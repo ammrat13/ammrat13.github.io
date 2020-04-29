@@ -1,0 +1,28 @@
+---
+---
+
+/* For styling the results of the post selector */
+
+.postSelectContainer {
+    /* We use flexbox for this */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: stretch;
+    align-content: stretch;
+}
+
+.postSelectItem {
+    /* Allow it to grow if we have very few posts */
+    flex-grow: 1;
+    /* Don't grow too large */
+    max-width: max(45%, 15rem);
+    
+    /* Keep some margin when doing so */
+    margin: 1rem 1rem;
+}
+
+.postSelectLink {
+    font-size: 150%;
+}

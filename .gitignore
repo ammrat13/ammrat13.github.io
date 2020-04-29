@@ -1,0 +1,10 @@
+# Ignore the built files
+_site/
+.sass-cache/
+
+# Ignore bundler configuration
+.bundle/
+
+# I don't care about the exact packages used
+# It's beyond my control anyway
+Gemfile.lock

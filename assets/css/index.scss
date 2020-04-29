@@ -1,0 +1,19 @@
+---
+---
+
+@import "shared";
+
+
+#profileImg {
+    margin-bottom: .7rem;
+    width: 100%;
+}
+
+#socialMediaLinks {
+    font-size: 300%;
+    text-align: right;
+}
+
+.socialMediaLink:hover {
+    opacity: .7;
+}

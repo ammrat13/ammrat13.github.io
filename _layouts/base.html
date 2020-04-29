@@ -1,0 +1,89 @@
+---
+# Have some default values
+stylesheet: index
+libs: []
+---
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <!-- Boilerplate -->
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="{{site.description}}"/>
+
+        <!-- Bootstrap -->
+        <!-- JQuery -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+        <!-- Process Includes -->
+        {% assign libList = page.libs | concat: layout.libs %}
+        {% for lib in libList %}
+            {% if lib == "postsel" %}
+                <!-- If we use the post selector, import the styles -->
+                <link rel="stylesheet" href="/assets/css/util/post_select.css"/>
+            {% elsif lib == "fa" %}
+                <!-- Font Awesome -->
+                <script src="https://kit.fontawesome.com/09a6f434c3.js" crossorigin="anonymous"></script>
+            {% elsif lib == "mathjax" %}
+                <!-- MathJax -->
+                <script>
+                    MathJax = {
+                        tex: {
+                            inlineMath: [['@@', '@@']],
+                            displayMath: [['%%', '%%']]
+                        }
+                    };
+                </script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.0.5/es5/tex-mml-chtml.js" crossorigin="anonymous"></script>
+            {% elsif lib == "code" %}
+                <!-- Custom code highlighting -->
+                <link rel="stylesheet" href="/assets/css/util/code.css"/>
+            {% else %}
+                <!-- Error -->
+                <script> console.error("Unknown library include: {{lib}}"); </script>
+            {% endif %}
+        {% endfor %}
+
+        <!-- My libraries -->
+        <link rel="stylesheet" href="/assets/css/{{page.stylesheet | default: layout.stylesheet}}.css"/>
+
+        <title>{{site.title}}</title>
+
+    </head>
+
+    <body>
+
+        <!-- Bootstrap navbar for navigation -->
+        <nav id="topLevelNav" class="navbar navbar-expand-md navbar-light bg-light">
+            <!-- Brand -->
+            <a class="navbar-brand" href="/index.html"/>{{site.title}}</a>
+
+            <!-- For collapsing -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topLevelNavCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- The thing to collapse -->
+            <div class="collapse navbar-collapse" id="topLevelNavCollapse">
+                <ul class="navbar-nav ml-auto">
+                    {% for link in site.data.navbar_links %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{link.page}}">{{link.name}}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </nav>
+
+        <div id="content">
+            {{ content }}
+        </div>
+    </body>
+
+</html>

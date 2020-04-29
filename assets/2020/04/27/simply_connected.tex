@@ -1,0 +1,22 @@
+\documentclass[tikz]{standalone}
+
+\begin{document}
+\begin{tikzpicture}
+
+% The left circle and inset
+\filldraw[color=lightgray,draw=black] (-3,0) circle (2);
+\filldraw[color=white,draw=black] (-3,0) circle (.7);
+
+% The right circle
+\filldraw[color=lightgray,draw=black] (3,0) circle (2);
+
+% The points
+\filldraw[color=black] (-3,-1.2) circle (.1);
+\filldraw[color=black] (3,-1.2) circle (.1);
+
+% The paths
+\draw[color=black] (-3,-1.2) arc (-90:270:1.3);
+\draw[color=black] (3,-1.2) .. controls (5,2) and (0,2) .. (3,-1.2);
+
+\end{tikzpicture}
+\end{document}

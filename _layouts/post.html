@@ -1,0 +1,35 @@
+---
+layout: base
+stylesheet: post
+libs: [postsel]
+---
+
+<!-- Find the index of this post -->
+{% for post in site.posts %}
+    {% if post.id == page.id %}
+        {% assign postIdx = forloop.index %}
+        {% break %}
+    {% endif %}
+{% endfor %}
+
+<!-- Calculate the starting index -->
+{% assign postNumSel = site.data.post_select.postNumSel %}
+{% assign halfNumSel = postNumSel | divided_by: 2 %}
+{% assign startIdx = postIdx | minus: halfNumSel | at_least: 0 %}
+
+
+<!-- Have a separate paragraph for the title due to spacing -->
+<p>
+    <h1>{{page.title}}</h1>
+    <em class="text-muted">{{page.date | date: "%-d %B %Y"}}</em>
+</p>
+
+<div id="postContent">
+    {{content}}
+</div>
+<hr/>
+
+<p>
+    <h2>Related Posts</h2>
+</p>
+{% include post_select.html start=startIdx num=postNumSel skipId=page.id %}

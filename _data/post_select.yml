@@ -1,0 +1,5 @@
+# Data for parameters for the post selector
+# It configures how many posts to get in different situations
+
+homeNumSel: 8
+postNumSel: 6

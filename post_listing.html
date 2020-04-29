@@ -1,0 +1,12 @@
+---
+layout: base
+stylesheet: post_listing
+libs: [postsel]
+---
+
+<p>
+    <h1>All Posts</h1>
+</p>
+
+{% assign numPosts = site.posts | size %}
+{% include post_select.html start='0' num=numPosts %}

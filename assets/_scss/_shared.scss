@@ -1,0 +1,33 @@
+/* To be used for the entire site */
+
+body {
+    /* Add some margin as a base */
+    margin: 5rem 2rem;
+}
+
+/* Center objects in the page itself */
+/* Have some parameters for calculating the width of objects */
+$pageObjWidth: 50vw;
+$pageObjMinWidth: 23rem;
+%page-obj {
+    /* Center on the page with auto margins */
+    /* Be sure to set width and min-width when inheriting */
+    margin: auto;
+
+    /* Also add some space to the bottom */
+    margin-bottom: 2rem;
+}
+
+#topLevelNav {
+    @extend %page-obj;
+    width: $pageObjWidth;
+    min-width: $pageObjMinWidth;
+}
+
+/* Have the content inset somewhat */
+$contentInset: 2rem;
+#content {
+    @extend %page-obj;
+    width: calc(#{$pageObjWidth} - #{$contentInset});
+    min-width: calc(#{$pageObjMinWidth} - #{$contentInset});
+}

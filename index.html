@@ -1,0 +1,35 @@
+---
+layout: base
+stylesheet: index
+libs: [postsel, fa]
+---
+
+<!-- We could build this up ourselves with Flex, but Bootstrap has it -->
+<div class="container align-items-start">
+    <div class="row">
+
+        <div class="col-xl-4">
+            <img id="profileImg" src="/assets/img/profile.svg" alt="A picture of me" class="rounded"/>
+
+            <!-- Have the social media links be clickable -->
+            <div id="socialMediaLinks">
+                <a href="https://www.linkedin.com/in/ammar-ratnani" class="text-body socialMediaLink"><i class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/ammrat13" class="text-body socialMediaLink"><i class="fab fa-github-square"></i></a>
+                <a href="mailto:ammrat13@gmail.com" class="text-body socialMediaLink"><i class="fas fa-envelope-square"></i></a>
+            </div>
+        </div>
+
+        <div class="col-xl-8">
+            <h1>About Me</h1>
+            {% include about_me.html %}
+        </div>
+
+    </div>
+
+    <hr/>
+
+    <p>
+        <h1>Recent Posts</h1>
+    </p>
+    {% include post_select.html start='0' num=site.data.post_select.homeNumSel %}
+</div>

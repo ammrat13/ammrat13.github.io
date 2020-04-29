@@ -1,0 +1,26 @@
+---
+---
+
+@import "shared";
+
+/* Center and block images */
+img {
+    display: block;
+    margin: 1.5rem auto;
+    width: 25rem;
+    max-width: 80%;
+}
+
+/* Margins on code segments */
+figure.highlight {
+    padding: 1rem 1rem 1px;
+}
+
+/* We have to type them out, but hide them */
+.mathjaxDeclarations {
+    display: none;
+}
+
+#postContent {
+    margin-bottom: 2rem;
+}
