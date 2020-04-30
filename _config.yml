@@ -24,6 +24,7 @@ baseurl: "/"
 url: "https://ammrat13.github.io"
 
 # Build settings
+future: false
 markdown: kramdown
 highlighter: rouge
 sass:
