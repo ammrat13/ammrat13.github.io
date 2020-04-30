@@ -1,0 +1,33 @@
+\documentclass[tikz]{standalone}
+
+\begin{document}
+\begin{tikzpicture}
+
+% The left side
+% The curve
+\draw[color=black] (-2,0) ellipse (.7 and 1.5);
+% Sector point
+\filldraw[color=gray] (-2,0) circle (.1);
+% Holes
+\filldraw[color=black] (-2,1) circle (.1);
+\filldraw[color=black] (-2,-1) circle (.1);
+% Dividing line
+\draw[color=gray,dashed] (-3,0) -- (-1,0);
+
+% The arrow
+\draw[color=black,thick,->] (-.6,0) -- (.6,0);
+
+% The right side
+% The curve
+\draw[color=black] (2,0) .. controls (3,1.7) and (1,1.7) .. cycle;
+\draw[color=black] (2,0) .. controls (3,-1.7) and (1,-1.7) .. cycle;
+% Sector point
+\filldraw[color=gray] (2,0) circle (.1);
+% Holes
+\filldraw[color=black] (2,1) circle (.1);
+\filldraw[color=black] (2,-1) circle (.1);
+% Dividing line
+\draw[color=gray,dashed] (3,0) -- (1,0);
+
+\end{tikzpicture}
+\end{document}
