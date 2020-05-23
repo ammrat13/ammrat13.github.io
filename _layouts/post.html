@@ -5,16 +5,14 @@ libs: [postsel]
 ---
 
 <!-- Find the index of this post -->
-<!-- This is the index in chronological order, but `site.posts` is reverse -->
-{% assign reversedPosts = site.posts | reverse %}
-{% for post in reversedPosts %}
+{% for post in site.posts %}
     {% if post.id == page.id %}
         {% assign postIdx = forloop.index %}
         {% break %}
     {% endif %}
 {% endfor %}
 
-<!-- Calculate the starting index, again, chronological -->
+<!-- Calculate the starting index -->
 {% assign postNumSel = site.data.post_select.postNumSel %}
 {% assign halfNumSel = postNumSel | divided_by: 2 %}
 {% assign startIdx = postIdx | minus: halfNumSel | at_least: 0 %}

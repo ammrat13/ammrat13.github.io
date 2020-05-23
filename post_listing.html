@@ -8,6 +8,5 @@ libs: [postsel]
     <h1>All Posts</h1>
 </p>
 
-<!-- We don't have to worry about direction since we are selecting all the posts -->
 {% assign numPosts = site.posts | size %}
 {% include post_select.html start='0' num=numPosts %}

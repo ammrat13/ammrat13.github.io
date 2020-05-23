@@ -3,15 +3,7 @@
 
 <div class="postSelectContainer">
 
-    <!-- We add a few `reverse`s because the indicies supplied are in
-          chronological order, while `site.posts` is in reverse -->
-    <!-- We reverse again at the end since we want to present in reverse -->
-    {% assign iterArr = site.posts
-                        | where_exp: "p", "p.id != include.skipId"
-                        | reverse
-                        | slice: include.start, include.num
-                        | reverse %}
-
+    {% assign iterArr = site.posts | where_exp: "p", "p.id != include.skipId" | slice: include.start, include.num %}
     {% for post in iterArr %}
 
         <div class="card postSelectItem">
