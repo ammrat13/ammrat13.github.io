@@ -32,7 +32,7 @@ Thus, the every loop is homotopic to one on a fixed circle, whose fundamental
 group is known to be @@\mathbb{Z}@@. Indeed, that's where we get the concept of
 [winding numbers](https://en.wikipedia.org/wiki/Winding_number). However, it
 may not be obvious that this is true (it certainly wasn't to me). I might try to
-prove it formally in a later post.
+prove it formally in a [later post]({{page.next.url}}).
 
 So that's the case of one hole, but what if there are multiple holes? I don't
 know how to do this formally, but here's a possible approach. We might start by
