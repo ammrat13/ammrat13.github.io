@@ -13,9 +13,12 @@ libs: [postsel]
 {% endfor %}
 
 <!-- Calculate the starting index -->
+<!-- Account for very early posts by subtracting more -->
+{% assign numPosts = site.posts | size %}
 {% assign postNumSel = site.data.post_select.postNumSel %}
 {% assign halfNumSel = postNumSel | divided_by: 2 %}
-{% assign startIdx = postIdx | minus: halfNumSel | at_least: 0 %}
+{% assign earlyPostCorr = halfNumSel | minus: numPosts | plus: postIdx | plus: 1 | at_least: 0 %}
+{% assign startIdx = postIdx | minus: halfNumSel | minus: earlyPostCorr | at_least: 0 %}
 
 
 <!-- Have a separate paragraph for the title due to spacing -->
