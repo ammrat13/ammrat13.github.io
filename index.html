@@ -31,5 +31,9 @@ libs: [postsel, fa]
     <p>
         <h1>Recent Posts</h1>
     </p>
-    {% include post_select.html start='0' num=site.data.post_select.homeNumSel %}
+    <!-- Remember that our post selector expects indices to be chronological -->
+    {% assign numPosts = site.posts | size %}
+    {% assign numSel = site.data.post_select.homeNumSel %}
+    {% assign startIdx = numSel | times: -1 | plus: numPosts | at_least: 0 %}
+    {% include post_select.html start=startIdx num=numSel %}
 </div>
