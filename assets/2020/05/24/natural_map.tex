@@ -1,0 +1,22 @@
+\documentclass[tikz]{standalone}
+
+\begin{document}
+\begin{tikzpicture}
+
+% The circle itself
+\draw[color=black, thick] (0,0) circle (2);
+
+% The tickmarks
+\draw[color=black] (2,0) -- (2.3,0);
+\draw[color=black] (0,2) -- (0,2.3);
+\draw[color=black] (0,-2) -- (0,-2.3);
+\draw[color=black] (-2,0) -- (-2.3,0);
+
+% The labels
+\node at (2.6,0) {\(0\)};
+\node at (0,2.6) {\(\pi/2\)};
+\node at (-.1,-2.6) {\(-\pi/2\)};
+\node at (-2.7,0) {\(\pm\pi\)};
+
+\end{tikzpicture}
+\end{document}

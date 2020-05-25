@@ -1,0 +1,20 @@
+\documentclass[tikz]{standalone}
+\usepackage{pgfplots}
+
+\begin{document}
+\begin{tikzpicture}
+
+\begin{axis}[
+    xlabel = \(x\),
+    ylabel = \(x\sin(x^{-1})\),
+]
+
+\addplot [
+    domain=-.006:.006, 
+    samples=10000, 
+]{x * sin(1/x)};
+
+\end{axis}
+
+\end{tikzpicture}
+\end{document}
