@@ -13,14 +13,21 @@
     align-content: stretch;
 }
 
-.postSelectItem {
-    /* Allow it to grow if we have very few posts */
+/* To be used by both items and placeholders */
+%postSelectFlexItem {
+    /* Set the ideal size, but allow it to grow */
+    flex-basis: 15rem;
     flex-grow: 1;
-    /* Don't grow too large */
-    max-width: max(45%, 15rem);
-    
-    /* Keep some margin when doing so */
+}
+.postSelectItem {
+    @extend %postSelectFlexItem;
+    /* Keep some margin around the items */
     margin: 1rem 1rem;
+}
+.postSelectPlaceholder {
+    @extend %postSelectFlexItem;
+    /* Don't have any height for placeholders */
+    margin: 0 1rem;
 }
 
 .postSelectLink {

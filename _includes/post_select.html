@@ -5,7 +5,6 @@
 
     {% assign iterArr = site.posts | where_exp: "p", "p.id != include.skipId" | slice: include.start, include.num %}
     {% for post in iterArr %}
-
         <div class="card postSelectItem">
             <div class="card-body">
                 <a href="{{post.url}}" class="text-body stretched-link postSelectLink"/>{{post.title}}</a>
@@ -14,7 +13,16 @@
                 <em class="text-secondary">On {{post.date | date: "%-d %B %Y"}}</em>
             </div>
         </div>
+    {% endfor %}
 
+    <!-- Add placeholders to make sure the items have equal width -->
+    <!-- We set the total number of items to be divisible by 1, 2, 3, ... -->
+    <!-- See: https://medium.com/developedbyjohn/equal-width-flex-items-a5ba1bfacb77 -->
+    {% assign totMod = 6 %} <!-- LCM(1,2,3) -->
+    {% assign numAlready = include.num | modulo: totMod %}
+    {% assign numPlaceholders = totMod | minus: numAlready %}
+    {% for i in (1..numPlaceholders) %}
+        <div class="postSelectPlaceholder"></div>
     {% endfor %}
 
 </div>
