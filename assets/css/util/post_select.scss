@@ -3,31 +3,40 @@
 
 /* For styling the results of the post selector */
 
+/* How much margin we want between posts */
+$itemMargin: 1rem;
+
 .postSelectContainer {
     /* We use flexbox for this */
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: stretch;
     align-content: stretch;
+
+    /* Use this trick with the negative sign to make the bordering cards not be
+        offset from the sides of the container */
+    /* We want to keep the offset from the top and bottom, so don't use it
+        for the vertical */
+    margin: 0 (-$itemMargin);
 }
 
 /* To be used by both items and placeholders */
-%postSelectFlexItem {
+%flexItem {
     /* Set the ideal size, but allow it to grow */
     flex-basis: 15rem;
     flex-grow: 1;
 }
 .postSelectItem {
-    @extend %postSelectFlexItem;
+    @extend %flexItem;
     /* Keep some margin around the items */
-    margin: 1rem 1rem;
+    margin: $itemMargin $itemMargin;
 }
 .postSelectPlaceholder {
-    @extend %postSelectFlexItem;
+    @extend %flexItem;
     /* Don't have any height for placeholders */
-    margin: 0 1rem;
+    margin: 0 $itemMargin;
 }
 
 .postSelectLink {
