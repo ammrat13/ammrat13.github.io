@@ -32,14 +32,17 @@ So let's try to build this from the ground up. What do we want the cross product
 to mean? We want to be able to measure how perpendicular two vectors
 (@@\mathbf{u}@@ and @@\mathbf{v}@@) are, and we can do this by using as a proxy
 the area of the parallelogram they span, as I think
-[this GIF](https://commons.wikimedia.org/wiki/File:Cross_product.gif) makes
-clear. Okay, how do we measure that area? _A priori_, I don't know how to
+[this GIF](https://commons.wikimedia.org/wiki/File:Cross_product.gif) shows.
+![An animation showing the cross product](/assets/2020/06/22/cross_product_anim.gif)
+Okay, how do we measure that area? _A priori_, I don't know how to
 measure areas in 3D space, but I do know how to measure volumes through the
 determinant.  Perhaps we could pick an arbitrary test vector @@\mathbf{t}@@,
 then calculate @@\det\begin{pmatrix} \mathbf{u} & \mathbf{v} & \mathbf{t}
 \end{pmatrix}^\top@@.  Given some details about @@\mathbf{t}@@, like how long it
 is and how much of it lies parallel to @@\mathbf{u}@@ and @@\mathbf{v}@@, we
 should be able to find the area we're after, as the image below makes clear.
+![The determinant can be computed as base times height](/assets/2020/06/22/det_ah.svg)
+%% \det\begin{pmatrix}\mathbf{u}&\mathbf{v}&\mathbf{t}\end{pmatrix}^\top = Ah %%
 
 You might notice something strange when doing the aforementioned computation,
 which becomes obvious when I fix @@\mathbf{u}@@ and @@\mathbf{v}@@ and let the
@@ -55,7 +58,7 @@ the RHS, which computes how parallel two vectors are! In general, we may write
 then start asking about the properties of @@\mathbf{f}@@. Letting @@\mathbf{t} =
 \mathbf{u}@@ or @@\mathbf{v}@@ shows that @@\mathbf{f}@@ is always orthogonal to
 its arguments since the determinant on the LHS clearly goes to zero in that
-case. Furthermore, as shown in the figure below, letting @@\mathbf{t} =
+case. Furthermore, as shown in the previous figure, letting @@\mathbf{t} =
 \mathbf{f}@@ itself allows us to express the volume on the right hand side as
 the area @@A@@ of the base spanned by @@\mathbf{u}@@ and @@\mathbf{v}@@ times
 the height of the parallelapiped, which is just @@||\mathbf{f}||@@ since it's
