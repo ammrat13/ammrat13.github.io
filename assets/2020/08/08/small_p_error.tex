@@ -1,0 +1,32 @@
+\documentclass[tikz,margin=2]{standalone}
+\usepackage{amsmath}
+\usepackage{pgfplots}
+
+\begin{document}
+\begin{tikzpicture}
+
+% Set up our axes. We don't put specific tick labels on the y-axis since it will
+% be scaled due to population size changes and changes in dt.
+\begin{axis}[
+    xlabel = \(k\),
+    ylabel = \(\text{d}k\),
+    ylabel near ticks,
+    yticklabels={,,},
+]
+
+% The plot of the "ideal" parabola
+\addplot[
+    dashed,
+    domain=0.0:1.0,
+    samples=100,
+]{1.386294*x*(1-x)};
+
+% The plot of the "actual" curve
+\addplot[
+    domain=0.0:1.0,
+    samples=100,
+]{(1-.25^x)*(1-x)};
+
+\end{axis}
+\end{tikzpicture}
+\end{document}
