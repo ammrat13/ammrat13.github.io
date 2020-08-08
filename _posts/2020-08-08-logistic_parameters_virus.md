@@ -10,11 +10,11 @@ libs: [mathjax]
 Recently, I've been working on invent**summer**, a part of
 [inventXYZ](https://inventxyz.com). It's run by my friend and some of his
 classmates, and I highly suggest checking them out - they're doing great things.
-Either way, given when this was happening, it's unsurprising that one of the
-projects in invent**summer** revolved around the Coronavirus. Specifically, we
-were guided through building a stochastic simulator for modeling the spread of a
-virus in a city. The model itself was very simple, but it still showed some
-important features of virus transmission.
+Either way, given this was written when the Coronavirus outbreak was happening,
+it's unsurprising that one of the projects in invent**summer** revolved around
+it. Specifically, we were guided through building a stochastic simulator for
+modeling the spread of a virus in a city. The model itself was very simple, but
+it still showed some important features of virus transmission.
 
 ![A GIF of how the simulation modelled spread](/assets/2020/08/08/runthrough.gif)
 In particular, the curve of the total number of affected people to date
@@ -26,10 +26,10 @@ sides of the arena. One can imagine this playing out in an arena that is much
 taller than it is wide. There, cases would grow linearly, not logistically, for
 most of the spread.
 
-Unsurprisingly, I've recently been interested in modelling the spread of
-viruses, at least with many simplifying assumptions in place. Specifically, I'd
-like to fit differential equations to the spread, mainly because I know they can
-and have been used to model stochastic processes like
+As you may have guessed, I've recently been interested in modelling the spread
+of viruses, at least with many simplifying assumptions in place. Specifically,
+I'd like to fit differential equations to the spread, mainly because I know they
+can and have been used to model stochastic processes like
 [Browinian Motion](https://https://en.wikipedia.org/wiki/Brownian_motion). I've
 done some work on a model similar to invent**summer**'s, and I may blog my work
 when it's more complete. For now, though, I'd like to write about a much simpler
@@ -45,7 +45,7 @@ pair of infected and healthy people, regardless of how much prior contact
 they've had.
 
 Those assumptions, though extremely limiting, allow us to solve explicitly.
-Using the common probability "trick" for unions of independent events and
+Using the common probability "trick" for the union of independent events and
 assuming that our numbers are large enough for probabilities to be treated as
 proportions, we see that the average rate of increase in the infected population
 will be
@@ -77,8 +77,8 @@ with the predicted results. The code is basically what you'd expect, so I won't
 include a listing here, and I'll just link to it at the end of this post. The
 only slightly complicated part involves computing the probability @@P_i@@ of a
 given infected person infecting a fixed healthy person *in one timestep* instead
-of in one second. To do this, we again apply the probability "trick" for unions
-of independent events to get
+of in one second. To do this, we again apply the probability "trick" for the
+union of independent events to get
 %%\begin{align\*}
 P_I &= 1 - (1-P_i)^\frac{1}{\text{d}t} \nl
 P_i &= 1 - (1-P_I)^{\text{d}t},
@@ -111,9 +111,9 @@ Combining that, with the fact I kept the population size high to minimize random
 artifacts, meant that everyone got infected almost immediately. Remember that,
 in my model, everyone is "on top of each other." To compensate for this, I
 reduced the total simulation time to @@10^{-5}\,\text{seconds}@@. I also reduced
-@@\text{d}t@@ to not lose resolution, but I didn't want to set it too low that
+@@\text{d}t@@ to not lose resolution, but I didn't want to set it so low that
 we introduce too many random artifacts into the plot of the derivative. After
-some experimentation, I set @@\text{d}t = 2.5\cdot 10^{-9}\, \text{seconds}@@.
+some trial and error, I set @@\text{d}t = 2.5\cdot 10^{-9}\, \text{seconds}@@.
 
 ![The result](/assets/2020/08/08/dk.png)
 The above image was the result of my experiment. The orange curve is the "ideal"
@@ -135,3 +135,23 @@ it will be in the limiting case), and expand to the first order as
 \frac{\text{d}k}{\text{d}t} &= -\ln(1-P_I)\cdot k\cdot(K-k).
 \end{align\*}%%
 It's the same result, just different reasoning and weaker requirements.
+
+That basically wraps up my exploration with this simplified model. There are
+many situations where it starts to break. I already pointed out one at the start
+of this post, but another one would be where @@\text{d}t@@ is large. Consider a
+scenario where people go to the supermarket once a week but otherwise isolate.
+In that case, the actual growth would be much less than what this model would
+predict just given the probability of transmission.
+
+Nonetheless, it makes sense that we see logistic-like growth in all kinds of
+virus spread. Not only does the basic logic - that new cases come from old cases
+and that the growth will cap at some point - hold, but we might also be able to
+compute then use an average @@P_I@@ for the population. Indeed, in real life, we
+do compute a population-wide average for
+%% R_0 \approx \frac{1}{1-P_I}, %%
+even though individual @@R_0@@s can vary wildly. It seems this simple logistic
+model is more versatile than I give it credit for.
+
+### Resources
+* [Code for this post](https://github.com/ammrat13/ammrat13.github.io/tree/master/assets/2020/08/08/simulation)
+* [Simulator for invent**summer**](https://github.com/ammrat13/inventsummer-2020/tree/master/covidsim)
