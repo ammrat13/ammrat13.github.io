@@ -5,7 +5,5 @@ fairly minimal, containing little more than an about section and some blog
 posts.
 
 #### Packages Used
- * `ruby`: Installed from repositories
- * `nodejs`: Installed from repositories
- * `bundler`: Installed locally with Gem and configured to install packages
-              locally
+ * `bundler`: Installed from repositories and configured to install packages
+              locally by running `bundle config set --local PATH $HOME/.gem`
