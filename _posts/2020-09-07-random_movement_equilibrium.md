@@ -15,7 +15,7 @@ population moves over time. Intuitively, we'd expect the dynamics to follow the
 reduces to the [Heat Equation](https://en.wikipedia.org/wiki/Heat_equation) if
 the diffusivity is constant throught the domain.
 
-![Equilibrium of my simulated diffusion](/assets/2020/09/05/clip_nofilter.png)
+![Equilibrium of my simulated diffusion](/assets/2020/09/07/clip_nofilter.png)
 Imagine my surprise, then, when I simulated the population to a steady state and
 got the above distribution. It's inconsistent with the heat equation --- we'd be
 expecting a uniform equilibrium distribution from that. Instead, we get "clumps"
@@ -57,7 +57,7 @@ while True:
 {% endhighlight %}
 This did get rid of the people clumped to the edge, but it still left the
 rarefactions. In fact, it actually made them much worse.
-![Equilibrium with rerolling](/assets/2020/09/05/reroll.png)
+![Equilibrium with rerolling](/assets/2020/09/07/reroll.png)
 
 On a side note, decreasing the variance for people's movement seemed to help
 significantly. In my simulation, all the people moved according to a normal
@@ -69,6 +69,16 @@ second, where @@n@@ can be made arbitrarily large.
 
 That works in theory, but not in practice. If we have a population of size
 @@\texttt{POP_SIZE} = K@@ and we simulate for @@t@@ seconds, then simulating
-takes @@\mathcal{O}(ntK)@@ time. That's not great if we plan to make @@n@@
-ridiculously large. However, we only really want to see the equilibrium state
-for now, and it might be better to calculate it rather than to simulate it out.
+takes @@\mathcal{O}(ntK)@@ time. That's not great, especially since two of those
+parameters are being made really large. However, we only really want to see the
+equilibrium state for now, and it might be better to calculate it rather than to
+simulate it out.
+
+To do this, we can start by formalizing the problem we are trying to solve. I'll
+consider the case where we clip the people to the edges of the domain, and the
+case where we reroll can be built on top of it. First, notation. I'm using
+slightly non-standard names here:
+%%\begin{align\*}
+\varphi(x \mid \mu) &= \frac{1}{\sqrt{2\pi\sigma^2}} \, \exp\left( -\frac{(x-\mu)^2}{2\sigma^2} \right) \nl
+\phi(x \mid \mu) &= \int_{-\infty}^x \varphi(t \mid \mu) dt
+\end{align\*}%%
