@@ -152,7 +152,7 @@ fig, ax = plt.subplots()
 # Plot the histogram (if we need to) and the expected distribution
 if SIM_POP:
     ax.hist(population, bins=NUM_BINS)
-#ax.plot(expectedX, expectedY)
+ax.plot(expectedX, expectedY)
 # Format the results
 ax.set_frame_on(True)
 ax.set_xlim(0.0, 1.0)

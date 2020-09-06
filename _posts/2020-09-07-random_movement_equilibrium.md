@@ -76,9 +76,83 @@ simulate it out.
 
 To do this, we can start by formalizing the problem we are trying to solve. I'll
 consider the case where we clip the people to the edges of the domain, and the
-case where we reroll can be built on top of it. First, notation. I'm using
-slightly non-standard names here:
+case where we reroll can be built on top of it. We can specify the state of our
+system with a number @@\rho_{\text{side}}@@, specifying the proportion of people
+clipped to one side, as well as a function @@\rho: [0,1] \to \mathbb{R}^+@@,
+specifying the density of people at a particular location. The system proceeds
+by computing
 %%\begin{align\*}
-\varphi(x \mid \mu) &= \frac{1}{\sqrt{2\pi\sigma^2}} \, \exp\left( -\frac{(x-\mu)^2}{2\sigma^2} \right) \nl
-\phi(x \mid \mu) &= \int_{-\infty}^x \varphi(t \mid \mu) dt
+\rho_{\text{side}} &:=
+    \frac{\rho_{\text{side}}}{2} +
+    \frac{\rho_{\text{side}}}{\sqrt{2\pi\sigma^2}} \int_{-\infty}^{-1} e^{-\frac{t^2}{2\sigma^2}}\,dt +
+    \int_0^1 \int_{-\infty}^{0} \frac{\rho(x)}{\sqrt{2\pi\sigma^2}} e^{-\frac{(t-x)^2}{2\sigma^2}} \, dt \, dx \nl
+\rho(x) &:=
+    \frac{\rho_{\text{side}}}{\sqrt{2\pi\sigma^2}} e^{-\frac{x^2}{2\sigma^2}} +
+    \frac{\rho_{\text{side}}}{\sqrt{2\pi\sigma^2}} e^{-\frac{(x-1)^2}{2\sigma^2}} +
+    \int_0^1 \frac{\rho(t)}{\sqrt{2\pi\sigma^2}}e^{\frac{(x-t)^2}{2\sigma^2}} \, dt .
 \end{align\*}%%
+The first term is the contribution from the left "wall", the second term that
+from the right wall, and the third term that from everywhere else. This
+iteration is quite complicated, and I highly doubt there is a closed form
+solution to it.
+
+So, we approximate. We can discretize the domain into @@\texttt{NUM_BINS} = N@@
+regions of equal length @@\texttt{BIN_DELTA} = \Delta@@, treating the two walls
+separately, and create a Markov matrix @@\texttt{markovMat} = \mathbf{M}@@ for
+movement between the regions. For calculation, we'll say that the population
+density is constant throught a given region. As for indexing, let index @@0@@ be
+the left wall, index @@N+1@@ the right wall, and each of the bins indexed left
+to right starting at @@1@@. Also, we'll use left stochastic matrices because
+that's what `numpy` seems to play better with --- @@M_{j,i}@@ represents the
+probability of transitioning to state @@j@@ given you are in state @@i@@.
+
+We can then go through the caclulations. First, we take care of transitioning
+between walls:
+%%\begin{align\*}
+M_{0,0} = M_{N+1,N+1} &= \frac{1}{2} \nl
+M_{N+1,0} = M_{0,N+1} &= \frac{1}{\sqrt{2\pi\sigma^2}} \int_{-\infty}^{-1} e^{-\frac{t^2}{2\sigma^2}} \, dt.
+\end{align\*}%%
+Now, consider transitioning between a wall and a bin @@B@@, and vice versa:
+%%\begin{align\*}
+M_{B,0} = M_{N+1-B,N+1} &= \frac{1}{\sqrt{2\pi\sigma^2}} \int_{(B-1)\Delta}^{B\Delta} e^{-\frac{t^2}{2\sigma^2}} \, dt\nl
+M_{0,B} = M_{N+1,N+1-B} &= \frac{1}{\sqrt{2\pi\sigma^2}} \int_{(B-1)\Delta}^{B\Delta} \int_{-\infty}^0 e^{-\frac{(t-x)^2}{2\sigma^2}} \, dt \, dx.
+\end{align\*}%%
+Finally, consider transitioning from a bin @@b@@ to another bin @@B@@:
+%% M_{B,b} = \frac{1}{\sqrt{2\pi\sigma^2}} \int_{(b-1)\Delta}^{b\Delta} \int_{(B-1)\Delta}^{B\Delta} e^{-\frac{(t-x)^2}{2\sigma^2}} \, dt \, dx. %%
+
+The above formulas aren't nice. Far from it. But, they are computable. We can
+even get a "closed-form" solution using the error function @@\text{erf}@@,
+implemented in Python as `math.erf`. We can use the formulas above to populate
+@@\mathbf{M}@@, from where we can solve for an eigenvector with eigenvalue one
+by computing @@(\mathbf{M} - \mathbf{I})\mathbf{v} = \mathbf{0}@@. In fact,
+since @@\mathbf{M} - \mathbf{I}@@ is not full rank, we can replace one of the
+rows with another constraint to get a particular @@\mathbf{v}@@. For instance, I
+required the numbers in the vector to sum to a particular value, corresponding
+to a fixed population size. This algorithm is @@\mathcal{O}(N^3)@@, which was
+much faster than simulating for me. It's just a question now of how well it
+works.
+
+![The result of the Markov chain, compared to simulation](/assets/2020/09/07/clip_filter_expected.png)
+It works pretty well. The above figure is the output of the Markov chain (in
+orange) compared to simulating until equilibrium (in blue). It was done with
+clipping, with @@\sigma = 0.1@@, and with @@N = 100@@. The outputs inside the
+simulation domain are fairly close, and number of people clipped (not shown on
+the graph above to avoid clutter) differ by only @@0.3\%@@.
+
+What I've said so far only applies to the case where we clip people to the
+boundaries. Thankfully, rerolls are just a small extension to this. We simply
+compute @@\mathbf{M}@@ as described above neglect the cases where a person goes
+into or comes out of a "wall," then renormalize all the probabilities to sum to
+one.
+{% highlight python %}
+markovMat = np.delete(markovMat, [0,-1], axis=0)
+markovMat = np.delete(markovMat, [0,-1], axis=1)
+markovMat /= np.sum(markovMat, axis=0)
+{% endhighlight %}
+
+![The results with rerolls](/assets/2020/09/07/reroll_expected.png)
+Again, it works fairly well. Of course, my work here is far from perfect, and
+there's probably still a lot more that can be done to refine the model. For
+instance, you might notice that the Markov chain seems to overestimate the
+number of people around the edges. Why is that? I invite you all to take a look
+at the code and see what you can find.
