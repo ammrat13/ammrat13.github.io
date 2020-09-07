@@ -7,9 +7,9 @@ libs: [mathjax]
     @@\newcommand{\nl}{\\}@@
 </div>
 
-In my last post [last post]({{page.previous.url}}), I touched on my efforts to
-model how a simple "virus" moves through a population, mainly through the lens
-of differential equations. As part of that, I wanted to test my model of how the
+In my [last post]({{page.previous.url}}), I touched on my efforts to model how a
+simple "virus" moves through a population, mainly through the lens of
+differential equations. As part of that, I wanted to test my model of how the
 population moves over time. Intuitively, we'd expect the dynamics to follow the
 [Diffusion Equation](https://en.wikipedia.org/wiki/Diffusion_equation), which
 reduces to the [Heat Equation](https://en.wikipedia.org/wiki/Heat_equation) if
@@ -19,7 +19,7 @@ the diffusivity is constant throught the domain.
 Imagine my surprise, then, when I simulated the population to a steady state and
 got the above distribution. It's inconsistent with the heat equation --- we'd be
 expecting a uniform equilibrium distribution from that. Instead, we get "clumps"
-on the edges of the simulation domain, as well as a "rarefaction" near them.
+on the edges of the simulation domain, as well as "rarefactions" near them.
 
 Granted, the result makes sense. Look at the code that moves people around:
 {% highlight python %}
@@ -32,12 +32,12 @@ unlike everywhere else in the domain. Really, the bounaries are accumulating
 everyone who overstepped them.
 
 The rarefactions are somewhat harder to explain. The best I can come up with is
-to compare it to the "unbounded" case. Imagine the simulation domain streteched
-to infinity in both directions. Then, with every person moving according to a
-normal distribution, having a constant population density would be an
-equilibrium state. When we bound the domain, however, we lose the contribution
-of everyone outside. This becomes especially noticible near the edges, where
-almost half of the influx would be coming from outside @@[0,1]@@.
+to compare it to the "unbounded" case. Imagine if the simulation domain
+streteched to infinity in both directions. Then, with every person moving
+according to a normal distribution, having a constant population density would
+be an equilibrium state. When we bound the domain, however, we lose the
+contribution of everyone outside. This becomes especially noticible near the
+edges, where almost half of the influx would be coming from outside @@[0,1]@@.
 
 Of couse, I find these "clipping artifacts" undesireable, and I looked for ways
 to mitigate them. One idea I had was to reroll the positions of people who
@@ -94,14 +94,14 @@ by computing
 The first term is the contribution from the left "wall", the second term that
 from the right wall, and the third term that from everywhere else. This
 iteration is quite complicated, and I highly doubt there is a closed form
-solution to it.
+expression for the fixed points.
 
 So, we approximate. We can discretize the domain into @@\texttt{NUM_BINS} = N@@
 regions of equal length @@\texttt{BIN_DELTA} = \Delta@@, treating the two walls
 separately, and create a Markov matrix @@\texttt{markovMat} = \mathbf{M}@@ for
 movement between the regions. For calculation, we'll say that the population
 density is constant throught a given region. As for indexing, let index @@0@@ be
-the left wall, index @@N+1@@ the right wall, and each of the bins indexed left
+the left wall, index @@N+1@@ the right wall, and each of the "bins" indexed left
 to right starting at @@1@@. Also, we'll use left stochastic matrices because
 that's what `numpy` seems to play better with --- @@M_{j,i}@@ represents the
 probability of transitioning to state @@j@@ given you are in state @@i@@.
@@ -125,23 +125,28 @@ even get a "closed-form" solution using the error function @@\text{erf}@@,
 implemented in Python as `math.erf`. We can use the formulas above to populate
 @@\mathbf{M}@@, from where we can solve for an eigenvector with eigenvalue one
 by computing @@(\mathbf{M} - \mathbf{I})\mathbf{v} = \mathbf{0}@@. In fact,
-since @@\mathbf{M} - \mathbf{I}@@ is not full rank, we can replace one of the
-rows with another constraint to get a particular @@\mathbf{v}@@. For instance, I
-required the numbers in the vector to sum to a particular value, corresponding
-to a fixed population size. This algorithm is @@\mathcal{O}(N^3)@@, which was
-much faster than simulating for me. It's just a question now of how well it
-works.
+since @@\texttt{solMat} = \mathbf{M} - \mathbf{I}@@ is not full rank, we can
+replace one of the rows with another constraint to get a particular
+@@\mathbf{v}@@. For instance, I required the numbers in the vector to sum to a
+particular value, corresponding to a fixed population size.
+{% highlight python %}
+solMat[-1] = np.ones((markovMatSize,))
+solVec[-1] = POP_SIZE
+sol = np.linalg.solve(solMat, solVec)
+{% endhighlight %}
+This algorithm is @@\mathcal{O}(N^3)@@, which was much faster than simulating
+for me. It was just a question of how well it worked.
 
 ![The result of the Markov chain, compared to simulation](/assets/2020/09/07/clip_filter_expected.png)
-It works pretty well. The above figure is the output of the Markov chain (in
+It worked pretty well. The above figure is the output of the Markov chain (in
 orange) compared to simulating until equilibrium (in blue). It was done with
 clipping, with @@\sigma = 0.1@@, and with @@N = 100@@. The outputs inside the
-simulation domain are fairly close, and number of people clipped (not shown on
+simulation domain are fairly close, and numbers of people clipped (not shown on
 the graph above to avoid clutter) differ by only @@0.3\%@@.
 
 What I've said so far only applies to the case where we clip people to the
 boundaries. Thankfully, rerolls are just a small extension to this. We simply
-compute @@\mathbf{M}@@ as described above neglect the cases where a person goes
+compute @@\mathbf{M}@@ as described above, neglect the cases where a person goes
 into or comes out of a "wall," then renormalize all the probabilities to sum to
 one.
 {% highlight python %}
