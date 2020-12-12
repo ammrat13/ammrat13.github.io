@@ -55,12 +55,10 @@ relevant symmetry group @@G@@. For a particular subgroup @@H@@, we might color
 all the elements of a particular coset the same color, ensuring that not all
 cosets share the same color. We would thus count (for @@k@@ colors)
 %% \frac{k^{[G:H]} - k}{[G:H]} %%
-distinct colorings for @@H@@.
+distinct colorings for @@H \neq G@@, and @@1@@ otherwise.
 
 There are several problems with this. First, we'd require that @@H \triangleleft
 G@@ for this to work. We'd also have to somehow sum over all the normal
-subgroups of @@G@@, which I'd imagine to be fairly difficult. Also, how would we
-know that we got *all* the possible colorings. I'd imagine this construction to
-be difficult to work with in a proof. But the biggest problem is that it's
-counting the wrong thing! We're coloring objects @@G@@ acts on, not @@G@@
-itself!
+subgroups of @@G@@, which becomes difficult when subgroups contain each other.
+But worst of all, it's not even counting the right thing! We need to count with
+respect to the objects @@G@@ acts on, not @@G@@ itself!
