@@ -14,13 +14,13 @@ libs: [mathjax]
 This semester, I took [MATH 3012](http://math.gatech.edu/courses/math/3012), a
 discrete math course with Dr. Ernest Croot. It was an interesting class,
 especially because discrete structures aren't discussed heavily in high-school
-and early college math, despite them being a core part of computer science.
+and early college, despite them being a core part of computer science.
 
 Until now, my main exposure to discrete math had been through math competitions,
 and I was kind of bad at them. The counting problems always messed me up (since
 I never practiced them). As such, combinatorics has always held a special place
 in my heart --- a field of math that's widely applicable, but one that I'm not
-good at.
+particularly good at.
 
 Dr. Croot began the course by showing us a wide variety of problems in the
 domain of discrete math. Stuff like simple counting problems, stars and bars,
@@ -29,31 +29,28 @@ problem he mentioned was counting colorings in the presence of symmetry. He gave
 the example of a necklace and counting the distinct colorings on it with
 rotational symmetry. I think he did an example with @@k@@ colors and @@3@@
 beads, deriving the formula:
-
 %% \frac{k^3 - k}{3} + k. %%
-
 The first term counts the colorings where all the beads aren't the same color,
 each generating three equivalent arrangements. The second term enumerates those
-colorings where all beads are the same, where the coloring is thus invariant
-under rotation.
+where all beads are the same and the coloring is thus invariant under rotation.
 
-Dr. Croot then asked us to think about the equivalent formulas for non-prime
-numbers of beads, or when we allow for reflection. If the derivation in this
-simple case was so complicated, just imagine how bad those would be! Just look
-at the example below: four beads and two colors with a flip along the vertical
-as symmetry. The case of two beads of each color is particularly ugly.
+He then asked us to think about the equivalent formulas for non-prime numbers of
+beads or when we allow for reflection. If the derivation in this simple case was
+so complicated, just imagine how bad those would be! Just look at the example
+below: four beads and two colors, with a flip along the vertical as symmetry.
+The case of two beads of each color is particularly ugly.
 ![The case of four beads and two colors under reflection](/assets/2020/12/13/colorings_reflection.svg)
 
 My professor mentioned Pólya's Enumeration Theorem as an easier way. I noticed a
-chapter of the same name in the textbook as well, though it was quite late in
-the book and we wouldn't get around to it.
+chapter of the same name in the book, though it was quite late in the text and
+we wouldn't get around to it.
 
 ---
 
-My gut reaction for finding a plan of attack was group theory. I read through
-Nathan Carter's [*Visual Group Theory*](http://books.google.com?id=F_H3DwAAQBAJ)
-last semester, and I was surprised as to how ubiquitous groups really are. Since
-they, in some sense, represent the symmetry of a system, it felt intuitive to
+My gut reaction for a plan of attack was group theory. I read through Nathan
+Carter's [*Visual Group Theory*](http://books.google.com?id=F_H3DwAAQBAJ) last
+semester, and I was surprised as to how ubiquitous groups really are. Since
+they, in some sense, represent the symmetries of a system, it felt intuitive to
 look at this problem through the lens of group theory.
 
 In particular, it felt like a good idea to look at all the subgroups of the
@@ -61,20 +58,20 @@ relevant symmetry group @@G@@. For a particular subgroup @@H@@, we might color
 all the elements of a particular coset the same color, ensuring that not all
 cosets share the same color. We would thus count (for @@k@@ colors)
 %% \frac{k^{[G:H]} - k}{[G:H]} %%
-distinct colorings for @@H \neq G@@, and @@1@@ otherwise.
+distinct colorings when @@H \neq G@@, and @@k@@ otherwise.
 
 There are several problems with this. First, we'd require that @@H \triangleleft
 G@@ for this to work. We'd also have to somehow sum over all the normal
-subgroups of @@G@@, which becomes difficult when subgroups contain each other.
-But worst of all, it's not even counting the right thing! We need to count with
+subgroups of @@G@@, and avoid double counting when subgroups contain each other.
+But worst of all, we're not even counting the right thing! We need to count with
 respect to the objects @@G@@ acts on, not @@G@@ itself!
 
 Nonetheless, the idea of using group theory was a good one. Indeed, Pólya's
 theorem is formulated in terms of it. The proof considers a group @@G@@ acting
 on a set @@X@@. It then takes @@G@@ to act on the set of its @@k@@-colorings
 @@[k]^X@@ in the following way. For @@c \in [k]^X@@, we take @@g \cdot c@@ to
-color @@g \cdot x@@ the same way @@c@@ colored @@x@@. That is, @@g \in G@@ can
-be seen as "shuffling" the elements of @@X@@, so we shuffle the colors alongside
+color @@g \cdot x@@ the same way @@c@@ colored @@x@@. In other words, @@g@@ can
+be seen as permuting the elements of @@X@@, so we permute the colors alongside
 their associated elements.
 
 We'll consider two colorings the same if they differ only by an action in @@G@@,
@@ -83,7 +80,8 @@ Enumeration Theorem asserts that the number we're after is
 %% \left|[k]^X/G\right| = \frac{1}{|G|}\sum_{g \in G} k^{\cyc{g}}, %%
 where @@\cyc{g}@@ first considers @@g@@ as a permutation on the elements of
 @@X@@ (where @@x \mapsto g \cdot x@@), then counts how many cycles it has.
-Remember that all permutations can be decomposed into a product of cycles.
+Remember that all permutations can be decomposed into a product of disjoint
+cycles.
 
 This result, to me, is quite odd. It's summing over all the elements of @@G@@,
 even if the subgroups generated by them overlap. I'd think the sum would
@@ -99,8 +97,8 @@ Orbit-Stabilizer was covered in *Visual Group Theory*, but I forgot the proof
 and (genuinely) had a fun time rediscovering it. It seems that, for a fixed @@x
 \in X@@, we give a bijection from the *left* cosets of @@\Stab{x}@@ to the
 elements of @@\Orb{x}@@, thus showing @@|\Orb{x}|=[G:\Stab{x}]@@. We create this
-function in the most natural way possible: the coset @@g\cdot\Stab{x}@@ maps to
-the object @@g \cdot x@@.
+function in the most natural way possible: we map the coset @@g\cdot\Stab{x}@@
+to the object @@g \cdot x@@.
 
 This is indeed a function. If @@g\cdot\Stab{x}=h\cdot\Stab{x}@@, then
 @@h^{-1}g\cdot\Stab{x}=\Stab{x}@@. From here it follows that @@h^{-1}g@@
@@ -113,26 +111,24 @@ surjectiveness is clear since any @@g \cdot x \in \Orb{x}@@ is mapped to by
 ---
 
 Burnside's Lemma really is a simple application of Orbit-Stabilizer once you
-know what to look for. I didn't see it initially, however. For some reason, I
-tried to prove that all elements of @@\Orb{x}@@ share the same stabilizing
-subgroup. I think I wanted to consider @@G/\Stab{x}@@ as the orbit's
-corresponding "orbiting subgroup" and do something with that. Of course, this
-would require showing that @@\Stab{x} \triangleleft G@@, but it turns out that's
-equivalent to all elements sharing the same stabilizer. Why? Consider all @@s
-\in \Stab{x}@@ and note that @@g^{-1}sg \cdot x = x@@ if and only if @@sg \cdot
-x = g \cdot x@@.
+know what to look for. But, I didn't see it initially. For some reason, I tried
+to prove that all elements of @@\Orb{x}@@ share the same stabilizing subgroup. I
+think I wanted to consider @@G/\Stab{x}@@ as an element's "orbiting subgroup"
+and do something with that. Of course, this would require showing that
+@@\Stab{x} \triangleleft G@@, but it turns out that's equivalent to all elements
+sharing the same stabilizer. Why? Consider all @@s \in \Stab{x}@@ and note that
+@@g^{-1}sg \cdot x = x@@ if and only if @@sg \cdot x = g \cdot x@@.
 
 But it doesn't matter since this statement is blatantly false. The [Wikipedia
 Article](https://en.wikipedia.org/wiki/Group_action#Fixed_points_and_stabilizer_subgroups)
 on Group Actions states that:
-
 > [A stabilizer] is a subgroup of @@G@@, though typically not a normal one ...
 > [but] the stabilizers of elements in the same orbit are conjugate to each
 > other.
 
 Moreover, I'm fairly sure the following is a counterexample. Below is a "Cayley
 diagram" depicting a set of three elements acted on by @@D_3@@, where the red
-arrows are rotation @@r@@ and the blue arrows flips @@f@@.
+arrows are rotation @@r@@ and the blue arrows are flips @@f@@.
 ![An example of a set with nonequal stabilizers](/assets/2020/12/13/stabilizer_nonnormal.svg)
 
 As for the actual proof, we can just count the number of distinct orbits in
@@ -144,13 +140,13 @@ differ only by an action in @@G@@. We sum as
 &= \sum_{O \in (X/G)} \sum_{x \in O} \frac{1}{|O|},
 \end{align\*}
 %%
-
-where we take @@O@@ to be all the different orbits. Initially, it may seem like
-we haven't done too much. But, we can easily clean this up. First, note that the
-cardinality of the orbit @@O@@ to which @@x@@ belongs is usually denoted
-@@|\Orb{x}|@@. Second, since all the orbits partition the set @@X@@, and since
-we just sum over all the elements of all the orbits, we can collapse the double
-summation into one. These simplifications, along with Orbit-Stabilizer, give
+where we take @@O@@ to range over all the different orbits. Initially, it may
+seem like we haven't done too much, but we can easily clean this up. First, note
+that the cardinality of the orbit @@O@@ to which @@x@@ belongs is usually
+denoted @@|\Orb{x}|@@. Second, since all the orbits partition the set @@X@@, and
+since we just sum over all the elements of all the orbits, we can collapse the
+double summation into one. These simplifications, along with Orbit-Stabilizer,
+give
 %%
 \begin{align\*}
 |X/G| &= \sum_{x \in X} \frac{1}{|\Orb{x}|} \nl
@@ -158,13 +154,13 @@ summation into one. These simplifications, along with Orbit-Stabilizer, give
 \end{align\*}
 %%
 
-The next part is quite tricky. We make the following observation:
+The next part is kind of tricky. We make the following observation:
 %% \sum_{x \in X} |\Stab{x}| = \sum_{g \in G} \nstab{g}, %%
 where @@\nstab{g}@@ denotes the number of different elements of @@X@@ that @@g@@
 stabilizes. Why is this true? We can see both sides as counting the number of
 pairs @@(g,x)@@ that are "stable" --- the number of pairs such that @@g \cdot x
-= x@@. We can choose to sum over the first "coordinate", as in the LHS, or the
-second, as in the RHS.
+= x@@. We can choose to sum over the second "coordinate", as in the LHS, or the
+first, as in the RHS.
 
 We can subsitute this observation into our result from above to arrive at
 Burnside's Lemma:
@@ -174,33 +170,33 @@ Burnside's Lemma:
 
 From Burnside, it's not too far to Pólya. We'll just fix some @@g \in G@@ and
 ask what colorings of @@X@@ it stabilizes. The form of the answer gives us a big
-hint. We seem to be choosing a color for each of the cycles in @@g@@ when
-applied to @@X@@. So, it makes sense to guess that, for a coloring to be stable,
-each cycle of @@g@@ must have all its elements colored the same.
+hint. We seem to be choosing a color for each of the cycles in @@g@@ (when
+applied to @@X@@). So, it makes sense to guess that, for a coloring to be
+stable, each cycle of @@g@@ must have all its elements colored the same.
 
 Indeed this is the case, and we can see this by creating a stable coloring in
-perhaps the most natural way. Arbitrarily pick some @@x_1 \in X@@ and color it
-one of the @@k@@ colors (giving us @@k@@ choices). Then, apply @@g@@. Since this
-coloring is to be stable, we must have @@g \cdot x_1@@ colored the same as
-@@x_1@@. The same is true for @@g^2 \cdot x_1@@, @@g^3 \cdot x_1@@, and so on
-until we get back to where we started. We've thus colored the cycle generated by
-@@x_1@@ with one of @@k@@ colors. But, we may not be done, so choose some
-@@x_2@@ we haven't seen before and repeat. Do the same for @@x_3@@, @@x_4@@, all
-the way up to @@x_{\cyc{g}}@@.
+perhaps the most natural way possible. Arbitrarily pick some @@x_1 \in X@@ and
+color it one of the @@k@@ colors (giving us @@k@@ choices). Then, apply @@g@@.
+Since this coloring is to be stable, we must have @@g \cdot x_1@@ colored the
+same as @@x_1@@. The same is true for @@g^2 \cdot x_1@@, @@g^3 \cdot x_1@@, and
+so on until we get back to where we started. We've thus colored the cycle
+"generated" by @@x_1@@ with one of @@k@@ colors. But, we may not be done, so
+choose some @@x_2@@ we haven't seen before, and repeat. We do the same for
+@@x_3@@, @@x_4@@, all the way up to @@x_{\cyc{g}}@@.
 
 When creating a stable coloring, we got @@k@@ choices for each of the
 @@\cyc{g}@@ different @@x_i \in X@@. Therefore, there are @@k^{\cyc{g}}@@ stable
-colorings for a fixed @@g@@. Finally, we can use Burnside's Lemma to see that
-the number of distinct colorings in @@[k]^X@@ is (as required)
+colorings for some arbitrary @@g@@. Finally, we can use Burnside's Lemma to see
+that the number of distinct colorings in @@[k]^X@@ is (as required)
 %% \left|[k]^X/G\right| = \frac{1}{|G|}\sum_{g \in G} k^{\cyc{g}}. %%
 
 As an aside, it's worth mentioning that @@\cyc{g}@@ is well defined for all @@g
-\in G@@. I touched on the fact that @@g@@ can be viewed as a permutation of the
+\in G@@. I touched on the fact that @@g@@ can be viewed as a permutation on the
 elements of @@X@@. In some sense, @@g@@ is part of the symmetric group on
 @@|X|@@ elements. It's well known that all permutations can be uniquely
-decomposed into a product of disjoint cycles, giving well-definedness. So, our
-process from the last two paragraphs will give the same answer every time, even
-though it wouldn't initially seem like it.
+decomposed into a product of disjoint cycles, giving our well-definedness. So,
+our process from the last two paragraphs will give the same answer every time,
+even though it wouldn't initially seem like it.
 
 ---
 
