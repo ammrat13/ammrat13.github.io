@@ -201,3 +201,11 @@ elements of @@X@@. In some sense, @@g@@ is part of the symmetric group on
 decomposed into a product of disjoint cycles, giving well-definedness. So, our
 process from the last two paragraphs will give the same answer every time, even
 though it wouldn't initially seem like it.
+
+---
+
+Well, that was an adventure. It took me back as well --- it's been almost a year
+since I last looked at group theory. I'm always surprised at how often it comess
+up, from ECC to RSA to matrix determinants to sorting and now counting.
+Moreover, it was just a fun exercise to try and figure out this theorem's proof.
+And, I now know more having done it, which is the most I can ask.
