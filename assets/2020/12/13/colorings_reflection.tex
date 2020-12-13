@@ -19,20 +19,22 @@
 \begin{tikzpicture}
 
 % All black and all white colorings
-\drawNecklace{-2}{0}{\B}{\B}{\B}{\B}
-\drawNecklace{ 2}{0}{\W}{\W}{\W}{\W}
-
-% One black or one white
-\drawNecklace{-2}{-3}{\W}{\B}{\B}{\B}
-\drawNecklace{ 2}{-3}{\B}{\W}{\W}{\W}
-\drawNecklace{-2}{-6}{\B}{\B}{\W}{\B}
-\drawNecklace{ 2}{-6}{\W}{\W}{\B}{\W}
-\drawNecklace{-2}{-9}{\B}{\W}{\B}{\B}
-\drawNecklace{ 2}{-9}{\W}{\B}{\W}{\W}
+\drawNecklace{-3}{0}{\B}{\B}{\B}{\B}
+\drawNecklace{ 0}{0}{\W}{\W}{\W}{\W}
 
 % Two of each
-\drawNecklace{-2}{-12}{\B}{\W}{\B}{\W}
-\drawNecklace{ 2}{-12}{\W}{\B}{\W}{\B}
+\drawNecklace{-3}{-3}{\B}{\W}{\B}{\W}
+\drawNecklace{ 0}{-3}{\W}{\B}{\W}{\B}
+\drawNecklace{ 3}{ 0}{\B}{\B}{\W}{\W}
+\drawNecklace{ 3}{-3}{\W}{\W}{\B}{\B}
+
+% One black or one white
+\drawNecklace{-3}{-6}{\W}{\B}{\B}{\B}
+\drawNecklace{ 0}{-6}{\B}{\B}{\W}{\B}
+\drawNecklace{ 3}{-6}{\B}{\W}{\B}{\B}
+\drawNecklace{-3}{-9}{\B}{\W}{\W}{\W}
+\drawNecklace{ 0}{-9}{\W}{\W}{\B}{\W}
+\drawNecklace{ 3}{-9}{\W}{\B}{\W}{\W}
 
 \end{tikzpicture}
 \end{document}
