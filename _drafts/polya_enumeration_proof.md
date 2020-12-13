@@ -6,6 +6,7 @@ libs: [mathjax]
 <div class="mathjaxDeclarations">
     @@\newcommand{\nl}{\\}@@
     @@\newcommand{\cyc}[1]{\text{NumCycles}(#1)}@@
+    @@\newcommand{\nstab}[1]{\text{NumStabilized}(#1)}@@
     @@\newcommand{\Stab}[1]{\text{Stab}(#1)}@@
     @@\newcommand{\Orb}[1]{\text{Orb}(#1)}@@
 </div>
@@ -122,6 +123,51 @@ equivalent to all elements sharing the same stabilizer. Why? Consider all @@s
 x = g \cdot x@@.
 
 But it doesn't matter since this statement is blatantly false. The [Wikipedia
-Article](https://en.wikipedia.org/wiki/Group_action#Orbits_and_stabilizers) on
-Group Actions states that
-> This is a subgroup of G, though typically not a normal one.
+Article](https://en.wikipedia.org/wiki/Group_action#Fixed_points_and_stabilizer_subgroups)
+on Group Actions states that:
+
+> [A stabilizer] is a subgroup of @@G@@, though typically not a normal one ...
+> [but] the stabilizers of elements in the same orbit are conjugate to each
+> other.
+
+Moreover, I'm fairly sure the following is a counterexample. Below is a "Cayley
+diagram" depicting a set of three elements acted on by @@D_3@@, where the red
+arrows are rotation @@r@@ and the blue arrows flips @@f@@.
+![An example of a set with nonequal stabilizers](/assets/2020/12/13/stabilizer_nonnormal.svg)
+
+As for the actual proof, we can just count the number of distinct orbits in
+@@X@@. This is equivalent to considering two elements of @@X@@ the same if they
+differ only by an action in @@G@@. We sum as
+%%
+\begin{align\*}
+|X/G| &= \sum_{O \in (X/G)} 1 \nl
+&= \sum_{O \in (X/G)} \sum_{x \in O} \frac{1}{|O|},
+\end{align\*}
+%%
+
+where we take @@O@@ to be all the different orbits. Initially, it may seem like
+we haven't done too much. But, we can easily clean this up. First, note that the
+cardinality of the orbit @@O@@ to which @@x@@ belongs is usually denoted
+@@|\Orb{x}|@@. Second, since all the orbits partition the set @@X@@, and since
+we just sum over all the elements of all the orbits, we can collapse the double
+summation into one. These simplifications, along with Orbit-Stabilizer, give
+%%
+\begin{align\*}
+|X/G| &= \sum_{x \in X} \frac{1}{|\Orb{x}|} \nl
+&= \frac{1}{|G|} \sum_{x \in X} |\Stab{x}|.
+\end{align\*}
+%%
+
+The next part is quite tricky. We make the following observation:
+%% \sum_{x \in X} |\Stab{x}| = \sum_{g \in G} \nstab{g}, %%
+where @@\nstab{g}@@ denotes the number of different elements of @@X@@ that @@g@@
+stabilizes. Why is this true? We can see both sides as counting the number of
+pairs @@(g,x)@@ that are "stable" --- the number of pairs such that @@g \cdot x
+= x@@. We can choose to sum over the first "coordinate", as in the LHS, or the
+second, as in the RHS.
+
+We can subsitute this observation into our result from above to arrive at
+Burnside's Lemma:
+%% |X/G| = \frac{1}{|G|} \sum_{g \in G} \nstab{g}. %%
+
+---
