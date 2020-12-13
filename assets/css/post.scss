@@ -17,6 +17,20 @@ figure.highlight {
     padding: 1rem 1rem 1px;
 }
 
+/* Style blockquotes to look as such */
+blockquote {
+    /* Background same color as card footers */
+    background-color: rgba(0,0,0,0.03);
+    /* Have a border on the left */
+    border-left: 0.4ch solid #6c757d;
+    /* Have some padding inside */
+    padding: 0.5rem 1ch 0.5rem 1.6ch;
+}
+/* Avoid issues with margins */
+blockquote p:last-child {
+    margin-bottom: 0px;
+}
+
 /* We have to type them out, but hide them */
 .mathjaxDeclarations {
     display: none;
