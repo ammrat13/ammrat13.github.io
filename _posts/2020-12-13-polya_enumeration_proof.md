@@ -129,6 +129,10 @@ on Group Actions states that:
 Moreover, I'm fairly sure the following is a counterexample. Below is a "Cayley
 diagram" depicting a set of three elements acted on by @@D_3@@, where the red
 arrows are rotation @@r@@ and the blue arrows are flips @@f@@.
+
+*Edit 12/25/2020: It occurs to me that the example below is just @@D_3@@ acting
+on a single vertex. Doing @@r@@ will cycle the vertices, and @@f@@ will keep the
+top vertex in place while swapping the other two.*
 ![An example of a set with nonequal stabilizers](/assets/2020/12/13/stabilizer_nonnormal.svg)
 
 As for the actual proof, we can just count the number of distinct orbits in
