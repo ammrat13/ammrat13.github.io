@@ -7,9 +7,7 @@
 
 
 /* Center and block images and figures */
-/* We only want to select the root ones */
-/* Images made with ![] will be wrapped in a p, so check for that */
-#postContent > figure, #postContent > img, p > img {
+figure, img {
     display: block;
     margin: 1.5rem auto;
     min-width: 20vw;
@@ -18,7 +16,8 @@
 
 /* Images in a figure should expand to the whole width */
 figure img {
-    width: 100%;
+    margin: 0rem;
+    max-width: 100%;
 }
 /* Figures should align their text center */
 figure {
@@ -27,15 +26,21 @@ figure {
 
 /* Figure captions should be styled as such */
 /* This styling was taken from Bootstrap */
-figure > figcaption {
+figcaption {
     font-size: 90%;
     font-style: italic;
     color: #6c757d;
 }
 
-/* Code segments should have margins */
+/* For code segments */
 figure.highlight {
+    /* Code segments should have margins */
     padding: 1rem 1rem 1px;
+
+    /* Undo a lot of the stuff done above for most figures */
+    text-align: left;
+    max-width: 100% !important;
+    margin: 0px 0px 1rem !important;
 }
 
 
