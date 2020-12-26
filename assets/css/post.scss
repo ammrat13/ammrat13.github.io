@@ -4,20 +4,44 @@
 @import "shared";
 @import "rouge";
 
-/* Center and block images */
-img {
+
+
+/* Center and block images and figures */
+/* We only want to select the root ones */
+/* Images made with ![] will be wrapped in a p, so check for that */
+#postContent > figure, #postContent > img, p > img {
     display: block;
     margin: 1.5rem auto;
     min-width: 20vw;
     max-width: 80%;
 }
 
-/* Margins on code segments */
+/* Images in a figure should expand to the whole width */
+figure img {
+    width: 100%;
+}
+/* Figures should align their text center */
+figure {
+    text-align: center;
+}
+
+/* Figure captions should be styled as such */
+/* This styling was taken from Bootstrap */
+figure > figcaption {
+    font-size: 90%;
+    font-style: italic;
+    color: #6c757d;
+}
+
+/* Code segments should have margins */
 figure.highlight {
     padding: 1rem 1rem 1px;
 }
 
+
+
 /* Style blockquotes to look as such */
+/* Again, many of the colors were taken from Bootstrap */
 blockquote {
     /* Background same color as card footers */
     background-color: rgba(0,0,0,0.03);
@@ -26,15 +50,19 @@ blockquote {
     /* Have some padding inside */
     padding: 0.5rem 1ch 0.5rem 1.6ch;
 }
+
 /* Avoid issues with margins */
 blockquote p:last-child {
     margin-bottom: 0px;
 }
 
+
+
 /* We have to type them out, but hide them */
 .mathjaxDeclarations {
     display: none;
 }
+
 
 #postContent {
     margin-bottom: 2rem;
