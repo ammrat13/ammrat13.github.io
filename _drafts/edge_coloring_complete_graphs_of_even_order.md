@@ -84,7 +84,7 @@ arrangement above. It's not immediately obvious from the figure, so consider the
 
 The first row contains subsets of adjacent numbers starting at @@1@@ and going
 up. The same is true for the last row, except it starts at @@2@@ (and wraps
-around). Another way see this arrangement is to start by taking the sets with
+around). Another way see this configuration is to start by taking the sets with
 adjacent elements in the "natural" order --- @@\\{1,2\\}@@, @@\\{2,3\\}@@, all
 the way up to @@\\{6,1\\}@@ --- then to, place all these sets, alternating the
 rows as we go. This was a nice observation, but I couldn't immediately elaborate
@@ -112,7 +112,7 @@ to work.
 \end{align*}
 %%
 <figcaption>
-The same arrangement as the last figure, but framed in terms of permutations
+The same data as the last figure, but framed in terms of permutations
 </figcaption>
 </figure>
 
@@ -131,29 +131,35 @@ algorithm to arrange the cycles with. But, I gave up on it after realizing how
 much overlap there would be between different three-cycles. Again, I would see
 this observation later, but in a different form.
 
-Another observation arising from this framing, one which I found quite powerful
-even though it didn't necessarily mean anything, was the idea of "pointing". For
-example, in the above arrangement, the @@1@@ on the first row is paired with
-@@2@@ (the first column of the first row has a @@2@@), so it can be seen as
-pointing to the @@2@@ (the second column) on the *second* row. Similarly, the
-@@2@@ on the second row points to the @@5@@ on the *third* row, and so on until
-we hit the last day. Repeatedly following these pointers gives "paths",
-@@(1,2,5,3,6)@@ in this case. This path is "good" since it didn't repeat any
-numbers. That's good since the recursive construction from the last section, the
-one involving @@\\{1,x\\}@@ sets, could probably be made to work with it.
+Another observation arising from this framing, and one which I found quite
+powerful, was the idea of "pointing". For example, in the above arrangement, the
+@@1@@ on the first row is paired with @@2@@ --- the first column of the first
+row has a @@2@@. So it can be seen as pointing to the @@2@@ (the second column)
+on the *second* row. Similarly, the @@2@@ on the second row points to the @@5@@
+on the *third* row, and so on until we cycle back to the first day. Repeatedly
+following these pointers gives "paths", @@(1,2,5,3,6,1)@@ in this case. This
+path is "bad" since it repeats a number. "Good" paths are aptly named since the
+recursive construction from the last section, the one involving @@\\{1,x\\}@@
+sets, can made to work with it. (More on this later.)
 
 <figure>
 <img src="/assets/2020/12/31/pointing_paths.svg">
 <figcaption>
-    A visualization of the two paths from the example above. The red arrows show
-    a good path, and the blue arrows show a bad one
+    A visualization of the path given above. Note that we complete the cycle,
+    going back to the first day, as shown by the dashed circles at the bottom.
+    Even though it only repeats a number on that last connection, it's still
+    bad
 </figcaption>
 </figure>
 
-Of course, the days can be reordered as needed to give favorable results.
-Nonetheless, I couldn't quite get this approach to work. I couldn't prove the
-existence of some day-ordering and some initial number which would give a good
-path. I also tried shoe-horning new-days into existing paths, regardless of
-whether they were good or bad, but I didn't have much luck with that either.
+In the day-ordering given above, there is no good path starting with any of the
+numbers. The days can be reordered to give favorable results, though.
+Nonetheless, I couldn't prove that good orderings *always* exist, and in fact
+they don't. While writing this post, I found that the configuration given above
+is a counterexample. I know this because I wrote some code to check all possible
+permutations of the days and starting locations.
+
+I also tried shoe-horning new days into old ones, integrating into existing
+paths, but I didn't make much headway there either.
 
 ---
