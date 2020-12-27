@@ -59,15 +59,15 @@ then set out to do.
 \end{align*}
 %%
 <figcaption>
-Grouping six people into distinct pairs over five days
+Grouping six students into distinct pairs over five days
 </figcaption>
 </figure>
 
 I started as I usually do, taking small examples and trying to find some
 pattern. One of the first things I noticed was that a greedy algorithm wouldn't
 always work. In the case above, for example, a greedy approach fails on the
-second row. After taking @@\\{1,3\\}@@, the algoritm takes @@\\{2,4\\}@@ then is
-forced to repeat @@\\{5,6\\}@@. There might've been some ordering with which
+second row. After taking @@\\{1,3\\}@@, the algorithm takes @@\\{2,4\\}@@ then
+is forced to repeat @@\\{5,6\\}@@. There might've been some ordering with which
 this approach would work, and we see later that this is the case, but I decided
 to look elsewhere.
 
@@ -117,10 +117,10 @@ The same data as the last figure, but framed in terms of permutations
 </figure>
 
 That's not to say I didn't make progress, though. One effective way I found to
-think about this problem was to think of each set as a permutation, specifically
-a two-cycle. Each day (row), then, is a product of two-cycles, and we're given
-the constraint that each column must be a permutation as well. This process
-gives a nice table, which I find easier to think about.
+think about this problem was to think of each pair of students as a permutation,
+specifically a two-cycle. Each day (row), then, is a product of two-cycles, and
+we're given the constraint that each column must be a permutation as well. This
+process gives a nice table, which I find easier to think about.
 
 One observation I made soon after was the existence of "three-cycles". In the
 example above, we have the two-cycle @@\begin{pmatrix}1&2\end{pmatrix}@@ on day
@@ -160,6 +160,33 @@ is a counterexample. I know this because I wrote some code to check all possible
 permutations of the days and starting locations.
 
 I also tried shoe-horning new days into old ones, integrating into existing
-paths, but I didn't make much headway there either.
+paths regardless of whether they were good or bad, but I didn't make much
+headway there either.
 
 ---
+
+No, the real breakthrough came when I was studying for [MATH
+3012](https://math.gatech.edu/courses/math/3012). A major part of the course was
+graph theory. My notes for it were the longest out of all the units, with an
+entire page devoted to definitions. Most of them were straightforward, but I
+found the definition for edges peculiar. We defined an edge as a subset of size
+two of the vertex set, at least in the simple and undirected case.
+
+I had the insight to model each pair of students as an edge in a graph. Then,
+I'd have to show that @@K_n@@ can be edge-colored with @@n-1@@ colors (for @@n@@
+even). The different colors correspond to different days, and forcing the
+minimum possible number of colors ensures noone is ever left out --- we'd
+require all @@\frac{1}{2}n@@ possible edges per color to meet the requirement.
+
+The first thing I did was check if something like was already known, which of
+course [it was](https://en.wikipedia.org/wiki/Edge_coloring#Examples). I chose
+not to look at the proof, though. I wanted to find it myself.
+
+In retrospect, it should've been obvious that I was dealing with a graph
+problem. The pattern I noticed with "adjacent subsets" --- @@\\{1,2\\}@@, then
+@@\\{2,3\\}@@, then @@\\{3,4\\}@@, and so on --- is simply that even cycles can
+be two-colored. Specifically, I was looking at the even cycle on the "rim" of
+@@K_n@@, shown below. Similarly, the pattern I noticed with three-cycles is just
+that triangles have chromatic number @@3@@.
+
+![The rim of K_6, colored with two colors](/assets/2020/12/31/rim_coloring.svg)
