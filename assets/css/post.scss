@@ -14,9 +14,10 @@ figure, img {
     max-width: 80%;
 }
 
-/* Images in a figure should expand to the whole width */
+/* Images in a figure should be centered and expand to the whole width */
 figure img {
-    margin: 0rem;
+    display: inline-block;
+    margin: 0 0 1em;
     max-width: 100%;
 }
 /* Figures should align their text center */
@@ -40,7 +41,7 @@ figure.highlight {
     /* Undo a lot of the stuff done above for most figures */
     text-align: left;
     max-width: 100%;
-    margin: 0px 0px 1rem;
+    margin: 0 0 1rem;
 }
 
 
@@ -58,7 +59,7 @@ blockquote {
 
 /* Avoid issues with margins */
 blockquote p:last-child {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 
