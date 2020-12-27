@@ -142,7 +142,18 @@ we hit the last day. Repeatedly following these pointers gives "paths",
 numbers. That's good since the recursive construction from the last section, the
 one involving @@\\{1,x\\}@@ sets, could probably be made to work with it.
 
+<figure>
+<img src="/assets/2020/12/31/pointing_paths.svg">
+<figcaption>
+    A visualization of the two paths from the example above. The red arrows show
+    a good path, and the blue arrows show a bad one
+</figcaption>
+</figure>
+
 Of course, the days can be reordered as needed to give favorable results.
 Nonetheless, I couldn't quite get this approach to work. I couldn't prove the
 existence of some day-ordering and some initial number which would give a good
-path.
+path. I also tried shoe-horning new-days into existing paths, regardless of
+whether they were good or bad, but I didn't have much luck with that either.
+
+---
