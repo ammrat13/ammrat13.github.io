@@ -190,3 +190,32 @@ be two-colored. Specifically, I was looking at the even cycle on the "rim" of
 that triangles have chromatic number @@3@@.
 
 ![The rim of K_6, colored with two colors](/assets/2020/12/31/rim_coloring.svg)
+
+Moreover, my idea with pointers was fundamentally a statement about graphs. A
+good path is just a path in @@K_n@@ that traverses each of the @@n-1@@ colors
+exactly once. Graphs with such a path can be used to (recursively) create an
+edge-coloring for @@K_{n+2}@@ with @@(n+2)-1@@ colors. How?
+
+First note that replacing some of the old colors in @@K_n@@ with the two new
+colors won't break its proper coloring, at least not inherently. As long as none
+of the new colors' edges share a vertex, the resulting coloring will be good.
+Phrased differently, the only way to break a proper coloring by recoloring edges
+is through the edges recolored.
+
+With that in mind, we can take the good path @@P=(x_1,x_2,\cdots,x_n)@@ and
+integrate it with the two new vertices @@u@@ and @@v@@. Consider the cycle
+starting at @@u@@, then following the good path @@P@@, then ending at @@v@@
+before cycling back. We'll color that even cycle with the two new colors @@c_n@@
+and @@c_{n+1}@@. Without loss of generality, let the edges @@\\{u,x_1\\}@@ and
+@@\\{x_n,v\\}@@ be colored with @@c_n@@. As for all the other new edges, color
+@@\\{u,x_i\\}@@ the same color that @@\\{x_{i-1},x_i\\}@@ was before it was
+overwritten, and similarly color @@\\{x_i,v\\}@@ whatever @@\\{x_i,x_{i+1}\\}@@
+was. The diagram below might be helpful.
+
+![An example of recursion with good paths](/assets/2020/12/31/good_path_recursion.svg)
+
+Sadly, recursing in this way doesn't guarantee the existence of a good path in
+the resulting graph. Like before, I made some effort to recurse in this way even
+in the absence of good paths, but I didn't have much luck.
+
+---
