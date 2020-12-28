@@ -53,7 +53,14 @@ libs: []
         <!-- My libraries -->
         <link rel="stylesheet" href="/assets/css/{{page.stylesheet | default: layout.stylesheet}}.css"/>
 
-        <title>{{site.title}}</title>
+        <!-- If the page has a title, use that -->
+        {% if page.title %}
+            <!-- Append the site name with a dash -->
+            <title>{{ page.title | append: " - " | append: site.title }}</title>
+        {% else %}
+            <!-- Otherwise, just use the site's title -->
+            <title>{{site.title}}</title>
+        {% endif %}
 
     </head>
 
