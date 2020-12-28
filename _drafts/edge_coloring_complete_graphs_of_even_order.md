@@ -15,8 +15,8 @@ has a proper [edge coloring](https://en.wikipedia.org/wiki/Edge_coloring) with
 @@n-1@@ colors. Alternatively, it is possible to partition the edges of @@K_n@@
 into @@n-1@@ sets (colors) such that no two edges in the same set share an
 endpoint. Clearly, this is the least possible number of colors --- each vertex
-has @@n-1@@ distinct edges going out of it. The theorem states that, for even
-@@n@@, it is possible to attain this minimum.
+has @@n-1@@ edges going out of it. The theorem states that, for even @@n@@, it
+is possible to attain this minimum.
 
 ---
 
@@ -25,7 +25,7 @@ theory. This semester, I served as a TA for [CS
 2110](http://www.icc.gatech.edu/files/syllabus/undergrad/CS-2110_Syllabus.pdf)
 at Georgia Tech. It was fun, though time consuming, and I thought a lot about
 how to best teach struggling students. I remembered that pair programming is a
-common technique used to teach new developers, but it could never be implemented
+common technique used to guide new developers, but it could never be implemented
 in the course. Nonetheless, I went on a tangent thinking about how one could
 implement pair programming in a class. Ideally, the same students wouldn't work
 together all the time --- usually the teacher would mix students around. How
@@ -34,8 +34,8 @@ someone they've already worked with?
 
 I assumed the number of students @@n@@ was even for simplicity. Each day, we
 take @@\frac{1}{2}n@@ subsets of size two, making sure none of them share an
-element. We want to never repeat subsets. In that case, the longest we can
-sustain this process is clearly
+element. We also want to never repeat subsets. In that case, the longest we can
+possibly sustain this process is clearly
 
 %%
 \frac{\text{# Total Subsets}}{\text{# Subsets per Day}}
@@ -43,8 +43,8 @@ sustain this process is clearly
 = n-1
 %%
 
-days. I still had to show that it can't be shorter, though, and that's what I
-then set out to do.
+days. I still had to show we won't be cut short, though, and that's what I set
+out to do.
 
 ---
 
@@ -86,18 +86,18 @@ The first row contains subsets of adjacent numbers starting at @@1@@ and going
 up. The same is true for the last row, except it starts at @@2@@ (and wraps
 around). Another way see this configuration is to start by taking the sets with
 adjacent elements in the "natural" order --- @@\\{1,2\\}@@, @@\\{2,3\\}@@, all
-the way up to @@\\{6,1\\}@@ --- then to, place all these sets, alternating the
-days as we go. This was a nice observation, but I couldn't immediately elaborate
-on it. But, I would later use it in a different form.
+the way up to @@\\{6,1\\}@@ --- then to place all these sets, alternating days
+as we go. This was a nice observation, but I couldn't immediately elaborate on
+it. I would later use it in a different form.
 
 Most of my effort focused on looking for some recursive pattern --- some way to
 create the case of @@n+2@@ from that of @@n@@. Initially, the problem would seem
 to lend itself to induction. The structure above, with the subsets @@\\{1,x\\}@@
 along the right side, looked convenient to work with, and I tried inducting with
 that. I put the sets @@\\{1,2\\}@@ along the first @@n-3@@ rows, then worked to
-"swap" the @@2@@ with some other number, using the remaining @@2@@ rows to put
-the "destroyed" sets in. I spent a lot of time here, but couldn't quite get it
-to work.
+"swap" the @@2@@ with some other number (in another set), using the remaining
+@@2@@ rows to put the "destroyed" sets in. I spent a lot of time here, but
+couldn't quite get it to work.
 
 ---
 
@@ -117,19 +117,19 @@ The same data as the last figure, but framed in terms of permutations
 </figure>
 
 That's not to say I didn't make progress, though. One effective way I found to
-think about this problem was to think of each pair of students as a permutation,
-specifically a two-cycle. Each day (row), then, is a product of two-cycles, and
+think about this problem was to imagine each pair of students as a permutation,
+specifically a two-cycle. Each day (row) is then a product of two-cycles, and
 we're given the constraint that each column must be a permutation as well. This
-process gives a nice table, which I find easier to think about.
+reframing gives a nice table, which I find easier to think about.
 
-One observation I made soon after was the existence of "three-cycles". In the
+An observation I made soon after was the existence of "three-cycles". In the
 example above, we have the two-cycle @@\begin{pmatrix}1&2\end{pmatrix}@@ on day
 one, and @@\begin{pmatrix}1&3\end{pmatrix}@@ on day two. This implies that
 @@\begin{pmatrix}2&3\end{pmatrix}@@ cannot be on days one or two, and must be on
 some other day (five in this case). I thought this could be made into some
 algorithm to arrange the cycles with. But, I gave up on it after realizing how
 much overlap there would be between different three-cycles. Again, I would see
-this observation later, but in a different form.
+this observation later in a different form.
 
 Another observation arising from this framing, and one which I found quite
 powerful, was the idea of "pointing". For example, in the above arrangement, the
@@ -167,7 +167,7 @@ headway there either.
 
 No, the real breakthrough came when I was studying for [MATH
 3012](https://math.gatech.edu/courses/math/3012). A major part of the course was
-graph theory. My notes for it were the longest out of all the units, with an
+graph theory. My notes on it were the longest out of all the units, with an
 entire page devoted to definitions. Most of them were straightforward, but I
 found the definition for edges peculiar. We defined an edge as a subset of size
 two of the vertex set, at least in the simple and undirected case.
@@ -175,30 +175,30 @@ two of the vertex set, at least in the simple and undirected case.
 I had the insight to model each pair of students as an edge in a graph. Then,
 I'd have to show that @@K_n@@ can be edge-colored with @@n-1@@ colors (for @@n@@
 even). The different colors correspond to different days, and forcing the
-minimum possible number of colors ensures noone is ever left out --- we'd
+minimum possible number of colors ensures noone is left out on any day --- we
 require all @@\frac{1}{2}n@@ possible edges per color to meet the requirement.
 
-The first thing I did was check if something like was already known, which of
-course [it was](https://en.wikipedia.org/wiki/Edge_coloring#Examples). I chose
-not to look at the proof, though. I wanted to find it myself.
+The first thing I did was check if something like this was already known, which
+of course [it was](https://en.wikipedia.org/wiki/Edge_coloring#Examples). I
+chose not to look at the proof, though. I wanted to find it myself.
 
 In retrospect, it should've been obvious that I was dealing with a graph
 problem. The pattern I noticed with "adjacent subsets" --- @@\\{1,2\\}@@, then
-@@\\{2,3\\}@@, then @@\\{3,4\\}@@, and so on --- is simply that even cycles can
-be two-colored. Specifically, I was looking at the even cycle on the "rim" of
+@@\\{2,3\\}@@, all the way up to @@\\{6,1\\}@@ --- is simply that even cycles
+can be two-colored. Specifically, I was looking at the cycle on the "rim" of
 @@K_n@@, shown below. Similarly, the pattern I noticed with three-cycles is just
 that triangles have chromatic number @@3@@.
 
 ![The rim of K_6, colored with two colors](/assets/2020/12/31/rim_coloring.svg)
 
-Moreover, my idea with pointers was fundamentally a statement about graphs. A
+Moreover, my idea with pointers is fundamentally a statement about graphs. A
 good path is just a path in @@K_n@@ that traverses each of the @@n-1@@ colors
 exactly once. Graphs with such a path can be used to (recursively) create an
 edge-coloring for @@K_{n+2}@@ with @@(n+2)-1@@ colors. How?
 
-First note that replacing some of the old colors in @@K_n@@ with the two new
+First note that recoloring some of the old edges in @@K_n@@ with the two new
 colors won't break its proper coloring, at least not inherently. As long as none
-of the new colors' edges share a vertex, the resulting coloring will be good.
+of the new colors' edges share a vertex, the resulting coloring will be proper.
 Phrased differently, the only way to break a proper coloring by recoloring edges
 is through the edges recolored.
 
@@ -215,7 +215,7 @@ was. The diagram below might be helpful.
 ![An example of recursion with good paths](/assets/2020/12/31/good_path_recursion.svg)
 
 Sadly, recursing in this way doesn't guarantee the existence of a good path in
-the resulting graph. Like before, I made some effort to recurse in this way even
+the resulting graph. Like before, I made some effort to use this argument even
 in the absence of good paths, but I didn't have much luck.
 
 ---
@@ -299,18 +299,18 @@ generated by the latter, such as the one below.
 
 ---
 
-So then, my approach was clear. I'd first recurse down to an odd multiple of
-two, then use my geometric apprach to color all the midlines and edges of even
+So then, my path was clear. I'd first recurse down to an odd multiple of two,
+then use my geometric approch to color all the midlines and edges of even
 length, and finally use my number theoretic approach to color the remaining
-edges. I wrote some code to do this and tested my algorithm all the way up to
-@@K_{500}@@. I also wrote some code to display the resultings. It's not
-efficient, not in the slightest, but it gets the job done.
+edges. I wrote a Python program to do this and tested my algorithm all the way
+up to @@K_{500}@@. I also wrote some SageMath code to display the results. It's
+not efficient, not in the slightest, but it gets the job done.
 
 ![My coloring of K_{10}](/assets/2020/12/31/K10_colored.png)
 
 And with that, I'd finished about a month of work. My last two posts have been
 quite long. I plan to only do that when it comes naturally, and not to force
-myself to wrote long-form content if I don't have any. Nonetheless, I enjoyed
+myself to wrote long-form content if I don't have any. Besides that, I enjoyed
 rediscovering this theorem, or rather a special case of it. I find solved
 problems a good source of puzzles. They're quite challenging, but still within
 the realm of a student's understanding. That's why I do them.
