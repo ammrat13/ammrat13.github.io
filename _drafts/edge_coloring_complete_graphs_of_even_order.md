@@ -66,10 +66,10 @@ Grouping six students into distinct pairs over five days
 I started as I usually do, taking small examples and trying to find some
 pattern. One of the first things I noticed was that a greedy algorithm wouldn't
 always work. In the case above, for example, a greedy approach fails on the
-second row. After taking @@\\{1,3\\}@@, the algorithm takes @@\\{2,4\\}@@ then
-is forced to repeat @@\\{5,6\\}@@. There might've been some ordering with which
-this approach would work, and we see later that this is the case, but I decided
-to look elsewhere.
+second day (row). After taking @@\\{1,3\\}@@, the algorithm takes @@\\{2,4\\}@@
+then is forced to repeat @@\\{5,6\\}@@. There might've been some ordering with
+which this approach would work, and we see later that this is the case, but I
+decided to look elsewhere.
 
 Another pattern I noticed had to do with the first and last lines in the
 arrangement above. It's not immediately obvious from the figure, so consider the
@@ -87,7 +87,7 @@ up. The same is true for the last row, except it starts at @@2@@ (and wraps
 around). Another way see this configuration is to start by taking the sets with
 adjacent elements in the "natural" order --- @@\\{1,2\\}@@, @@\\{2,3\\}@@, all
 the way up to @@\\{6,1\\}@@ --- then to, place all these sets, alternating the
-rows as we go. This was a nice observation, but I couldn't immediately elaborate
+days as we go. This was a nice observation, but I couldn't immediately elaborate
 on it. But, I would later use it in a different form.
 
 Most of my effort focused on looking for some recursive pattern --- some way to
@@ -133,10 +133,10 @@ this observation later, but in a different form.
 
 Another observation arising from this framing, and one which I found quite
 powerful, was the idea of "pointing". For example, in the above arrangement, the
-@@1@@ on the first row is paired with @@2@@ --- the first column of the first
+@@1@@ on the first day is paired with @@2@@ --- the first column of the first
 row has a @@2@@. So it can be seen as pointing to the @@2@@ (the second column)
-on the *second* row. Similarly, the @@2@@ on the second row points to the @@5@@
-on the *third* row, and so on until we cycle back to the first day. Repeatedly
+on the *second* day. Similarly, the @@2@@ on the second day points to the @@5@@
+on the *third* day, and so on until we cycle back to the first day. Repeatedly
 following these pointers gives "paths", @@(1,2,5,3,6,1)@@ in this case. This
 path is "bad" since it repeats a number. "Good" paths are aptly named since the
 recursive construction from the last section, the one involving @@\\{1,x\\}@@
@@ -219,3 +219,43 @@ the resulting graph. Like before, I made some effort to recurse in this way even
 in the absence of good paths, but I didn't have much luck.
 
 ---
+
+Even though most of my efforts were focused on the strategies above, I also made
+some other observations that would be important. But before that, I'd like to
+define a term.
+
+> A *day* is a set of @@\frac{1}{2}n@@ edges in @@K_n@@ not sharing any
+> vertices.
+
+I devoted a lot of time to finding days. Why? A coloring we're searching for can
+be seen as a collection of @@n-1@@ different days that don't share any edges.
+These days will encompass all @@\frac{1}{2}n(n-1) = \binom{n}{2}@@ possible
+edges, and thus provide an @@n-1@@ edge coloring, with each day corresponding to
+a color. Also note that this term was borrowed from the original problem I was
+working on.
+
+As for my observations, I first noticed that for odd multiples of two, it's
+possible to make days with a nice geometric structure. We can take a "midline"
+--- an edge between opposite vertices, as well as all the edges perpendicular to
+it, to be in the same day. This one arrangement generates @@\frac{1}{2}n@@
+different days through @@180^\circ@@ rotational symmetry, and encompasses all
+midlines and edges of even "length" --- edges connecting vertices an even number
+of edges apart along the rim. However, this construction doesn't work when @@n@@
+is an even multiple of two, since it will contain two midlines instead of just
+one, leading to double counting. I tried to make a similar construction for that
+case, sometimes trying to recurse down by two as before, but to no avail.
+
+<figure>
+<img src="/assets/2020/12/31/midline_color.svg"/>
+<figcaption>
+    An example of the above construction when @@n=6@@.
+</figcaption>
+</figure>
+
+Thankfully, I later noticed that I didn't need to worry about the even multiples
+of two. Why? In that case, we can see @@K_n@@ as two different complete
+@@K_{\frac{n}{2}}@@ graphs with vertices connected by a bipartite complete graph
+@@K_{\frac{n}{2},\frac{n}{2}}@@. It's straightforward to edge-color the latter
+with @@\frac{1}{2}n@@ colors. Moreover, since @@\frac{1}{2}n@@ is even by
+assumption, we can recursively color the two @@K_{\frac{n}{2}}@@s with the
+colors that remain.
