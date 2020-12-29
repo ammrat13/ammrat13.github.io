@@ -1,15 +1,28 @@
 version: 2.1
-orbs:
-  ruby: circleci/ruby@0.1.2 
 
+
+# This project uses both jekyll and npm
+# We'd like both orbs for this to work
+orbs:
+    ruby: circleci/ruby@1.1.2
+    node: circleci/node@4.1.0
+
+
+# We will only be running on docker
+# Define a name for it to prevent duplication
+executors:
+    docker-exec:
+        docker:
+            - image: cimg/ruby:3.0-node
+
+
+# Do the build
 jobs:
   build:
-    docker:
-      - image: circleci/ruby:2.6.3-stretch-node
-    executor: ruby/default
+    executor: docker-exec
     steps:
       - checkout
+      - ruby/bundle-install
       - run:
           name: Which bundler?
           command: bundle -v
-      - ruby/bundle-install
