@@ -14,15 +14,51 @@ executors:
     docker-exec:
         docker:
             - image: cimg/ruby:2.7-node
+            - resource_class: small
 
 
-# Do the build
+# Different commands for the different "phases"
+commands:
+
+    # Do the setup steps
+    # Checkout the code and install our dependencies
+    setup:
+        steps:
+            - checkout
+            - ruby/install-deps:
+                - path: ./vendor/bundle
+            - node/install-packages:
+                - cache-path: ./node_modules
+
+    # Actually build the site
+    build:
+        steps:
+            - bundle exec jekyll build
+
+    # Test that all the links work as expected
+    # Ignore some problematic sites
+    test-links:
+        steps:
+            - |
+                npx linkinator \
+                    --recurse \
+                    --skip https://www.linkedin.com/in/ammar-ratnani \
+                    ./_site
+
+
+
+# Job to do the build and test it
 jobs:
-  build:
-    executor: docker-exec
-    steps:
-      - checkout
-      - ruby/install-deps
-      - run:
-          name: Which bundler?
-          command: bundle -v
+    build-and-test:
+        executor: docker-exec
+        steps:
+            - setup
+            - build
+            - test-links
+
+
+# Workflow to call the job
+workflows:
+    build-and-test:
+        jobs:
+            - build-and-test
