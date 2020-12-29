@@ -2,9 +2,6 @@
 _site/
 .sass-cache/
 
-# Ignore bundler configuration
-.bundle/
-
 # Ignore gem and node dependencies
 vendor/
 node_modules/
