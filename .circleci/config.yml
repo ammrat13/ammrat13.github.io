@@ -14,7 +14,6 @@ executors:
     docker-exec:
         docker:
             - image: cimg/ruby:2.7-node
-            - resource_class: small
 
 
 # Different commands for the different "phases"
@@ -33,17 +32,19 @@ commands:
     # Actually build the site
     build:
         steps:
-            - bundle exec jekyll build
+            - run:
+                command: bundle exec jekyll build
 
     # Test that all the links work as expected
     # Ignore some problematic sites
     test-links:
         steps:
-            - |
-                npx linkinator \
-                    --recurse \
-                    --skip https://www.linkedin.com/in/ammar-ratnani \
-                    ./_site
+            - run:
+                command: |
+                    npx linkinator \
+                        --recurse \
+                        --skip https://www.linkedin.com/in/ammar-ratnani \
+                        ./_site
 
 
 
@@ -51,6 +52,7 @@ commands:
 jobs:
     build-and-test:
         executor: docker-exec
+        resource_class: small
         steps:
             - setup
             - build
