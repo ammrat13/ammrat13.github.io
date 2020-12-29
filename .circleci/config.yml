@@ -12,6 +12,7 @@ orbs:
 # Define a name for it to prevent duplication
 executors:
     docker-exec:
+        resource_class: small
         docker:
             - image: cimg/ruby:2.7-node
 
@@ -19,15 +20,15 @@ executors:
 # Different commands for the different "phases"
 commands:
 
-    # Do the startup steps
+    # Do the setup steps
     # Checkout the code and install our dependencies
-    startup:
+    setup:
         steps:
             - checkout
             - ruby/install-deps:
-                - path: ./vendor/bundle
+                path: ./vendor/bundle
             - node/install-packages:
-                - cache-path: ./node_modules
+                cache-path: ./node_modules
 
     # Actually build the site
     build:
@@ -50,9 +51,8 @@ commands:
 jobs:
     build-and-test:
         executor: docker-exec
-        resource_class: small
         steps:
-            - startup
+            - setup
             - build
             - test-links
 
