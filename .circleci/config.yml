@@ -14,7 +14,7 @@ executors:
     docker-exec:
         resource_class: small
         docker:
-            - image: cimg/ruby:2.7-node
+            - image: cimg/ruby:2.7-browsers
 
 
 # Different commands for the different "phases"
