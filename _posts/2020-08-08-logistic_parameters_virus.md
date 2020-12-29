@@ -30,9 +30,9 @@ As you may have guessed, I've recently been interested in modelling the spread
 of viruses, at least with many simplifying assumptions in place. Specifically,
 I'd like to fit differential equations to the spread, mainly because I know they
 can and have been used to model stochastic processes like
-[Browinian Motion](https://https://en.wikipedia.org/wiki/Brownian_motion). I've
-done some work on a model similar to invent**summer**'s, and I may blog my work
-when it's more complete. For now, though, I'd like to write about a much simpler
+[Browinian Motion](https://en.wikipedia.org/wiki/Brownian_motion). I've done
+some work on a model similar to invent**summer**'s, and I may blog my work when
+it's more complete. For now, though, I'd like to write about a much simpler
 case.
 
 I assumed that we had a total population size of @@K@@ and denoted the current
