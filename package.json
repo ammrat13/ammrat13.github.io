@@ -1,0 +1,17 @@
+{
+  "name": "ammrat13.github.io",
+  "author": "Ammar Ratnani",
+  "description": "My personal site",
+  "repository": {
+    "type": "git",
+    "url": "github-personal:ammrat13/ammrat13.github.io.git"
+  },
+  "keywords": [
+    "mathematics",
+    "computer-science"
+  ],
+  "dependencies": {
+    "linkinator": "^2.11.2",
+    "percy": "^0.28.5"
+  }
+}
