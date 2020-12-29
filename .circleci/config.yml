@@ -13,7 +13,7 @@ orbs:
 executors:
     docker-exec:
         docker:
-            - image: cimg/ruby:3.0-node
+            - image: cimg/ruby:2.7-node
 
 
 # Do the build
