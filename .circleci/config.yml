@@ -23,6 +23,7 @@ commands:
     # Do the setup steps
     # Checkout the code and install our dependencies
     setup:
+        description: Setting up the environment
         steps:
             - checkout
             - ruby/install-deps:
@@ -33,14 +34,14 @@ commands:
 
     # Actually build the site
     build:
-        name: Building the site
+        description: Building the site
         steps:
             - run: bundle exec jekyll build
 
     # Test that all the links work as expected
     # Ignore some problematic sites
     test-links:
-        name: Running Linkinator
+        description: Running Linkinator
         steps:
             - run: |
                 npx linkinator \
