@@ -49,6 +49,12 @@ commands:
                     --skip https://www.linkedin.com/in/ammar-ratnani \
                     ./_site
 
+    # Do visual regression testing
+    test-visual:
+        description: Performing visual regression tests
+        steps:
+            - run: npx percy snapshot ./_site
+
 
 
 # Job to do the build and test it
@@ -59,6 +65,7 @@ jobs:
             - setup
             - build
             - test-links
+            - test-visual
 
 
 # Workflow to call the job
