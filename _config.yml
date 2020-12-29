@@ -20,10 +20,14 @@ kramdown:
     smart_quotes: ["apos", "apos", "quot", "quot"]
 
 # Exclude from processing.
-# Be sure to ignore gem and node dependencies
 exclude:
+    # Exclude packaging files for Ruby and Node
   - Gemfile
   - Gemfile.lock
+  - package.json
+  - package-lock.json
+    # Exclude dependencies for Ruby and Node
   - vendor/
   - node_modules/
+    # Exclude the README
   - README.md
