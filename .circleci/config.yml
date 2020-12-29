@@ -19,9 +19,9 @@ executors:
 # Different commands for the different "phases"
 commands:
 
-    # Do the setup steps
+    # Do the startup steps
     # Checkout the code and install our dependencies
-    setup:
+    startup:
         steps:
             - checkout
             - ruby/install-deps:
@@ -32,19 +32,17 @@ commands:
     # Actually build the site
     build:
         steps:
-            - run:
-                command: bundle exec jekyll build
+            - run: bundle exec jekyll build
 
     # Test that all the links work as expected
     # Ignore some problematic sites
     test-links:
         steps:
-            - run:
-                command: |
-                    npx linkinator \
-                        --recurse \
-                        --skip https://www.linkedin.com/in/ammar-ratnani \
-                        ./_site
+            - run: |
+                npx linkinator \
+                    --recurse \
+                    --skip https://www.linkedin.com/in/ammar-ratnani \
+                    ./_site
 
 
 
@@ -54,7 +52,7 @@ jobs:
         executor: docker-exec
         resource_class: small
         steps:
-            - setup
+            - startup
             - build
             - test-links
 
