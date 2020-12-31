@@ -69,7 +69,11 @@ jobs:
 
 
 # Workflow to call the job
+# Don't do it on master
 workflows:
     build-and-test:
         jobs:
-            - build-and-test
+            - build-and-test:
+                filters:
+                    branches:
+                        ignore: master
