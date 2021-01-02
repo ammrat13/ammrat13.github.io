@@ -8,3 +8,4 @@ gem "rouge"
 
 # Security updates from Dependabot
 gem "kramdown", ">= 2.3.0"
+gem "nokogiri", ">= 1.11.0.rc4"
