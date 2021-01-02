@@ -58,7 +58,7 @@ blockquote {
 }
 
 /* Avoid issues with margins */
-blockquote p:last-child {
+blockquote :last-child {
     margin-bottom: 0;
 }
 
