@@ -10,6 +10,7 @@ libs: [mathjax]
     @@\newcommand{\RR}{\mathbb{R}}@@
     @@\newcommand{\hex}[1]{\texttt{0x#1}}@@
     @@\newcommand{\rep}[1]{\overline{#1}}@@
+    @@\newcommand{\ecid}{\mathcal{O}}@@
     @@\newcommand{\modulo}[1]{\text{ mod } #1}@@
 </div>
 
@@ -114,16 +115,23 @@ example, division over @@\ZZ_p@@ (when it works) looks like inversion modulo
 @@p@@ when looking at the ones place. In addition, working over @@\QQ_p@@ often
 seems to be nicer than working over finite fields. Thus, one might solve a
 problem in @@\FF{p}@@ by "lifting" it to @@\QQ_p@@, solving it there, then
-transfering back by looking at the ones place --- taking the result it modulo
-@@p@@.
+"reducing" by taking the result modulo @@p@@.
 
-It's also worth noting that the @@p@@-adics can be thought of as formal power
-series in the "variable" @@p@@. Their addition, multiplication, and division
-laws are very similar, with the @@p@@-adics just having to deal with carries. We
-even see that @@\frac{1}{p}\notin\ZZ_p@@, just as @@\frac{1}{x}@@ can't be
-expressed as a formal power series and must be treated separately. This
-similarity means they sometimes play nicely with each other, which we'll see
-later.
+---
+
+Let's focus on the reduction step first. Given some point @@R=(x,y)@@ on the
+curve @@E\[\QQ_p\]@@, we'd like to find some corresponding point @@\bar{R}@@
+over the curve @@\bar{E}\[\FF{p}\]@@. Our first instinct might be to take
+everything modulo @@p@@ as described above, just looking at the ones digit. I
+denote this process with an overbar. We get a reduced point
+@@\bar{R}=(\bar{x},\bar{y})@@, as well as a reduced curve
+@@y^2=x^3+\bar{a}x+\bar{b}@@. This'll work as long as all the numbers are
+@@p@@-adic integers. If @@a@@ or @@b@@ are fractional, we can't do anything and
+the process fails. If @@x@@ or @@y@@ are, however, we can sensibly map the point
+to the group identity @@\ecid@@.
+
+It turns out that this mapping is a group homomorphism --- a transformation
+which respects group addition.
 
 
 
