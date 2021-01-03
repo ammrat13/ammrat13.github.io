@@ -9,9 +9,11 @@ libs: [mathjax]
 
 I was a finalist for [CSAW CTF 2020](https://csaw.io). I was on the Mad H@tter's
 team, and I swept the cryptography challenges. They were all interesting, and I
-felt I'd write down some of my thoughts on them. Curiously, the challenge I
-found most difficult was ranked the easiest. Thus, I'm devoting this entire post
-to it.
+felt I'd write down some of my thoughts on them. Curiously, the question ranked
+the easiest was the one I found most difficult. So, I'm devoting this entire
+post to it.
+
+---
 
 > **Eccentric (100 Points)**
 >
@@ -36,9 +38,17 @@ Indeed, that is the case here. Plugging @@E@@ into SageMath gives that the
 number of points on the elliptic curve @@\\#E@@ is equal to @@p@@.
 [Wikipedia](https://wikipedia.org/wiki/Elliptic-curve_cryptography#Domain_parameters)
 lists such curves as insecure, providing some references but sadly not
-describing any attacks against them. It does, however, reference [a paper][1] by
-Nigel Smart. Moreover, Smart's Attack shows up within the first few results of
+describing any attacks against them. It does, however, link to [a paper][1] by
+Nigel Smart. Moreover, Smart's attack shows up within the first few results of
 Googling attacks on this class of curves.
+
+I found a [StackExchange thread](https://crypto.stackexchange.com/q/71525) which
+linked to [a paper][2] by Novotney surveying weak elliptic curves. It had some
+SageMath code in the back implementing Smart's attack. During the competition, I
+just copied the program, and it worked. But, I didn't understand how. The math
+is actually pretty involved, and it took me about a month of reading and
+re-reading to gain some deeper understanding of it.
 
 
 [1]: </assets/2021/01/15/pdf/Smart.pdf> "The Discrete Logarithm Problem on Elliptic Curves of Trace One"
+[2]: </assets/2021/01/15/pdf/Novotney.pdf> "Weak Curves In Elliptic Curve Cryptography"
