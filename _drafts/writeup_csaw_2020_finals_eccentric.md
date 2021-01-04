@@ -12,6 +12,7 @@ libs: [mathjax]
     @@\newcommand{\ecid}{\mathcal{O}}@@
     @@\newcommand{\hex}[1]{\texttt{0x#1}}@@
     @@\newcommand{\rep}[1]{\overline{#1}}@@
+    @@\newcommand{\degr}[1]{\deg(#1)}@@
     @@\newcommand{\chin}[1]{\Delta #1}@@
     @@\newcommand{\BigO}[1]{\mathcal{O}(#1)}@@
     @@\newcommand{\modulo}[1]{\text{ mod } #1}@@
@@ -119,7 +120,13 @@ I also still need to give some definitions:
 > negative two.
 
 > A *@@p@@-adic unit* is a @@p@@-adic number with degree zero. Alternatively,
-> it's a member of @@\ZZ_p@@ congruent to zero modulo @@p@@.
+> it's a member of @@\ZZ_p@@ *not* congruent to zero modulo @@p@@. For example
+> in @@\QQ_5@@, @@3@@ and @@-1@@ are units while @@-5@@ and @@\frac{1}{10}@@ are
+> not.
+
+> Unofficially, a *@@p@@-adic fraction* is a member of @@\QQ_p\setminus\ZZ_p@@.
+> That is, a @@p@@-adic rational which is not an integer. For instance in
+> @@\QQ_5@@, @@\frac{1}{5}@@ is a fraction while @@\frac{1}{4}@@ is not.
 
 But, the main takeaway is that @@\ZZ_p@@ can be thought of as
 @@\ZZ/p^\infty\ZZ@@, whatever that's supposed to mean. It has all the rings
@@ -133,10 +140,10 @@ problem in @@\FF{p}@@ by "lifting" it to @@\QQ_p@@, solving it there, then
 ---
 
 Let's focus on the reduction step first. It won't be that important for the
-actual attack, so feel free to skip this section. Otherwise, suppose we have
-some point @@R=(x,y)@@ on the curve @@E\[\QQ_p\]@@, and we'd like to find some
-corresponding point @@\bar{R}@@ over the curve @@\bar{E}\[\FF{p}\]@@. Our first
-instinct might be to take everything modulo @@p@@ as described above, just
+actual attack though, so feel free to skip this section. Otherwise, suppose we
+have some point @@R=(x,y)@@ on the curve @@E\[\QQ_p\]@@, and we'd like to find
+some corresponding point @@\bar{R}@@ over the curve @@\bar{E}\[\FF{p}\]@@. Our
+first instinct might be to take everything modulo @@p@@ as described above, just
 looking at the ones digit. I denote this process with an overbar. We get a
 reduced point @@\bar{R}=(\bar{x},\bar{y})@@, as well as a reduced curve
 @@y^2=x^3+\bar{a}x+\bar{b}@@. This'll work as long as all the numbers are
@@ -187,15 +194,69 @@ Finally note that
 which becomes the equation for @@\lambda@@ in point-doubling when taken modulo
 @@p@@, as required.
 
-Now, we just need to handle the cases where: 1) exactly one summand maps to the
-identity under reduction, and 2) both summands map to @@\ecid@@. We can quickly
-show Case 2 given Case 1. Suppose @@\bar{I}=\bar{J}=\ecid@@, but their sum
-@@R=I+J@@ does not reduce to the identity. Then it follows that @@R-J@@ reduces
-to @@\ecid@@. However, using Case 1 and that @@\overline{-J}=-\bar{J}@@, for all
-@@J@@ in fact, we get that @@\overline{R-J}=\bar{R}@@ which is not the identity,
-a contradiction.
+Now, we just need to handle showing group homomorphism in the cases I've been
+avoiding up to this point. Namely, those where: 1)&nbsp;exactly one summand maps
+to the identity under reduction, or 2)&nbsp;both summands map to @@\ecid@@. We
+can quickly show Case 2 given Case 1. Suppose @@\bar{I}=\bar{J}=\ecid@@, but
+their sum @@R=I+J@@ does not reduce to the identity. Then it follows that
+@@R-J@@ reduces to @@\ecid@@. However, using Case 1 and that
+@@\overline{-J}=-\bar{J}@@, for all @@J@@ in fact, we get that
+@@\overline{R-J}=\bar{R}@@ which is not the identity, a contradiction.
 
-As for Case 1, let @@\bar{I}=\ecid@@ and consider @@R+I@@.
+As for Case 1, let @@\bar{I}=\ecid@@ without loss of generality and consider
+@@R+I@@. We just need to verify that @@x_{R+I}\equiv x_R\modulo{p}@@ and the
+same for @@y@@. To do this, we'll write down the formula for the
+@@x@@-coordinate in point addition:
+%%
+\begin{align\*}
+x_{R+I} &= \lambda^2 - x_I - x_R \nl
+&= \left(\frac{y_R-y_I}{x_R-x_I}\right)^2 - x_I - x_R \nl
+&= \frac{y_R^2 - 2y_Ry_I + y_I^2 - x_R^2x_I + 2x_Rx_I^2 - x_I^3}{x_R^2 - 2x_Rx_I + x_I^2} - x_R.
+\end{align\*}
+%%
+Again, this looks terrible, until we make the following observations: that
+@@\degr{x_R}=0@@ and that @@\degr{y_I}=\frac{3}{2}\degr{x_I}@@. The former is
+true by the assumption @@\bar{R}\neq\ecid@@. The latter follows directly from
+the defining equation of the elliptic curve, combined with the fact @@x_I@@ and
+@@y_I@@ are fractional and that for fractional numbers @@\degr{a^n}=n\degr{a}@@.
+By considering these degrees, and simplifying @@y_I^2@@, a lot of the fraction
+vanishes. Letting @@\chin{d}=\degr{y_I}-\degr{x_I}@@, we get
+%%
+\begin{align\*}
+x_{R+I} &= \frac{-2y_Ry_I + 2x_Rx_I^2}{x_I^2} - x_R + \BigO{p^{\chin{d}+1}} \nl
+&= x_R - \frac{2y_Ry_I}{x_I^2} + \BigO{p^{\chin{d}+1}} \nl
+&= x_R + \BigO{p}.
+\end{align\*}
+%%
+So the @@x@@-coordinate is correct. What about the @@y@@-coordinate. Again,
+we'll write down the formula:
+%%
+\begin{align\*}
+y_{R+I} &= \lambda\cdot(x_R - x_{R+I}) - y_R \nl
+&= \frac{y_R-y_I}{x_R-x_I}\cdot\left(\frac{2y_Ry_I}{x_I^2} + \BigO{p^{\chin{d}+1}}\right) - y_R \nl
+&= \frac{2y_R^2y_I-2y_Ry_I^2}{x_Rx_I^2-x_I^3} - y_R + \lambda\BigO{p^{\chin{d}+1}}
+\end{align\*}
+%%
+Since @@\degr{\lambda}@@ is just @@\chin{d}@@, we get that
+@@\lambda\BigO{p^{\chin{d}+1}}@@ simplifies to @@\BigO{p}@@. Thus
+%%
+\begin{align\*}
+y_{R+I} &= \frac{2y_R^2y_I-2y_Ry_I^2}{x_Rx_I^2-x_I^3} - y_R + \BigO{p} \nl
+&= \frac{2y_Ry_I^2}{x_I^3} - y_R + \BigO{p} \nl
+&= \frac{2y_Rx_I^3}{x_I^3} - y_R + \BigO{p} \nl
+&= y_R + \BigO{p}.
+\end{align\*}
+%%
+
+So we've created a reduction mapping @@R\mapsto\bar{R}@@ going from
+@@E\[\QQ_p\]\to \bar{E}\[\FF{p}\]@@. Despite doing so in the most obvious way
+possible, it turns out this transformation is quite nice. It's a group
+homomorphism, which is the most we can ask for, though proving it was a bit of a
+pain. Sadly, we won't really use this reduction mapping in Smart's attack.
+Instead, we'll go the opposite direction. We'll lift our elliptic curve from
+@@E\[\FF{p}\]\to E\[\QQ_p\]@@ and do all our math there.
+
+---
 
 
 
