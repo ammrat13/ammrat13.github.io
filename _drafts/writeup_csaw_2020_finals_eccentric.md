@@ -4,13 +4,16 @@ libs: [mathjax]
 ---
 
 <div class="mathjaxDeclarations">
+    @@\newcommand{\nl}{\\}@@
     @@\newcommand{\FF}[1]{\mathbb{F}_{#1}}@@
     @@\newcommand{\ZZ}{\mathbb{Z}}@@
     @@\newcommand{\QQ}{\mathbb{Q}}@@
     @@\newcommand{\RR}{\mathbb{R}}@@
+    @@\newcommand{\ecid}{\mathcal{O}}@@
     @@\newcommand{\hex}[1]{\texttt{0x#1}}@@
     @@\newcommand{\rep}[1]{\overline{#1}}@@
-    @@\newcommand{\ecid}{\mathcal{O}}@@
+    @@\newcommand{\chin}[1]{\Delta #1}@@
+    @@\newcommand{\BigO}[1]{\mathcal{O}(#1)}@@
     @@\newcommand{\modulo}[1]{\text{ mod } #1}@@
 </div>
 
@@ -108,6 +111,16 @@ However, multiplication is a bit more complicated, requiring an infinite FOIL as
 with power series, and division is reverse-engineering multiplication again like
 power series.
 
+I also still need to give some definitions:
+
+> The *degree*, or more commonly *order*, of a @@p@@-adic number is the lowest
+> power of @@p@@ that shows up in its expansion. For instance in @@\QQ_5@@, the
+> degree of @@3@@ is zero, that of @@5@@ is one, and that of @@\frac{1}{50}@@ is
+> negative two.
+
+> A *@@p@@-adic unit* is a @@p@@-adic number with degree zero. Alternatively,
+> it's a member of @@\ZZ_p@@ congruent to zero modulo @@p@@.
+
 But, the main takeaway is that @@\ZZ_p@@ can be thought of as
 @@\ZZ/p^\infty\ZZ@@, whatever that's supposed to mean. It has all the rings
 @@\ZZ/p^k\ZZ@@ inside of it, and thus can be used to reason about them. For
@@ -119,19 +132,70 @@ problem in @@\FF{p}@@ by "lifting" it to @@\QQ_p@@, solving it there, then
 
 ---
 
-Let's focus on the reduction step first. Given some point @@R=(x,y)@@ on the
-curve @@E\[\QQ_p\]@@, we'd like to find some corresponding point @@\bar{R}@@
-over the curve @@\bar{E}\[\FF{p}\]@@. Our first instinct might be to take
-everything modulo @@p@@ as described above, just looking at the ones digit. I
-denote this process with an overbar. We get a reduced point
-@@\bar{R}=(\bar{x},\bar{y})@@, as well as a reduced curve
+Let's focus on the reduction step first. It won't be that important for the
+actual attack, so feel free to skip this section. Otherwise, suppose we have
+some point @@R=(x,y)@@ on the curve @@E\[\QQ_p\]@@, and we'd like to find some
+corresponding point @@\bar{R}@@ over the curve @@\bar{E}\[\FF{p}\]@@. Our first
+instinct might be to take everything modulo @@p@@ as described above, just
+looking at the ones digit. I denote this process with an overbar. We get a
+reduced point @@\bar{R}=(\bar{x},\bar{y})@@, as well as a reduced curve
 @@y^2=x^3+\bar{a}x+\bar{b}@@. This'll work as long as all the numbers are
 @@p@@-adic integers. If @@a@@ or @@b@@ are fractional, we can't do anything and
 the process fails. If @@x@@ or @@y@@ are, however, we can sensibly map the point
 to the group identity @@\ecid@@.
 
 It turns out that this mapping is a group homomorphism --- a transformation
-which respects group addition.
+which respects group addition. It doesn't take much effort to see this, but
+still more than you'd think. We'll use the same notation for elliptic curve
+point addition as
+[Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication).
+It's immediately clear that this reduction mapping respects "most" point
+additions. As long as two points (that don't map to @@\ecid@@) don't share an
+@@\bar{x}@@, their calculation of @@\lambda@@ doesn't care about this
+transformation, again since division in @@\QQ_p@@ when taken modulo @@p@@ looks
+like division in @@\FF{p}@@. Even if they share an @@\bar{x}@@, the computation
+still works if they have different @@\bar{y}@@. The numerator in @@\lambda@@
+would have degree zero while the denominator would have degree at least one. The
+results for @@\lambda@@, @@x@@, and @@y@@ wouldn't be in @@\ZZ_p@@, so the sum
+would map to @@\ecid@@, as expected.
+
+Things become trickier when both points @@\bar{R},\bar{S}\neq\ecid@@ share an
+@@\bar{x}@@ and a @@\bar{y}@@. We'd like to show that the resulting @@\lambda@@
+is congruent to that of point-doubling modulo @@p@@. To do this, we'll assume
+@@x_R-x_S=p^k\chin{x}@@ and similarly that @@y_R-y_S=p^k\chin{y}@@, where
+@@k\geq1@@ and @@\chin{x}@@ is a unit but @@\chin{y}@@ may not be. However, we
+do know @@\chin{y}@@ has degree at least @@-k+1@@ since @@y_R-y_S@@ has a zero
+in its ones place. Now we can solve for @@\chin{y}@@ in
+%%
+\left(y_S+p^k\chin{y}\right)^2 = \left(x_S+p^k\chin{x}\right)^3 + a\left(x_S+p^k\chin{x}\right) + b.
+%%
+That looks bad, until we realize we can manipulate it to say
+%%
+\begin{align\*}
+2y_Sp^k\chin{y} &= 3x_S^2p^k\chin{x} + ap^k\chin{x} + \BigO{p^{k+1}} \nl
+2y_S\chin{y} &= 3x_S^2\chin{x} + a\chin{x} + \BigO{p} \nl
+\chin{y} &= \frac{3x_S^2 + a}{2y_S}\chin{x} + \BigO{p}.
+\end{align\*}
+%%
+Finally note that
+%%
+\begin{align\*}
+\lambda &= \frac{p^k\chin{y}}{p^k\chin{x}} = \frac{\chin{y}}{\chin{x}} \nl
+&= \frac{3x_S^2 + a}{2y_S} + \BigO{p},
+\end{align\*}
+%%
+which becomes the equation for @@\lambda@@ in point-doubling when taken modulo
+@@p@@, as required.
+
+Now, we just need to handle the cases where: 1) exactly one summand maps to the
+identity under reduction, and 2) both summands map to @@\ecid@@. We can quickly
+show Case 2 given Case 1. Suppose @@\bar{I}=\bar{J}=\ecid@@, but their sum
+@@R=I+J@@ does not reduce to the identity. Then it follows that @@R-J@@ reduces
+to @@\ecid@@. However, using Case 1 and that @@\overline{-J}=-\bar{J}@@, for all
+@@J@@ in fact, we get that @@\overline{R-J}=\bar{R}@@ which is not the identity,
+a contradiction.
+
+As for Case 1, let @@\bar{I}=\ecid@@ and consider @@R+I@@.
 
 
 
