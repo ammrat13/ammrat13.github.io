@@ -13,6 +13,7 @@ libs: [mathjax]
     @@\newcommand{\hex}[1]{\texttt{0x#1}}@@
     @@\newcommand{\rep}[1]{\overline{#1}}@@
     @@\newcommand{\degr}[1]{\deg(#1)}@@
+    @@\newcommand{\kern}[1]{\ker(#1)}@@
     @@\newcommand{\chin}[1]{\Delta #1}@@
     @@\newcommand{\BigO}[1]{\mathcal{O}(#1)}@@
     @@\newcommand{\modulo}[1]{\text{ mod } #1}@@
@@ -96,13 +97,12 @@ this was the subject of a [3Blue1Brown video](https://youtu.be/XFDM1ip5HdU).
 Sadly, we don't get everything. We don't get @@\frac{1}{2}@@, @@\frac{1}{4}@@,
 @@\frac{1}{6}@@,&nbsp;...&nbsp;. For those, we need the @@2@@-adic rationals
 @@\QQ_2@@, which is just like @@\ZZ_2@@ except we allow negative powers of
-@@2@@. This makes @@\QQ_2@@ a field, unlike @@\ZZ_2@@ which was just a ring.
-Note that we can have numbers with expansions stretching infinitely to the left,
-but not to the right since they'll just diverge under our new metric. And of
-course, what I've said here for @@2@@ can be generalized to any prime number
-@@p@@. It doesn't generalize to composites, though, since they lose field
-structure, in part because they lack closure. For example,
-@@\frac{1}{5}\notin\QQ_{10}@@.
+@@2@@. This makes @@\QQ_2@@ a field, unlike @@\ZZ_2@@ which is just a ring. Note
+that we can have numbers with expansions stretching infinitely to the left, but
+not to the right since they'll just diverge under our new metric. And of course,
+what I've said here for @@2@@ can be generalized to any prime number @@p@@. It
+doesn't generalize to composites, though, since they lose field structure, in
+part because they lack closure. For example, @@\frac{1}{5}\notin\QQ_{10}@@.
 
 I've glossed over a lot of details here. For instance, the distance between two
 numbers is not just how many bits you need to distinguish them @@b@@, but rather
@@ -135,126 +135,129 @@ example, division over @@\ZZ_p@@ (when it works) looks like inversion modulo
 @@p@@ when looking at the ones place. In addition, working over @@\QQ_p@@ often
 seems to be nicer than working over finite fields. Thus, one might solve a
 problem in @@\FF{p}@@ by "lifting" it to @@\QQ_p@@, solving it there, then
-"reducing" by taking the result modulo @@p@@.
+"reducing" by taking the result modulo @@p@@ --- by looking at the ones place in
+the expansion.
 
 ---
 
-Let's focus on the reduction step first. It won't be that important for the
-actual attack though, so feel free to skip this section. Otherwise, suppose we
-have some point @@R=(x,y)@@ on the curve @@E\[\QQ_p\]@@, and we'd like to find
-some corresponding point @@\bar{R}@@ over the curve @@\bar{E}\[\FF{p}\]@@. Our
-first instinct might be to take everything modulo @@p@@ as described above, just
-looking at the ones digit. I denote this process with an overbar. We get a
-reduced point @@\bar{R}=(\bar{x},\bar{y})@@, as well as a reduced curve
-@@y^2=x^3+\bar{a}x+\bar{b}@@. This'll work as long as all the numbers are
-@@p@@-adic integers. If @@a@@ or @@b@@ are fractional, we can't do anything and
-the process fails. If @@x@@ or @@y@@ are, however, we can sensibly map the point
-to the group identity @@\ecid@@.
+Let's focus on the reduction step first. Suppose we have some point @@P=(x,y)@@
+on the curve @@E\[\QQ_p\]@@, and we'd like to find some corresponding point on
+the reduced curve over @@\FF{p}@@. Our first instinct might be to take
+everything modulo @@p@@ as described above. I denote this process with an
+overbar, abusing notation for points and curves. We get a reduced point
+@@\bar{P}=(\bar{x},\bar{y})@@, as well as a reduced curve @@\bar{E}@@ defined by
+@@y^2=x^3+\bar{a}x+\bar{b}@@. This'll work as long as all the numbers involved
+are @@p@@-adic integers. If @@a@@ or @@b@@ are fractional, we can't do anything
+and the process fails. If @@x@@ or @@y@@ are fractional, however, we can
+sensibly map @@P@@ to the group identity @@\ecid@@, thus putting it in the
+kernel of this reduction homomorphism.
 
-It turns out that this mapping is a group homomorphism --- a transformation
-which respects group addition. It doesn't take much effort to see this, but
-still more than you'd think. We'll use the same notation for elliptic curve
-point addition as
+Oh by the way, this mapping @@\rho:E\[\QQ_p\]\to\bar{E}\[\FF{p}\]@@ is a group
+homomorphism --- a transformation which respects group addition. It doesn't take
+much effort to see this, but still more than you'd think. We'll use the same
+notation for elliptic curve operations as
 [Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication).
-It's immediately clear that this reduction mapping respects "most" point
-additions. As long as two points (that don't map to @@\ecid@@) don't share an
-@@\bar{x}@@, their calculation of @@\lambda@@ doesn't care about this
-transformation, again since division in @@\QQ_p@@ when taken modulo @@p@@ looks
-like division in @@\FF{p}@@. Even if they share an @@\bar{x}@@, the computation
-still works if they have different @@\bar{y}@@. The numerator in @@\lambda@@
-would have degree zero while the denominator would have degree at least one. The
-results for @@\lambda@@, @@x@@, and @@y@@ wouldn't be in @@\ZZ_p@@, so the sum
-would map to @@\ecid@@, as expected.
+It's immediately clear that @@\rho@@ respects "most" point additions. As long as
+two points (that *don't* map to @@\ecid@@) don't share an @@\bar{x}@@, their
+calculation of @@\lambda@@ wouldn't care about this transformation, again since
+division in @@\QQ_p@@ when taken modulo @@p@@ looks like division in @@\FF{p}@@.
+Even if they do share an @@\bar{x}@@, the computation still works if they have
+different @@\bar{y}@@. The numerator in @@\lambda@@ would have degree zero while
+the denominator would have degree at least one. The results for @@\lambda@@,
+@@x@@, and @@y@@ would be fractional, so the sum would map to @@\ecid@@, as
+expected.
 
-Things become trickier when both points @@\bar{R},\bar{S}\neq\ecid@@ share an
+Things become trickier when both points @@P,Q\notin\kern{\rho}@@ share an
 @@\bar{x}@@ and a @@\bar{y}@@. We'd like to show that the resulting @@\lambda@@
 is congruent to that of point-doubling modulo @@p@@. To do this, we'll assume
-@@x_R-x_S=p^k\chin{x}@@ and similarly that @@y_R-y_S=p^k\chin{y}@@, where
+@@x_P-x_Q=p^k\chin{x}@@ and similarly that @@y_P-y_Q=p^k\chin{y}@@, where
 @@k\geq1@@ and @@\chin{x}@@ is a unit but @@\chin{y}@@ may not be. However, we
-do know @@\chin{y}@@ has degree at least @@-k+1@@ since @@y_R-y_S@@ has a zero
+do know @@\chin{y}@@ has degree at least @@-k+1@@ since @@y_P-y_Q@@ has a zero
 in its ones place. Now we can solve for @@\chin{y}@@ in
 %%
-\left(y_S+p^k\chin{y}\right)^2 = \left(x_S+p^k\chin{x}\right)^3 + a\left(x_S+p^k\chin{x}\right) + b.
+\left(y_Q+p^k\chin{y}\right)^2 = \left(x_Q+p^k\chin{x}\right)^3 + a\left(x_Q+p^k\chin{x}\right) + b.
 %%
 That looks bad, until we realize we can manipulate it to say
 %%
 \begin{align\*}
-2y_Sp^k\chin{y} &= 3x_S^2p^k\chin{x} + ap^k\chin{x} + \BigO{p^{k+1}} \nl
-2y_S\chin{y} &= 3x_S^2\chin{x} + a\chin{x} + \BigO{p} \nl
-\chin{y} &= \frac{3x_S^2 + a}{2y_S}\chin{x} + \BigO{p}.
+2y_Qp^k\chin{y} &= 3x_Q^2p^k\chin{x} + ap^k\chin{x} + \BigO{p^{k+1}} \nl
+2y_Q\chin{y} &= 3x_Q^2\chin{x} + a\chin{x} + \BigO{p} \nl
+\chin{y} &= \frac{3x_Q^2 + a}{2y_Q}\chin{x} + \BigO{p}.
 \end{align\*}
 %%
 Finally note that
 %%
 \begin{align\*}
 \lambda &= \frac{p^k\chin{y}}{p^k\chin{x}} = \frac{\chin{y}}{\chin{x}} \nl
-&= \frac{3x_S^2 + a}{2y_S} + \BigO{p},
+&= \frac{3x_Q^2 + a}{2y_Q} + \BigO{p},
 \end{align\*}
 %%
-which becomes the equation for @@\lambda@@ in point-doubling when taken modulo
-@@p@@, as required.
+which, when taken modulo @@p@@, becomes the equation for @@\lambda@@ in
+point-doubling, as required.
 
-Now, we just need to handle showing group homomorphism in the cases I've been
-avoiding up to this point. Namely, those where: 1)&nbsp;exactly one summand maps
-to the identity under reduction, or 2)&nbsp;both summands map to @@\ecid@@. We
-can quickly show Case 2 given Case 1. Suppose @@\bar{I}=\bar{J}=\ecid@@, but
-their sum @@R=I+J@@ does not reduce to the identity. Then it follows that
-@@R-J@@ reduces to @@\ecid@@. However, using Case 1 and that
-@@\overline{-J}=-\bar{J}@@, for all @@J@@ in fact, we get that
-@@\overline{R-J}=\bar{R}@@ which is not the identity, a contradiction.
+Now, we just need to handle showing homomorphism in the cases I've been avoiding
+up to this point. Namely, those where: 1.&nbsp;exactly one summand is in
+@@\kern{\rho}@@, or 2.&nbsp;both summands are. We can quickly show Case 2 given
+Case 1. Suppose @@I,J\in\kern{\rho}@@, but their sum @@P=I+J@@ is not.
+Subtracting @@J@@ from both sides, it follows that @@P-J@@ reduces to @@\ecid@@.
+However, using Case 1 and that @@\overline{-J}=-\bar{J}@@ (for all @@J@@ in
+fact) we get @@\overline{P-J}=\bar{P}@@ which is not the identity, a
+contradiction.
 
 As for Case 1, let @@\bar{I}=\ecid@@ without loss of generality and consider
-@@R+I@@. We just need to verify that @@x_{R+I}\equiv x_R\modulo{p}@@ and the
-same for @@y@@. To do this, we'll write down the formula for the
+@@P+I@@. We just need to verify that @@x_{P+I}\equiv x_P\modulo{p}@@ and the
+same for @@y@@. To do this, we'll first write down the formula for the
 @@x@@-coordinate in point addition:
 %%
 \begin{align\*}
-x_{R+I} &= \lambda^2 - x_I - x_R \nl
-&= \left(\frac{y_R-y_I}{x_R-x_I}\right)^2 - x_I - x_R \nl
-&= \frac{y_R^2 - 2y_Ry_I + y_I^2 - x_R^2x_I + 2x_Rx_I^2 - x_I^3}{x_R^2 - 2x_Rx_I + x_I^2} - x_R.
+x_{P+I} &= \lambda^2 - x_I - x_P \nl
+&= \left(\frac{y_P-y_I}{x_P-x_I}\right)^2 - x_I - x_P \nl
+&= \frac{y_P^2 - 2y_Py_I + y_I^2 - x_P^2x_I + 2x_Px_I^2 - x_I^3}{x_P^2 - 2x_Px_I + x_I^2} - x_P.
 \end{align\*}
 %%
-Again, this looks terrible, until we make the following observations: that
-@@\degr{x_R}=0@@ and that @@\degr{y_I}=\frac{3}{2}\degr{x_I}@@. The former is
-true by the assumption @@\bar{R}\neq\ecid@@. The latter follows directly from
+Again, that looks bad, until we make the following observations: that
+@@\degr{x_P}=0@@ and that @@\degr{y_I}=\frac{3}{2}\degr{x_I}@@. The former is
+true by the assumption @@P\notin\kern{\rho}@@. The latter follows directly from
 the defining equation of the elliptic curve, combined with the fact @@x_I@@ and
-@@y_I@@ are fractional and that for fractional numbers @@\degr{a^n}=n\degr{a}@@.
-By considering these degrees, and simplifying @@y_I^2@@, a lot of the fraction
-vanishes. Letting @@\chin{d}=\degr{y_I}-\degr{x_I}@@, we get
+@@y_I@@ are fractional. By considering these degrees, and simplifying @@y_I^2@@,
+a lot of the expression vanishes. Letting @@\chin{d}=\degr{y_I}-\degr{x_I}@@, we
+get
 %%
 \begin{align\*}
-x_{R+I} &= \frac{-2y_Ry_I + 2x_Rx_I^2}{x_I^2} - x_R + \BigO{p^{\chin{d}+1}} \nl
-&= x_R - \frac{2y_Ry_I}{x_I^2} + \BigO{p^{\chin{d}+1}} \nl
-&= x_R + \BigO{p}.
+x_{P+I} &= \frac{-2y_Py_I + 2x_Px_I^2}{x_I^2} - x_P + \BigO{p^{\chin{d}+1}} \nl
+&= x_P - \frac{2y_Py_I}{x_I^2} + \BigO{p^{\chin{d}+1}} \nl
+&= x_P + \BigO{p}.
 \end{align\*}
 %%
 So the @@x@@-coordinate is correct. What about the @@y@@-coordinate. Again,
 we'll write down the formula:
 %%
 \begin{align\*}
-y_{R+I} &= \lambda\cdot(x_R - x_{R+I}) - y_R \nl
-&= \frac{y_R-y_I}{x_R-x_I}\cdot\left(\frac{2y_Ry_I}{x_I^2} + \BigO{p^{\chin{d}+1}}\right) - y_R \nl
-&= \frac{2y_R^2y_I-2y_Ry_I^2}{x_Rx_I^2-x_I^3} - y_R + \lambda\BigO{p^{\chin{d}+1}}
+y_{P+I} &= \lambda\cdot(x_P - x_{P+I}) - y_P \nl
+&= \frac{y_P-y_I}{x_P-x_I}\cdot\left(\frac{2y_Py_I}{x_I^2} + \BigO{p^{\chin{d}+1}}\right) - y_P \nl
+&= \frac{2y_P^2y_I-2y_Py_I^2}{x_Px_I^2-x_I^3} - y_P + \lambda\BigO{p^{\chin{d}+1}}
 \end{align\*}
 %%
 Since @@\degr{\lambda}@@ is just @@\chin{d}@@, we get that
 @@\lambda\BigO{p^{\chin{d}+1}}@@ simplifies to @@\BigO{p}@@. Thus
 %%
 \begin{align\*}
-y_{R+I} &= \frac{2y_R^2y_I-2y_Ry_I^2}{x_Rx_I^2-x_I^3} - y_R + \BigO{p} \nl
-&= \frac{2y_Ry_I^2}{x_I^3} - y_R + \BigO{p} \nl
-&= \frac{2y_Rx_I^3}{x_I^3} - y_R + \BigO{p} \nl
-&= y_R + \BigO{p}.
+y_{P+I} &= \frac{2y_P^2y_I-2y_Py_I^2}{x_Px_I^2-x_I^3} - y_P + \BigO{p} \nl
+&= \frac{2y_Py_I^2}{x_I^3} - y_P + \BigO{p} \nl
+&= \frac{2y_Px_I^3}{x_I^3} - y_P + \BigO{p} \nl
+&= y_P + \BigO{p}.
 \end{align\*}
 %%
 
-So we've created a reduction mapping @@R\mapsto\bar{R}@@ going from
-@@E\[\QQ_p\]\to \bar{E}\[\FF{p}\]@@. Despite doing so in the most obvious way
-possible, it turns out this transformation is quite nice. It's a group
-homomorphism, which is the most we can ask for, though proving it was a bit of a
-pain. Sadly, we won't really use this reduction mapping in Smart's attack.
-Instead, we'll go the opposite direction. We'll lift our elliptic curve from
-@@E\[\FF{p}\]\to E\[\QQ_p\]@@ and do all our math there.
+So we've created a reduction mapping @@\rho:E\[\QQ_p\]\to\bar{E}\[\FF{p}\]@@.
+Despite doing so in the most obvious way possible, it turns out this
+transformation is quite nice. It's a group homomorphism, which is the most we
+can ask for. I guess it goes to show how closely @@\QQ_p@@ is related to
+@@\FF{p}@@. Sadly, we won't really use @@\rho@@ in Smart's attack. The most
+we'll see is that the points in @@\kern{\rho}@@ are precisely those with
+fractional coordinates, which is true almost by definition. Instead, most of our
+time will be spent going the opposite direction. We'll lift our elliptic curve
+from @@\FF{p}@@ to @@\QQ_p@@ and do all our math there.
 
 ---
 
