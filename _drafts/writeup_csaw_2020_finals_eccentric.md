@@ -69,9 +69,10 @@ attempt.
 
 Consider the numbers @@1=\hex{0001}@@ and @@257=\hex{0101}@@. They're very far
 apart in the conventional sense, but in another sense they're very close
-together. So close, in fact, that an 8-bit computer can't tell them apart.
-Recall that all math on an @@n@@-bit computer is done modulo @@2^n@@, and as
-such these numbers would both be congruent to @@1 \modulo{256}@@.
+together. So close, in fact, that an 8-bit computer has a hard time telling them
+apart. Recall that most arithmetic instructions on an @@n@@-bit computer are
+executed modulo @@2^n@@, and both of these numbers are congruent to @@1
+\modulo{256}@@.
 
 In some sense, eight bits of "precision" isn't enough - you'd need nine to
 distinguish the two numbers. But it goes deeper. You'd need thirteen bits of
@@ -88,18 +89,19 @@ of the expected values --- all natural numbers for instance, it also contains
 many unexpected numbers. For example, @@-1\in\ZZ_2@@. How? Note that in two's
 complement, we can express @@-1@@ as all ones. If we take ones stretching all
 the way to the left: @@\rep{1}=\cdots111@@, we should get a number
-indistinguishable from @@-1@@ no matter how many bits of precision we use. Thus
-@@-1=\rep{1}@@ under the @@2@@-adic metric. In fact, all the negative numbers
-are present, and the trick of flipping the bits and adding one works as well.
-Moreover, we get some fractions like @@\frac{1}{3}=\rep{01}1@@. Incidentally,
-this was the subject of a [3Blue1Brown video](https://youtu.be/XFDM1ip5HdU).
+indistinguishable from negative one no matter how many bits of precision we use.
+Thus @@-1=\rep{1}@@ under the @@2@@-adic metric. Incidentally, this was the
+subject of a [3Blue1Brown video](https://youtu.be/XFDM1ip5HdU). In fact, all the
+negative numbers are present, and the trick for negation --- flipping the bits
+and adding one --- works as well. Moreover, we get some fractions like
+@@\frac{1}{3}=\rep{01}1@@.
 
 Sadly, we don't get everything. We don't get @@\frac{1}{2}@@, @@\frac{1}{4}@@,
 @@\frac{1}{6}@@,&nbsp;...&nbsp;. For those, we need the @@2@@-adic rationals
-@@\QQ_2@@, which is just like @@\ZZ_2@@ except we allow negative powers of
-@@2@@. This makes @@\QQ_2@@ a field, unlike @@\ZZ_2@@ which is just a ring. Note
-that we can have numbers with expansions stretching infinitely to the left, but
-not to the right since they'll just diverge under our new metric. And of course,
+@@\QQ_2@@, which is just like @@\ZZ_2@@ except we allow negative powers of two.
+This makes @@\QQ_2@@ a field, unlike @@\ZZ_2@@ which is just a ring. Note that
+we can have numbers with expansions stretching infinitely to the left, but not
+to the right since they'll just diverge under our new metric. And of course,
 what I've said here for @@2@@ can be generalized to any prime number @@p@@. It
 doesn't generalize to composites, though, since they lose field structure, in
 part because they lack closure. For example, @@\frac{1}{5}\notin\QQ_{10}@@.
@@ -154,26 +156,28 @@ kernel of this reduction homomorphism.
 
 Oh by the way, this mapping @@\rho:E\[\QQ_p\]\to\bar{E}\[\FF{p}\]@@ is a group
 homomorphism --- a transformation which respects group addition. It doesn't take
-much effort to see this, but still more than you'd think. We'll use the same
-notation for elliptic curve operations as
+much effort to get the intuition behind this, but the details are somewhat
+hairy. We'll use the same notation for elliptic curve operations as
 [Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication).
 It's immediately clear that @@\rho@@ respects "most" point additions. As long as
 two points (that *don't* map to @@\ecid@@) don't share an @@\bar{x}@@, their
 calculation of @@\lambda@@ wouldn't care about this transformation, again since
-division in @@\QQ_p@@ when taken modulo @@p@@ looks like division in @@\FF{p}@@.
-Even if they do share an @@\bar{x}@@, the computation still works if they have
-different @@\bar{y}@@. The numerator in @@\lambda@@ would have degree zero while
-the denominator would have degree at least one. The results for @@\lambda@@,
-@@x@@, and @@y@@ would be fractional, so the sum would map to @@\ecid@@, as
-expected.
+division in @@\QQ_p@@ when taken modulo @@p@@ looks exactly like division in
+@@\FF{p}@@. Even if they do share an @@\bar{x}@@, the computation still works if
+they have different @@\bar{y}@@. The numerator in @@\lambda@@ would have degree
+zero while the denominator would have degree at least one. The results for
+@@\lambda@@, @@x@@, and @@y@@ would be fractional, so the sum would map to
+@@\ecid@@, as expected.
 
-Things become trickier when both points @@P,Q\notin\kern{\rho}@@ share an
-@@\bar{x}@@ and a @@\bar{y}@@. We'd like to show that the resulting @@\lambda@@
-is congruent to that of point-doubling modulo @@p@@. To do this, we'll assume
-@@x_P-x_Q=p^k\chin{x}@@ and similarly that @@y_P-y_Q=p^k\chin{y}@@, where
-@@k\geq1@@ and @@\chin{x}@@ is a unit but @@\chin{y}@@ may not be. However, we
-do know @@\chin{y}@@ has degree at least @@-k+1@@ since @@y_P-y_Q@@ has a zero
-in its ones place. Now we can solve for @@\chin{y}@@ in
+Here come the details. Feel free to skip to the last paragraph of this section
+if you don't care about them. Otherwise, consider the trickier case when both
+points @@P,Q\notin\kern{\rho}@@ share an @@\bar{x}@@ and a @@\bar{y}@@. We'd
+like to show that the resulting @@\lambda@@ is congruent to that of
+point-doubling modulo @@p@@. To do this, we'll assume @@x_P-x_Q=p^k\chin{x}@@
+and similarly that @@y_P-y_Q=p^k\chin{y}@@, where @@k\geq1@@ and @@\chin{x}@@ is
+a unit but @@\chin{y}@@ may not be. However, we do know @@\chin{y}@@ has degree
+at least @@-k+1@@ since @@y_P-y_Q@@ has a zero in its ones place. Now we can
+solve for @@\chin{y}@@ in
 %%
 \left(y_Q+p^k\chin{y}\right)^2 = \left(x_Q+p^k\chin{x}\right)^3 + a\left(x_Q+p^k\chin{x}\right) + b.
 %%
