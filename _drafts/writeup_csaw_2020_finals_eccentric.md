@@ -131,15 +131,24 @@ I also still need to give some definitions:
 > That is, a @@p@@-adic rational which is not an integer. For instance in
 > @@\QQ_5@@, @@\frac{1}{5}@@ is a fraction while @@\frac{1}{4}@@ is not.
 
-But, the main takeaway is that @@\ZZ_p@@ can be thought of as
-@@\ZZ/p^\infty\ZZ@@, whatever that's supposed to mean. It has all the rings
-@@\ZZ/p^k\ZZ@@ inside of it, and thus can be used to reason about them. For
-example, division over @@\ZZ_p@@ (when it works) looks like inversion modulo
-@@p@@ when looking at the ones place. In addition, working over @@\QQ_p@@ often
-seems to be nicer than working over finite fields. Thus, one might solve a
-problem in @@\FF{p}@@ by "lifting" it to @@\QQ_p@@, solving it there, then
-"reducing" by taking the result modulo @@p@@ --- by looking at the ones place in
-the expansion.
+But, I think the takeaways from this section are two different ways of thinking
+about the @@p@@-adics. First, they can be seen as formal power series in the
+"variable" @@p@@. Arithmetic is defined in exactly the same way, with carries
+being the only exception. Just as two power series are "fairly close" if they
+differ by @@\BigO{x^{100}}@@, two @@p@@-adics are "farily close" if they require
+@@100@@ digits of precision to distinguish. Many concepts, like degrees and
+units, carry over as well. Because of this similarity, the @@p@@-adics actually
+play really nicely with formal power series, as we'll see later.
+
+Second and more importantly, @@\ZZ_p@@ can also be thought of as
+@@\ZZ/p^\infty\ZZ@@, whatever that's supposed to mean. It contains all the rings
+@@\ZZ/p^k\ZZ@@, each embedded in the last @@k@@ digits, so @@\ZZ_p@@ can easily
+be used to reason about them. For example, division over @@\ZZ_p@@ (when it
+works) looks like inversion modulo @@p@@ when looking at the ones place. In
+addition, working over @@\QQ_p@@ often seems to be nicer than working over
+finite fields. Thus, one might solve a problem in @@\FF{p}@@ by "lifting" it to
+@@\QQ_p@@, solving it there, then "reducing" by taking the result modulo @@p@@
+--- by looking at the ones place in the expansion.
 
 ---
 
@@ -330,8 +339,8 @@ This formulation is much easier to work with. Now we just need to solve for
 Taylor series. So we expand
 %%
 \begin{align\*}
-f(s) &\equiv \sum_{i=0}^N \frac{f^{(i)}(r)}{i!} (s-r)^i &\mod p^{k+1} \nl
-&\equiv f(r) + f^\prime(r)\cdot(s-r) + \sum_{i=2}^N \frac{f^{(i)}(s)}{i!} (s-r)^i &\mod p^{k+1}
+f(s) &\equiv \sum_{i=0}^N \frac{f^{(i)}(r)}{i!} (s-r)^i &\mod p^{k+1} &\nl
+&\equiv f(r) + f^\prime(r)\cdot(s-r) + \sum_{i=2}^N \frac{f^{(i)}(s)}{i!}(s-r)^i &\mod p^{k+1} &.
 \end{align\*}
 %%
 Since we require @@s-r\equiv0\modulo{p^k}@@, all the terms in the sum will be
@@ -339,8 +348,8 @@ divisible by @@p^{2k}@@ and will thus vanish. We also require that
 @@f(s)\equiv0\modulo{p^{k+1}}@@, eliminating the RHS. Now we solve
 %%
 \begin{align\*}
-0 &\equiv f(r) + f^\prime(r)\cdot(s-r) &\mod p^{k+1} \nl
-s &\equiv r + f(r) \cdot f^\prime(r)^{-1} &\mod p^{k+1}
+0 &\equiv f(r) + f^\prime(r)\cdot(s-r) &\mod p^{k+1} &\nl
+s &\equiv r + f(r) \cdot f^\prime(r)^{-1} &\mod p^{k+1} &.
 \end{align\*}
 %%
 
