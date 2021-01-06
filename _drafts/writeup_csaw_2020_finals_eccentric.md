@@ -13,10 +13,11 @@ libs: [mathjax]
     @@\newcommand{\hex}[1]{\texttt{0x#1}}@@
     @@\newcommand{\rep}[1]{\overline{#1}}@@
     @@\newcommand{\degr}[1]{\deg(#1)}@@
-    @@\newcommand{\kern}[1]{\ker(#1)}@@
+    @@\newcommand{\kernl}[1]{\ker(#1)}@@
     @@\newcommand{\chin}[1]{\Delta #1}@@
     @@\newcommand{\BigO}[1]{\mathcal{O}(#1)}@@
     @@\newcommand{\modulo}[1]{\text{ mod } #1}@@
+    @@\newcommand{\modfunc}[2]{\text{mod}(#1,#2)}@@
 </div>
 
 I was a finalist for [CSAW CTF 2020](https://csaw.io). I was on the Mad H@tter's
@@ -171,7 +172,7 @@ zero while the denominator would have degree at least one. The results for
 
 Here come the details. Feel free to skip to the last paragraph of this section
 if you don't care about them. Otherwise, consider the trickier case when both
-points @@P,Q\notin\kern{\rho}@@ share an @@\bar{x}@@ and a @@\bar{y}@@. We'd
+points @@P,Q\notin\kernl{\rho}@@ share an @@\bar{x}@@ and a @@\bar{y}@@. We'd
 like to show that the resulting @@\lambda@@ is congruent to that of
 point-doubling modulo @@p@@. To do this, we'll assume @@x_P-x_Q=p^k\chin{x}@@
 and similarly that @@y_P-y_Q=p^k\chin{y}@@, where @@k\geq1@@ and @@\chin{x}@@ is
@@ -201,8 +202,8 @@ point-doubling, as required.
 
 Now, we just need to handle showing homomorphism in the cases I've been avoiding
 up to this point. Namely, those where: 1.&nbsp;exactly one summand is in
-@@\kern{\rho}@@, or 2.&nbsp;both summands are. We can quickly show Case 2 given
-Case 1. Suppose @@I,J\in\kern{\rho}@@, but their sum @@P=I+J@@ is not.
+@@\kernl{\rho}@@, or 2.&nbsp;both summands are. We can quickly show Case 2 given
+Case 1. Suppose @@I,J\in\kernl{\rho}@@, but their sum @@P=I+J@@ is not.
 Subtracting @@J@@ from both sides, it follows that @@P-J@@ reduces to @@\ecid@@.
 However, using Case 1 and that @@\overline{-J}=-\bar{J}@@ (for all @@J@@ in
 fact) we get @@\overline{P-J}=\bar{P}@@ which is not the identity, a
@@ -221,7 +222,7 @@ x_{P+I} &= \lambda^2 - x_I - x_P \nl
 %%
 Again, that looks bad, until we make the following observations: that
 @@\degr{x_P}=0@@ and that @@\degr{y_I}=\frac{3}{2}\degr{x_I}@@. The former is
-true by the assumption @@P\notin\kern{\rho}@@. The latter follows directly from
+true by the assumption @@P\notin\kernl{\rho}@@. The latter follows directly from
 the defining equation of the elliptic curve, combined with the fact @@x_I@@ and
 @@y_I@@ are fractional. By considering these degrees, and simplifying @@y_I^2@@,
 a lot of the expression vanishes. Letting @@\chin{d}=\degr{y_I}-\degr{x_I}@@, we
@@ -258,10 +259,90 @@ Despite doing so in the most obvious way possible, it turns out this
 transformation is quite nice. It's a group homomorphism, which is the most we
 can ask for. I guess it goes to show how closely @@\QQ_p@@ is related to
 @@\FF{p}@@. Sadly, we won't really use @@\rho@@ in Smart's attack. The most
-we'll see is that the points in @@\kern{\rho}@@ are precisely those with
+we'll see is that the points in @@\kernl{\rho}@@ are precisely those with
 fractional coordinates, which is true almost by definition. Instead, most of our
 time will be spent going the opposite direction. We'll lift our elliptic curve
 from @@\FF{p}@@ to @@\QQ_p@@ and do all our math there.
+
+---
+
+So we have some point on a curve @@P\in E\[\FF{p}\]@@ and we'd like to find some
+new point @@\hat{P}\in\hat{E}\[\QQ_p\]@@ that reduces to our original point
+under the reduction homomorphism described above: @@\rho(\hat{P})=P@@. In some
+sense, we'd like to "invert" the reduction by lifting. Of course, there are
+(probably) infinitely many @@\hat{P}@@ and @@\hat{E}@@ that'll work --- we just
+need to find one. How?
+
+[Hensel's lifting lemma](https://wikipedia.org/wiki/Hensel%27s_lemma) makes this
+very easy. Novotney's [paper][2] covers it too. Here's a very roundabout
+explanation of what the lemma says, which will hopefully provide some intuition
+as to why we're using it. Suppose we have some polynomial @@f@@ and we'd like to
+find one of its roots @@n\in\ZZ_p@@. *A priori* we won't know all the digits of
+@@n@@, but suppose we know the last @@k@@ digits. Then, Hensel's lemma allows us
+to find the next digit in the expansion, so that we now know the last @@k+1@@
+digits of @@n@@. This process can then be repeated indefinitely --- we can find
+the last @@k+2@@ digits, then @@k+3@@, *ad infinitum*.
+
+How's this useful? Well, by moving everything to the LHS, we can see our
+original elliptic curve @@E\[\FF{p}\]@@ as a polynomial @@y^2-x^3-ax-b@@ for
+which we know a root @@P=(x,y)@@. Remember that @@\FF{p}@@ is just the ones
+place of @@\ZZ_p@@, so we can apply Hensel's lifting lemma here for @@k=1@@. We
+can choose one of the variables to treat as a constant, say @@x@@, then
+repeatedly lift the other variable to find a root of this polynomial in
+@@\ZZ_p\subset\QQ_p@@, and thus a point @@\hat{P}\in\hat{E}\[\QQ_p\]@@.
+
+That's the idea, but there are some details to be mindful of. First, I used
+@@a@@ and @@b@@ as the coefficients in the polynomial above. That usually works,
+but will cause Smart's attack to fail about @@\frac{1}{p}@@-th of the time. If
+the lifted curve defined by @@a@@ and @@b@@ over @@\QQ_p@@ happens to be
+isomorphic to that over @@\FF{p}@@, Smart's attack will fail. He actually notes
+this in his original [paper][1], and this
+[StackExchange thread](https://crypto.stackexchange.com/a/70508) provides a
+solution for these "canonical lifts". Note that @@\hat{E}@@ isn't unique --- we
+can lift the original curve @@E@@ in infinitely many ways. Before trying to lift
+@@P@@ to @@\hat{P}@@, just add a random multiple of @@p@@ to both @@a@@ and
+@@b@@. Now, @@\hat{E}@@ will be defined by these new values @@\hat{a}@@ and
+@@\hat{b}@@, but will still reduce to our original curve @@E@@ when taken modulo
+@@p@@.
+
+Second, I chose to keep @@x@@ constant and lift @@y@@. Usually, either will
+work, but not always. As we'll see below, at each iteration of the lift we
+require that @@f^\prime@@ is not a multiple of @@p@@. If we iterate with @@x@@
+held constant, then @@f^\prime(y)=2y@@ is guaranteed to satisfy that condition
+since our initial @@y@@ is not congruent to zero modulo @@p@@. If we hold @@y@@
+constant instead, then @@f^\prime(x)=3x^2-\hat{a}@@ which can be a multiple of
+@@p@@.
+
+With that out of the way, let's look at the surprisingly simple proof. But
+first, we need to clarify what exactly we're trying to prove. The formulation
+from three paragraphs ago isn't exactly nice to work with, but we can make it
+so. Suppose we have the last @@k@@ digits of @@n@@, a root of @@f@@ in
+@@\ZZ_p@@. This is equivalent to saying we have a root @@r@@ of @@f@@ modulo
+@@p^k@@. We'd like to find the next digit in the expansion of @@n@@ --- some
+root @@s@@ of @@f@@ modulo @@p^{k+1}@@. Moreover, we require that @@s\equiv
+r\modulo{p^k}@@. The last @@k@@ digits are set once they're "discovered", and we
+never go back and change them.
+
+This formulation is much easier to work with. Now we just need to solve for
+@@s@@. Though, we do need one more trick. We start by
+[Taylor-expanding](https://en.wikipedia.org/wiki/Taylor_series) @@f@@ about
+@@r@@. This is why we require @@f@@ to be a polynomial: they have finite
+Taylor series. So we expand
+%%
+\begin{align\*}
+f(s) &\equiv \sum_{i=0}^N \frac{f^{(i)}(r)}{i!} (s-r)^i &\mod p^{k+1} \nl
+&\equiv f(r) + f^\prime(r)\cdot(s-r) + \sum_{i=2}^N \frac{f^{(i)}(s)}{i!} (s-r)^i &\mod p^{k+1}
+\end{align\*}
+%%
+Since we require @@s-r\equiv0\modulo{p^k}@@, all the terms in the sum will be
+divisible by @@p^{2k}@@ and will thus vanish. We also require that
+@@f(s)\equiv0\modulo{p^{k+1}}@@, eliminating the RHS. Now we solve
+%%
+\begin{align\*}
+0 &\equiv f(r) + f^\prime(r)\cdot(s-r) &\mod p^{k+1} \nl
+s &\equiv r + f(r) \cdot f^\prime(r)^{-1} &\mod p^{k+1}
+\end{align\*}
+%%
 
 ---
 
