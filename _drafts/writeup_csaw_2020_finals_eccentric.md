@@ -276,11 +276,11 @@ from @@\FF{p}@@ to @@\QQ_p@@ and do all our math there.
 ---
 
 So we have some point on a curve @@P\in E\[\FF{p}\]@@ and we'd like to find some
-new point @@\hat{P}\in\hat{E}\[\QQ_p\]@@ that reduces to our original point
-under the reduction homomorphism described above: @@\rho(\hat{P})=P@@. In some
-sense, we'd like to "invert" the reduction by lifting. Of course, there are
-(probably) infinitely many @@\hat{P}@@ and @@\hat{E}@@ that'll work --- we just
-need to find one. How?
+new point @@P^\*\in E^\*\[\QQ_p\]@@ that reduces to our original point under the
+reduction homomorphism described above: @@\rho(P^\*)=P@@. In some sense, we'd
+like to "invert" the reduction by lifting. Of course, there are (probably)
+infinitely many @@P^\*@@ and @@E^\*@@ that'll work --- we just need to find one.
+How?
 
 [Hensel's lifting lemma](https://wikipedia.org/wiki/Hensel%27s_lemma) makes this
 very easy. Novotney's [paper][2] covers it too. Here's a very roundabout
@@ -298,7 +298,7 @@ which we know a root @@P=(x,y)@@. Remember that @@\FF{p}@@ is just the ones
 place of @@\ZZ_p@@, so we can apply Hensel's lifting lemma here for @@k=1@@. We
 can choose one of the variables to treat as a constant, say @@x@@, then
 repeatedly lift the other variable to find a root of this polynomial in
-@@\ZZ_p\subset\QQ_p@@, and thus a point @@\hat{P}\in\hat{E}\[\QQ_p\]@@.
+@@\ZZ_p\subset\QQ_p@@, and thus a point @@P^\*\in E^\*\[\QQ_p\]@@.
 
 That's the idea, but there are some details to be mindful of. First, I used
 @@a@@ and @@b@@ as the coefficients in the polynomial above. That usually works,
@@ -307,19 +307,18 @@ the lifted curve defined by @@a@@ and @@b@@ over @@\QQ_p@@ happens to be
 isomorphic to that over @@\FF{p}@@, Smart's attack will fail. He actually notes
 this in his original [paper][1], and this
 [StackExchange thread](https://crypto.stackexchange.com/a/70508) provides a
-solution for these "canonical lifts". Note that @@\hat{E}@@ isn't unique --- we
-can lift the original curve @@E@@ in infinitely many ways. Before trying to lift
-@@P@@ to @@\hat{P}@@, just add a random multiple of @@p@@ to both @@a@@ and
-@@b@@. Now, @@\hat{E}@@ will be defined by these new values @@\hat{a}@@ and
-@@\hat{b}@@, but will still reduce to our original curve @@E@@ when taken modulo
-@@p@@.
+solution for these "canonical lifts". Note that @@E^\*@@ isn't unique --- we can
+lift the original curve @@E@@ in infinitely many ways. Before trying to lift
+@@P@@ to @@P^\*@@, just add a random multiple of @@p@@ to both @@a@@ and @@b@@.
+Now, @@E^\*@@ will be defined by these new values @@a^\*@@ and @@b^\*@@, but
+will still reduce to our original curve @@E@@ when taken modulo @@p@@.
 
 Second, I chose to keep @@x@@ constant and lift @@y@@. Usually, either will
 work, but not always. As we'll see below, at each iteration of the lift we
 require that @@f^\prime@@ is not a multiple of @@p@@. If we iterate with @@x@@
 held constant, then @@f^\prime(y)=2y@@ is guaranteed to satisfy that condition
 since our initial @@y@@ is not congruent to zero modulo @@p@@. If we hold @@y@@
-constant instead, then @@f^\prime(x)=3x^2-\hat{a}@@ which can be a multiple of
+constant instead, then @@f^\prime(x)=3x^2-a^\*@@ which can be a multiple of
 @@p@@.
 
 With that out of the way, let's look at the surprisingly simple proof. But
@@ -354,6 +353,8 @@ s &\equiv r + f(r) \cdot f^\prime(r)^{-1} &\mod p^{k+1} &.
 %%
 
 ---
+
+So we can lift our curve @@@@
 
 
 
