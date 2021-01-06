@@ -352,11 +352,57 @@ s &\equiv r + f(r) \cdot f^\prime(r)^{-1} &\mod p^{k+1} &.
 \end{align\*}
 %%
 
+As an aside, the actual statement of Hensel's lemma is much more general than
+what I've given here. We just don't need the extra power.
+
 ---
 
-So we can lift our curve @@@@
+So we can lift @@P\in E\[\FF{p}\]@@ to another point @@P^\*\in E^\*\[\QQ_p\]@@,
+as well as convert back by reducing modulo @@p@@. But what does this get us? I
+said that working over @@\QQ_p@@ is much nicer than working over a finite field,
+but how so? We need one more transformation before we can understand Smart's
+attack. It's breifly discussed in Leprevost's [paper][3], but it's covered in
+much more detail in Chapter IV.1 of Silverman's [book][4].
+
+Suppose we have some elliptic curve @@E\[\QQ_p\]@@ with domain parameters @@a@@
+and @@b@@. Silverman makes the following change of variables:
+%%
+\begin{align\*}
+z &= -\frac{x}{y} \nl
+w &= -\frac{1}{y}.
+\end{align\*}
+%%
+I'm honestly not sure what motivated this choice. He mentions that it brings
+@@\ecid@@ to the origin in the @@z@@-@@w@@-plane, which is in line with his
+investigation of points in the "neighborhood" around @@\ecid@@. He also talks
+about uniformizers, but I don't have the background to understand what he's
+saying.
+
+What he does next is even stranger. He first rewrites the equation of @@E@@ in
+terms of @@z@@ and @@w@@ as
+%% w = z^3 + azw^2 + bw^3, %%
+then recursively substitutes it into itself over and over again! This process
+"converges" to a power series in @@z@@. This seems surprising at first, but it's
+actually quite easy to see this. Note that, every time we recursively substitute
+@@w@@, the lowest degree of a term containing @@w@@ increases by at least one.
+That is, every substitution "determines" at least one more coefficient in the
+power series. Another way to see this, and the way Silverman presents it, is
+through Hensel's lemma. We repeatedly lift modulo powers of @@z@@.
+
+So we have this power series
+%% w = \sum_{i=0}^\infty A_i z^{3+i} %%
+which describes some of the points on our original elliptic curve @@E@@. It
+doesn't describe all of them, though --- only those whose value of @@z@@ causes
+this power series to converge. Convergence over @@\RR@@ is tricky, and that over
+@@\FF{p}@@ is impossible, but not so over @@\QQ_p@@. Under the @@p@@-adic
+metric, this power series converges when @@\degr{z}\geq1@@. That happens when
+@@\degr{x}>\degr{y}@@, which is true only for points with fractional
+coordinates. That is, this series converges for and only for points
+@@P\in\kernl{\rho}@@.
 
 
 
 [1]: </assets/2021/01/15/pdf/Smart.pdf> "The Discrete Logarithm Problem on Elliptic Curves of Trace One"
 [2]: </assets/2021/01/15/pdf/Novotney.pdf> "Weak Curves In Elliptic Curve Cryptography"
+[3]: </assets/2021/01/15/pdf/Leprevost.pdf> "Generating Anomalous Elliptic Curves"
+[4]: <https://link.springer.com/book/10.1007/978-0-387-09494-6> "The Arithmetic of Elliptic Curves"
