@@ -436,15 +436,14 @@ c &= 1 + a\lambda^2 + b\lambda^3 \nl
 from which we get
 %% z_R = -z_P - z_Q - \frac{2a\lambda\nu+3b\lambda^2\nu}{1+a\lambda^2+b\lambda^3}. %%
 However, this isn't the formula for point addition. We defined @@P+Q+R@@ to
-equal @@\ecid@@ since they're colinear. Thus, @@P+Q=-R@@. Inverting a point in
-@@x@@-@@y@@-space corresponds to negating the @@y@@-coordinate. So in
-@@z@@-@@w@@-space, we invert a point by negating both its @@z@@- and
-@@w@@-values. Thus
+equal @@\ecid@@ since they're colinear. Thus, @@P+Q=-R@@. We invert a point in
+@@x@@-@@y@@-space by negating its @@y@@-coordinate. So in @@z@@-@@w@@-space, we
+invert a point by negating both its @@z@@- and @@w@@-values. Thus
 %% z_{P+Q} = z_P + z_Q + \frac{2a\lambda\nu+3b\lambda^2\nu}{1+a\lambda^2+b\lambda^3}. %%
 
 That fraction looks nasty to work with. Thankfully, we don't need to. Note that
 @@\lambda@@ only contains terms of degree two or higher, and the same is thus
-true for the numerator in the last term. The denominator is a unit power series
+true for the numerator in that last term. The denominator is a unit power series
 --- a formal power series with a nonzero constant term. So, it's invertible as a
 power series in @@z_P@@ and @@z_Q@@, and more importantly won't change the
 degree of the numerator. Therefore
@@ -471,9 +470,81 @@ we can work around that.
 
 ---
 
+After covering all that background material, we're finally ready to see Smart's
+attack. Let's look back to the CTF problem that started this whole post. Suppose
+we have some elliptic curve @@E\[\FF{p}\]@@, defined by @@a@@ and @@b@@, with
+order @@\\#E=p@@. Furthermore, we're given two points on the curve related by
+@@P-dG=\ecid@@, and we're asked to solve for @@d@@.
+
+Smart's attack starts by lifting @@E@@ and its points to a curve over @@\QQ_p@@.
+We get as a result that
+%% P^\* - dG^\* \in \kernl{\rho} %%
+since reduction modulo @@p@@ is a group homomorphism. Now, we'd like to use the
+mapping @@\theta@@, described in the last section, to exploit that simple
+addition law. We know that
+%% \theta(P^\* - dG^\*) = k p + \BigO{p^2}. %%
+We'd like to say something along the lines of
+%% \theta(P^\*) - d\cdot\theta(G^\*) \equiv k p \mod p^2, %%
+since from there, solving for @@d@@ is straightforward. But, we run into two
+issues. First, @@P^\*,G^\*\notin\kernl{\rho}@@, so passing them to @@\theta@@ is
+ill-defined. Second, we don't know what @@k@@ is, so solving in terms of it is
+kind of useless.
+
+To solve both of these problems at once, we require @@\\#E=p@@. Why? We're going
+to multiply both sides of the equation by @@p@@. On the LHS, note that
+@@pG=\ecid@@, so @@pG^\*\in\kernl{\rho}@@ and taking @@\theta@@ of it is
+well-defined. Likewise for @@P@@. Meanwhile, multiplying the RHS by @@p@@ will
+cause it to vanish modulo @@p^2@@. We can see this either as multiplication by
+@@p@@ corresponding to a "shift" in a number's @@p@@-adic expansion, or as the
+@@p@@s digit of the RHS operating as in @@\FF{p}^+@@.
+
+Thus we get
+%%
+\begin{align\*}
+p \cdot \theta( P^\* - dG^\* ) &= k p^2 + \BigO{p^3} \nl
+\theta( pP^\* - d \cdot pG^\* ) &= \BigO{p^2} \nl
+\theta(pP^\*) - d \cdot \theta(pG^\*) &= \BigO{p^2},
+\end{align\*}
+%%
+from where it's easy to solve for @@d@@ as
+%% d = \frac{\theta(pP^\*)}{\theta(pG^\*)} + \BigO{p}. %%
+Of course, we only care about @@d@@ modulo @@\\#E@@, so we can drop the
+@@\BigO{p}@@ term and simply look at the ones place of the result.
+
+This method allows us to find @@d@@ for the curve given in `handout.txt`. We can
+give it to the challenge server to get the flag:
+{% highlight plaintext %}
+flag{wh0_sa1d_e11ipt1c_curv3z_r_s3cur3??}
+{% endhighlight %}
+
+---
+
+### Resources
+
+This post may or may not have helped you understand Smart's attack. Ultimately,
+there's no substitute for practice --- struggling through the material yourself.
+I've linked a few resources below, some which I've mirrored on my site in case
+the original link breaks. I found Koc's tutorial on @@p@@-adic arithmetic and
+Novotney's summary of Smart's attack particularly helpful.
+* [Koc, C. K. (2002). A Tutorial on p-adic Arithmetic. *Electrical and Computer
+  Engineering*, *Oregon State University*, *Corvallis*, *Oregon*, *97331*.
+  `http://www.cryptocode.net/docs/r09.pdf`][5]
+* [Smart, N. P. (1999). The discrete logarithm problem on elliptic curves of
+  trace one. *Journal of cryptology*, *12*(3), 193-196.
+  `https://link.springer.com/content/pdf/10.1007/s001459900052.pdf`][1]
+* [Silverman, J. H. (2009). *The arithmetic of elliptic curves* (Vol. 106).
+  Springer Science & Business Media.
+  `https://link.springer.com/book/10.1007/978-0-387-09494-6`][4]
+* [Leprevost, F., Monnerat, J., Varrette, S., & Vaudenay, S. (2005). Generating
+  anomalous elliptic curves. *Information processing letters*, *93*(5), 225-230.
+  `http://www.monnerat.info/publications/anomalous.pdf`][3]
+* [Novotney, P. (2010). Weak Curves In Elliptic Curve Cryptography.
+  `https://www.wstein.org/edu/2010/414/projects/novotney.pdf`][2]
+
 
 
 [1]: </assets/2021/01/15/pdf/Smart.pdf> "The Discrete Logarithm Problem on Elliptic Curves of Trace One"
 [2]: </assets/2021/01/15/pdf/Novotney.pdf> "Weak Curves In Elliptic Curve Cryptography"
 [3]: </assets/2021/01/15/pdf/Leprevost.pdf> "Generating Anomalous Elliptic Curves"
 [4]: <https://link.springer.com/book/10.1007/978-0-387-09494-6> "The Arithmetic of Elliptic Curves"
+[5]: </assets/2021/01/15/pdf/Koc.pdf> "A Tutorial on p-adic Arithmetic"
