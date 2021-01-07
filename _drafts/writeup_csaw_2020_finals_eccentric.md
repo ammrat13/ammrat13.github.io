@@ -365,8 +365,8 @@ attack. It's breifly discussed in Leprevost's [paper][3], but it's covered in
 much more detail in Chapter IV.1 of Silverman's [book][4].
 
 Suppose we have some elliptic curve @@E\[\QQ_p\]@@ with domain parameters @@a@@
-and @@b@@. Silverman makes the following change of variables (which I denote
-@@\theta@@):
+and @@b@@. Silverman makes the following change of variables (which I denote as
+the function @@\theta@@):
 %%
 \begin{align\*}
 z &= -\frac{x}{y} \nl
@@ -401,15 +401,15 @@ happens when @@\degr{x}>\degr{y}@@, which is true if and only if both @@x@@ and
 @@y@@ are fractional. That is, this series converges for and only for points
 @@P\in\kernl{\rho}@@.
 
-So we can think of some points on @@E@@ in terms of their @@z@@-value, from
-which we can derive @@w@@. But that doesn't really help us unless we can do math
-with @@z@@ alone. Luckily, our choice of @@\theta@@ makes point arithmetic easy.
-Ultimately, this is because it maps lines to lines, with vertical lines mapping
-to lines through the origin. Thus, three points that are colinear in
-@@x@@-@@y@@-space will be colinear in @@z@@-@@w@@-space, and vice-versa since
+Thus we can think of some of the points on @@E@@ in terms of their @@z@@-value,
+from which we can derive @@w@@. But that doesn't really help us unless we can do
+math with @@z@@ alone. Luckily, our choice of @@\theta@@ makes point arithmetic
+easy. Ultimately, this is because it maps lines to lines, with vertical lines
+mapping to lines through the origin. As a result, three points that are colinear
+in @@x@@-@@y@@-space will be colinear in @@z@@-@@w@@-space, and vice-versa since
 @@\theta@@ is invertible.
 
-Because of this line-preservation property, we can derive the formulas for point
+Because of this line-preservation property, we can derive the formula for point
 addition in terms of @@z@@ alone. Recall that we define three colinear points
 @@P@@,@@Q@@,@@R@@ as summing to @@\ecid@@. Suppose we know @@P@@ and @@Q@@ and
 wish to find @@R@@. We'll do so much the same way we would for any other
@@ -450,6 +450,26 @@ power series in @@z_P@@ and @@z_Q@@, and more importantly won't change the
 degree of the numerator. Therefore
 %% z_{P+Q} = z_P + z_Q + \BigO{z^2}, %%
 which simplifies things greatly.
+
+So we have this very simple addition law when we view points in @@E\[\QQ_p\]@@
+in terms of their @@z@@-coordinates after transforming with @@\theta@@. We
+define this new space of @@z@@-values @@\hat{E}\[p\ZZ_p\]@@ as the set
+@@p\ZZ_p@@ endowed with this group operation, denoted @@\oplus@@ to distinguish
+it from regular addition. Note that @@\theta:\kernl{\rho}\to\hat{E}@@ is a group
+homomorphism by construction. More importantly however, note the structure in
+the lower digits of @@\hat{E}@@. The ones place of any number in that set is
+zero by definition, but the @@p@@s digit is more interesting. Under @@\oplus@@,
+it looks exactly like @@\FF{p}@@ under addition, which makes sense since it's
+the least significant non-zero digit and since none of the higher order terms in
+the addition law affect it.
+
+We know how to solve the discrete-log problem in @@\FF{p}^+@@ --- it's just
+inversion modulo @@p@@. So, we can take advantage of the fact noted in the last
+paragraph to construct an attack. Of course, we have to be mindful of the fact
+@@\theta@@ is only defined for points that reduce to @@\ecid@@ modulo @@p@@, but
+we can work around that.
+
+---
 
 
 
