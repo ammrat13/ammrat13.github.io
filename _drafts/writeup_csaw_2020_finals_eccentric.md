@@ -365,7 +365,8 @@ attack. It's breifly discussed in Leprevost's [paper][3], but it's covered in
 much more detail in Chapter IV.1 of Silverman's [book][4].
 
 Suppose we have some elliptic curve @@E\[\QQ_p\]@@ with domain parameters @@a@@
-and @@b@@. Silverman makes the following change of variables:
+and @@b@@. Silverman makes the following change of variables (which I denote
+@@\theta@@):
 %%
 \begin{align\*}
 z &= -\frac{x}{y} \nl
@@ -384,21 +385,71 @@ terms of @@z@@ and @@w@@ as
 then recursively substitutes it into itself over and over again! This process
 "converges" to a power series in @@z@@. This seems surprising at first, but it's
 actually quite easy to see this. Note that, every time we recursively substitute
-@@w@@, the lowest degree of a term containing @@w@@ increases by at least one.
-That is, every substitution "determines" at least one more coefficient in the
-power series. Another way to see this, and the way Silverman presents it, is
-through Hensel's lemma. We repeatedly lift modulo powers of @@z@@.
+@@w@@, the degree of any term containing @@w@@ increases by at least one. That
+is, every substitution "determines" at least one more coefficient in the power
+series. Another way to see this, and the way Silverman presents it, is through
+Hensel's lemma. We repeatedly lift modulo powers of @@z@@.
 
 So we have this power series
 %% w = \sum_{i=0}^\infty A_i z^{3+i} %%
 which describes some of the points on our original elliptic curve @@E@@. It
 doesn't describe all of them, though --- only those whose value of @@z@@ causes
-this power series to converge. Convergence over @@\RR@@ is tricky, and that over
-@@\FF{p}@@ is impossible, but not so over @@\QQ_p@@. Under the @@p@@-adic
-metric, this power series converges when @@\degr{z}\geq1@@. That happens when
-@@\degr{x}>\degr{y}@@, which is true only for points with fractional
-coordinates. That is, this series converges for and only for points
+this series to converge. Convergence over @@\RR@@ is tricky, and that over
+@@\FF{p}@@ is impossible, but it's fairly simple to show over @@\QQ_p@@. Under
+the @@p@@-adic metric, this power series converges when @@\degr{z}\geq1@@. That
+happens when @@\degr{x}>\degr{y}@@, which is true if and only if both @@x@@ and
+@@y@@ are fractional. That is, this series converges for and only for points
 @@P\in\kernl{\rho}@@.
+
+So we can think of some points on @@E@@ in terms of their @@z@@-value, from
+which we can derive @@w@@. But that doesn't really help us unless we can do math
+with @@z@@ alone. Luckily, our choice of @@\theta@@ makes point arithmetic easy.
+Ultimately, this is because it maps lines to lines, with vertical lines mapping
+to lines through the origin. Thus, three points that are colinear in
+@@x@@-@@y@@-space will be colinear in @@z@@-@@w@@-space, and vice-versa since
+@@\theta@@ is invertible.
+
+Because of this line-preservation property, we can derive the formulas for point
+addition in terms of @@z@@ alone. Recall that we define three colinear points
+@@P@@,@@Q@@,@@R@@ as summing to @@\ecid@@. Suppose we know @@P@@ and @@Q@@ and
+wish to find @@R@@. We'll do so much the same way we would for any other
+elliptic curve. We start by finding the line between @@P@@ and @@Q@@ --- the one
+with slope
+%%
+\begin{align\*}
+\lambda &= \frac{w_P - w_Q}{z_P - z_Q} \nl
+&= \sum_{i=0}^\infty A_i \frac{z_P^{3+i} - z_Q^{3+i}}{z_P - z_Q} \nl
+&= \sum_{i=0}^\infty \left( A_i \sum_{j=0}^{i+2} z_P^j z_Q^{i+2-j} \right)
+\end{align\*}
+%%
+and @@w@@-intercept
+%% \nu = w_P - \lambda z_P = w_Q - \lambda z_Q. %%
+We then substitute @@w=\lambda z + \nu@@ and solve for @@z_R@@ in
+%% c(z-z_P)(z-z_Q)(z-z_R) = z^3 + azw^2 + bw^3 - w. %%
+Expanding then equating the cubic and quadratic coefficients gives
+%%
+\begin{align\*}
+c &= 1 + a\lambda^2 + b\lambda^3 \nl
+-c\cdot(z_P + z_Q + z_R) &= 2a\lambda\nu + 3b\lambda^2\nu,
+\end{align\*}
+%%
+from which we get
+%% z_R = -z_P - z_Q - \frac{2a\lambda\nu+3b\lambda^2\nu}{1+a\lambda^2+b\lambda^3}. %%
+However, this isn't the formula for point addition. We defined @@P+Q+R@@ to
+equal @@\ecid@@ since they're colinear. Thus, @@P+Q=-R@@. Inverting a point in
+@@x@@-@@y@@-space corresponds to negating the @@y@@-coordinate. So in
+@@z@@-@@w@@-space, we invert a point by negating both its @@z@@- and
+@@w@@-values. Thus
+%% z_{P+Q} = z_P + z_Q + \frac{2a\lambda\nu+3b\lambda^2\nu}{1+a\lambda^2+b\lambda^3}. %%
+
+That fraction looks nasty to work with. Thankfully, we don't need to. Note that
+@@\lambda@@ only contains terms of degree two or higher, and the same is thus
+true for the numerator in the last term. The denominator is a unit power series
+--- a formal power series with a nonzero constant term. So, it's invertible as a
+power series in @@z_P@@ and @@z_Q@@, and more importantly won't change the
+degree of the numerator. Therefore
+%% z_{P+Q} = z_P + z_Q + \BigO{z^2}, %%
+which simplifies things greatly.
 
 
 
