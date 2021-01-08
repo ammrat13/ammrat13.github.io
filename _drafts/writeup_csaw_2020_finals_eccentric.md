@@ -20,7 +20,7 @@ libs: [mathjax]
     @@\newcommand{\modfunc}[2]{\text{mod}(#1,#2)}@@
 </div>
 
-I was a finalist for [CSAW CTF 2020](https://csaw.io). I was on the Mad H@tter's
+I was a finalist for [CSAW CTF 2020](https://csaw.io). I was on the Mad H@tters'
 team, and I swept the cryptography challenges. They were all interesting, and I
 felt I'd write down some of my thoughts on them. Curiously, the question ranked
 the easiest was the one I found most difficult. So, I'm devoting this entire
@@ -36,7 +36,7 @@ post to it.
 > * [`handout.txt`](/assets/2021/01/15/challenge/handout.txt)
 
 The handout specifies a finite field of prime order @@\FF{p}@@, as well as an
-elliptic curve @@E@@ over it with the form @@y^2 = x^3 + ax + b@@. It also gives
+elliptic curve @@E@@ over it of the form @@y^2 = x^3 + ax + b@@. It also gives
 us two points on the curve @@P = dG@@, and asks us to solve for the integer
 @@d@@.
 
@@ -64,9 +64,8 @@ re-reading to gain some deeper understanding of it.
 
 ---
 
-The first piece of the attack has to do with the @@p@@-adic numbers. I've
-thought a lot about how to briefly summarize them, and what follows is my best
-attempt.
+The first piece of the attack has to do with @@p@@-adic numbers. I've thought a
+lot about how to briefly summarize them, and what follows is my best attempt.
 
 Consider the numbers @@1=\hex{0001}@@ and @@257=\hex{0101}@@. They're very far
 apart in the conventional sense, but in another sense they're very close
@@ -84,17 +83,17 @@ closer to @@4097@@ than it is to @@257@@, and @@257@@ is just as far away from
 What I've just described is the @@2@@-adic metric. Starting from the *least*
 significant digit, how many bits of "precision" do we need to distinguish two
 numbers? With this metric, we also get the @@2@@-adic integers @@\ZZ_2@@, which
-are all the numbers that can be expressed as a sum of *non-negative* integer
-powers of two, or all the "binary" integers. Even though @@\ZZ_2@@ contains many
-of the expected values --- all natural numbers for instance, it also contains
-many unexpected numbers. For example, @@-1\in\ZZ_2@@. How? Note that in two's
+are all the numbers that can be expressed as a sum of *non-negative* powers of
+two, or all the "binary" integers. Even though @@\ZZ_2@@ contains many of the
+expected values --- all natural numbers for instance, it also contains many
+unexpected numbers. For example, @@-1\in\ZZ_2@@. How? Note that in two's
 complement, we can express @@-1@@ as all ones. If we take ones stretching all
 the way to the left: @@\rep{1}=\cdots111@@, we should get a number
 indistinguishable from negative one no matter how many bits of precision we use.
 Thus @@-1=\rep{1}@@ under the @@2@@-adic metric. Incidentally, this was the
 subject of a [3Blue1Brown video](https://youtu.be/XFDM1ip5HdU). In fact, all the
 negative numbers are present, and the trick for negation --- flipping the bits
-and adding one --- works as well. Moreover, we get some fractions like
+and adding one --- works as well. We even get some fractions like
 @@\frac{1}{3}=\rep{01}1@@.
 
 Sadly, we don't get everything. We don't get @@\frac{1}{2}@@, @@\frac{1}{4}@@,
@@ -111,9 +110,9 @@ I've glossed over a lot of details here. For instance, the distance between two
 numbers is not just how many bits you need to distinguish them @@b@@, but rather
 @@p^{-b}@@. Also, I didn't explain in detail how computations work. Addition is
 done term-by-term with carries, and we know to negate and thus subtract.
-However, multiplication is a bit more complicated, requiring an infinite FOIL as
-with power series, and division is reverse-engineering multiplication again like
-power series.
+However, multiplication is a bit more complicated, needing an infinite FOIL as
+with power series, and division requires reverse-engineering multiplication
+again like power series.
 
 I also still need to give some definitions:
 
@@ -123,32 +122,32 @@ I also still need to give some definitions:
 > negative two.
 
 > A *@@p@@-adic unit* is a @@p@@-adic number with degree zero. Alternatively,
-> it's a member of @@\ZZ_p@@ *not* congruent to zero modulo @@p@@. For example
-> in @@\QQ_5@@, @@3@@ and @@-1@@ are units while @@-5@@ and @@\frac{1}{10}@@ are
+> it's a member of @@\ZZ_p@@ not congruent to zero modulo @@p@@. For example in
+> @@\QQ_5@@, @@3@@ and @@-1@@ are units while @@-5@@ and @@\frac{1}{10}@@ are
 > not.
 
 > Unofficially, a *@@p@@-adic fraction* is a member of @@\QQ_p\setminus\ZZ_p@@.
 > That is, a @@p@@-adic rational which is not an integer. For instance in
 > @@\QQ_5@@, @@\frac{1}{5}@@ is a fraction while @@\frac{1}{4}@@ is not.
 
-But, I think the takeaways from this section are two different ways of thinking
-about the @@p@@-adics. First, they can be seen as formal power series in the
-"variable" @@p@@. Arithmetic is defined in exactly the same way, with carries
-being the only exception. Just as two power series are "fairly close" if they
-differ by @@\BigO{x^{100}}@@, two @@p@@-adics are "farily close" if they require
-@@100@@ digits of precision to distinguish. Many concepts, like degrees and
-units, carry over as well. Because of this similarity, the @@p@@-adics actually
-play really nicely with formal power series, as we'll see later.
+But, I think the main takeaways from this section are two different ways of
+thinking about the @@p@@-adics. First, they can be seen as formal power series
+in the "variable" @@p@@. Arithmetic is defined in exactly the same way, with
+carries being the only exception. Just as two power series are "fairly close" if
+they differ by @@\BigO{x^{100}}@@, two @@p@@-adics are "farily close" if they
+require @@100@@ digits of precision to distinguish. Many concepts, like degrees
+and units, carry over as well. Because of this similarity, the @@p@@-adics
+actually play really nicely with formal power series, as we'll see later.
 
-Second and more importantly, @@\ZZ_p@@ can also be thought of as
-@@\ZZ/p^\infty\ZZ@@, whatever that's supposed to mean. It contains all the rings
-@@\ZZ/p^k\ZZ@@, each embedded in the last @@k@@ digits, so @@\ZZ_p@@ can easily
-be used to reason about them. For example, division over @@\ZZ_p@@ (when it
-works) looks like inversion modulo @@p@@ when looking at the ones place. In
-addition, working over @@\QQ_p@@ often seems to be nicer than working over
-finite fields. Thus, one might solve a problem in @@\FF{p}@@ by "lifting" it to
-@@\QQ_p@@, solving it there, then "reducing" by taking the result modulo @@p@@
---- by looking at the ones place in the expansion.
+Second and more importantly, @@\ZZ_p@@ can be thought of as @@\ZZ/p^\infty\ZZ@@,
+whatever that's supposed to mean. It contains all the rings @@\ZZ/p^k\ZZ@@, each
+embedded in the last @@k@@ digits, so @@\ZZ_p@@ can easily be used to reason
+about them. For example, division over @@\ZZ_p@@ (when it works) looks like
+inversion modulo @@p@@ when looking at the ones digit. In addition, working over
+@@\QQ_p@@ often seems to be nicer than working over finite fields. Thus, one
+might solve a problem in @@\FF{p}@@ by "lifting" it to @@\QQ_p@@, solving it
+there, then "reducing" by taking the result modulo @@p@@ --- by looking at the
+ones place in the expansion.
 
 ---
 
@@ -179,19 +178,21 @@ zero while the denominator would have degree at least one. The results for
 @@\lambda@@, @@x@@, and @@y@@ would be fractional, so the sum would map to
 @@\ecid@@, as expected.
 
-Here come the details. Feel free to skip to the last paragraph of this section
-if you don't care about them. Otherwise, consider the trickier case when both
+Now for the details. Feel free to skip to the last paragraph of this section if
+you don't care about them. Otherwise, consider the trickier case when both
 points @@P,Q\notin\kernl{\rho}@@ share an @@\bar{x}@@ and a @@\bar{y}@@. We'd
-like to show that the resulting @@\lambda@@ is congruent to that of
-point-doubling modulo @@p@@. To do this, we'll assume @@x_P-x_Q=p^k\chin{x}@@
-and similarly that @@y_P-y_Q=p^k\chin{y}@@, where @@k\geq1@@ and @@\chin{x}@@ is
-a unit but @@\chin{y}@@ may not be. However, we do know @@\chin{y}@@ has degree
-at least @@-k+1@@ since @@y_P-y_Q@@ has a zero in its ones place. Now we can
-solve for @@\chin{y}@@ in
+like to show that the resulting @@\lambda@@ is congruent modulo @@p@@ to that of
+point-doubling. To do this, we'll assume @@x_P-x_Q=p^k\chin{x}@@ and similarly
+that @@y_P-y_Q=p^k\chin{y}@@, where @@\chin{x}@@ is a unit but @@\chin{y}@@ may
+not be. However, we do know @@\chin{y}@@ has degree at least @@-k+1@@ since
+@@y_P-y_Q@@ has a zero in its ones place. Now we can solve for @@\chin{y}@@ in
 %%
-\left(y_Q+p^k\chin{y}\right)^2 = \left(x_Q+p^k\chin{x}\right)^3 + a\left(x_Q+p^k\chin{x}\right) + b.
+\begin{align\*}
+\left(y_Q+p^k\chin{y}\right)^2 &= \left(x_Q+p^k\chin{x}\right)^3 + a\left(x_Q+p^k\chin{x}\right) + b \nl
+y_Q^2 + 2y_Qp^k\chin{y} + p^{2k}\chin{y}^2 &= x_Q^3 + 3x_Q^2p^k\chin{x} + 3x_Qp^{2k}\chin{x}^2 + p^{3k}\chin{x}^3 + ax_Q + ap^k\chin{x} + b.
+\end{align\*}
 %%
-That looks bad, until we realize we can manipulate it to say
+That looks bad, until we realize we can simplify it as
 %%
 \begin{align\*}
 2y_Qp^k\chin{y} &= 3x_Q^2p^k\chin{x} + ap^k\chin{x} + \BigO{p^{k+1}} \nl
@@ -199,7 +200,7 @@ That looks bad, until we realize we can manipulate it to say
 \chin{y} &= \frac{3x_Q^2 + a}{2y_Q}\chin{x} + \BigO{p}.
 \end{align\*}
 %%
-Finally note that
+Finally see that
 %%
 \begin{align\*}
 \lambda &= \frac{p^k\chin{y}}{p^k\chin{x}} = \frac{\chin{y}}{\chin{x}} \nl
@@ -218,10 +219,9 @@ However, using Case 1 and that @@\overline{-J}=-\bar{J}@@ (for all @@J@@ in
 fact) we get @@\overline{P-J}=\bar{P}@@ which is not the identity, a
 contradiction.
 
-As for Case 1, let @@\bar{I}=\ecid@@ without loss of generality and consider
-@@P+I@@. We just need to verify that @@x_{P+I}\equiv x_P\modulo{p}@@ and the
-same for @@y@@. To do this, we'll first write down the formula for the
-@@x@@-coordinate in point addition:
+As for Case 1, let @@\bar{I}=\ecid@@ and consider @@P+I@@. We just need to
+verify that @@x_{P+I}\equiv x_P\modulo{p}@@ and the same for @@y@@. To do this,
+we'll first write down the formula for the @@x@@-coordinate in point addition:
 %%
 \begin{align\*}
 x_{P+I} &= \lambda^2 - x_I - x_P \nl
@@ -234,7 +234,7 @@ Again, that looks bad, until we make the following observations: that
 true by the assumption @@P\notin\kernl{\rho}@@. The latter follows directly from
 the defining equation of the elliptic curve, combined with the fact @@x_I@@ and
 @@y_I@@ are fractional. By considering these degrees, and simplifying @@y_I^2@@,
-a lot of the expression vanishes. Letting @@\chin{d}=\degr{y_I}-\degr{x_I}@@, we
+a lot of the expression vanishes. Letting @@\chin{d}=\degr{x_I}-\degr{y_I}@@, we
 get
 %%
 \begin{align\*}
@@ -243,7 +243,7 @@ x_{P+I} &= \frac{-2y_Py_I + 2x_Px_I^2}{x_I^2} - x_P + \BigO{p^{\chin{d}+1}} \nl
 &= x_P + \BigO{p}.
 \end{align\*}
 %%
-So the @@x@@-coordinate is correct. What about the @@y@@-coordinate. Again,
+So the @@x@@-coordinate is correct. What about the @@y@@-coordinate? Again,
 we'll write down the formula:
 %%
 \begin{align\*}
@@ -252,7 +252,7 @@ y_{P+I} &= \lambda\cdot(x_P - x_{P+I}) - y_P \nl
 &= \frac{2y_P^2y_I-2y_Py_I^2}{x_Px_I^2-x_I^3} - y_P + \lambda\BigO{p^{\chin{d}+1}}
 \end{align\*}
 %%
-Since @@\degr{\lambda}@@ is just @@\chin{d}@@, we get that
+Since @@\degr{\lambda}@@ is just @@-\chin{d}@@, we get that
 @@\lambda\BigO{p^{\chin{d}+1}}@@ simplifies to @@\BigO{p}@@. Thus
 %%
 \begin{align\*}
@@ -283,32 +283,32 @@ infinitely many @@P^\*@@ and @@E^\*@@ that'll work --- we just need to find one.
 How?
 
 [Hensel's lifting lemma](https://wikipedia.org/wiki/Hensel%27s_lemma) makes this
-very easy. Novotney's [paper][2] covers it too. Here's a very roundabout
-explanation of what the lemma says, which will hopefully provide some intuition
-as to why we're using it. Suppose we have some polynomial @@f@@ and we'd like to
-find one of its roots @@n\in\ZZ_p@@. *A priori* we won't know all the digits of
-@@n@@, but suppose we know the last @@k@@ digits. Then, Hensel's lemma allows us
-to find the next digit in the expansion, so that we now know the last @@k+1@@
+very easy. Novotney's [paper][2] covers it. Here's a very roundabout explanation
+of what the lemma says, which will hopefully provide some intuition as to why
+we're using it. Suppose we have some polynomial @@f@@ and we'd like to find one
+of its roots @@n\in\ZZ_p@@. *A priori* we won't know all the digits of @@n@@,
+but suppose we know the last @@k@@ digits. Then, Hensel's lemma allows us to
+find the next digit in the expansion, so that we now know the last @@k+1@@
 digits of @@n@@. This process can then be repeated indefinitely --- we can find
 the last @@k+2@@ digits, then @@k+3@@, *ad infinitum*.
 
 How's this useful? Well, by moving everything to the LHS, we can see our
 original elliptic curve @@E\[\FF{p}\]@@ as a polynomial @@y^2-x^3-ax-b@@ for
 which we know a root @@P=(x,y)@@. Remember that @@\FF{p}@@ is just the ones
-place of @@\ZZ_p@@, so we can apply Hensel's lifting lemma here for @@k=1@@. We
-can choose one of the variables to treat as a constant, say @@x@@, then
-repeatedly lift the other variable to find a root of this polynomial in
+place of @@\ZZ_p@@, so we can apply Hensel's lifting lemma with @@k=1@@. We can
+choose one of the variables to treat as a constant, say @@x@@, then repeatedly
+lift the other variable to find a root of this polynomial in
 @@\ZZ_p\subset\QQ_p@@, and thus a point @@P^\*\in E^\*\[\QQ_p\]@@.
 
 That's the idea, but there are some details to be mindful of. First, I used
 @@a@@ and @@b@@ as the coefficients in the polynomial above. That usually works,
-but will cause Smart's attack to fail about @@\frac{1}{p}@@-th of the time. If
-the lifted curve defined by @@a@@ and @@b@@ over @@\QQ_p@@ happens to be
-isomorphic to that over @@\FF{p}@@, Smart's attack will fail. He actually notes
-this in his original [paper][1], and this
+but it will cause Smart's attack to fail about @@\frac{1}{p}@@-th of the time.
+It fails when the lifted curve, defined by @@a@@ and @@b@@ over @@\QQ_p@@,
+happens to be isomorphic to that over @@\FF{p}@@. Smart actually notes this in
+his [paper][1], and this
 [StackExchange thread](https://crypto.stackexchange.com/a/70508) provides a
 solution for these "canonical lifts". Note that @@E^\*@@ isn't unique --- we can
-lift the original curve @@E@@ in infinitely many ways. Before trying to lift
+lift the original curve @@E@@ in infinitely many ways. So, before trying to lift
 @@P@@ to @@P^\*@@, just add a random multiple of @@p@@ to both @@a@@ and @@b@@.
 Now, @@E^\*@@ will be defined by these new values @@a^\*@@ and @@b^\*@@, but
 will still reduce to our original curve @@E@@ when taken modulo @@p@@.
@@ -332,7 +332,7 @@ r\modulo{p^k}@@. The last @@k@@ digits are set once they're "discovered", and we
 never go back and change them.
 
 This formulation is much easier to work with. Now we just need to solve for
-@@s@@. Though, we do need one more trick. We start by
+@@s@@! Though, we do need one more trick. We start by
 [Taylor-expanding](https://en.wikipedia.org/wiki/Taylor_series) @@f@@ about
 @@r@@. This is why we require @@f@@ to be a polynomial: they have finite
 Taylor series. So we expand
@@ -343,12 +343,12 @@ f(s) &\equiv \sum_{i=0}^N \frac{f^{(i)}(r)}{i!} (s-r)^i &\mod p^{k+1} &\nl
 \end{align\*}
 %%
 Since we require @@s-r\equiv0\modulo{p^k}@@, all the terms in the sum will be
-divisible by @@p^{2k}@@ and will thus vanish. We also require that
+divisible by @@p^{2k}@@ and thus vanish. We also require that
 @@f(s)\equiv0\modulo{p^{k+1}}@@, eliminating the RHS. Now we solve
 %%
 \begin{align\*}
 0 &\equiv f(r) + f^\prime(r)\cdot(s-r) &\mod p^{k+1} &\nl
-s &\equiv r + f(r) \cdot f^\prime(r)^{-1} &\mod p^{k+1} &.
+s &\equiv r - f(r) \cdot f^\prime(r)^{-1} &\mod p^{k+1} &.
 \end{align\*}
 %%
 
@@ -381,24 +381,30 @@ saying.
 
 What he does next is even stranger. He first rewrites the equation of @@E@@ in
 terms of @@z@@ and @@w@@ as
-%% w = z^3 + azw^2 + bw^3, %%
+%%
+w = z^3 + azw^2 + bw^3,
+%%
 then recursively substitutes it into itself over and over again! This process
 "converges" to a power series in @@z@@. This seems surprising at first, but it's
 actually quite easy to see this. Note that, every time we recursively substitute
-@@w@@, the degree of any term containing @@w@@ increases by at least one. That
-is, every substitution "determines" at least one more coefficient in the power
-series. Another way to see this, and the way Silverman presents it, is through
-Hensel's lemma. We repeatedly lift modulo powers of @@z@@.
+@@w@@, the minimum possible degree of any term containing a @@w@@ increases by
+at least one. That is, every substitution "determines" at least one more
+coefficient in the power series. Another way to see this, and the way Silverman
+presents it, is through Hensel's lemma. We repeatedly lift modulo powers of
+@@z@@.
 
 So we have this power series
-%% w = \sum_{i=0}^\infty A_i z^{3+i} %%
+%%
+w = \sum_{i=0}^\infty A_i z^{3+i}
+%%
 which describes some of the points on our original elliptic curve @@E@@. It
 doesn't describe all of them, though --- only those whose value of @@z@@ causes
 this series to converge. Convergence over @@\RR@@ is tricky, and that over
 @@\FF{p}@@ is impossible, but it's fairly simple to show over @@\QQ_p@@. Under
 the @@p@@-adic metric, this power series converges when @@\degr{z}\geq1@@. That
 happens when @@\degr{x}>\degr{y}@@, which is true if and only if both @@x@@ and
-@@y@@ are fractional. That is, this series converges for and only for points
+@@y@@ are fractional. That is, this series converges for and only for points in
+the kernel of the reduction homomorphism described two sections ago:
 @@P\in\kernl{\rho}@@.
 
 Thus we can think of some of the points on @@E@@ in terms of their @@z@@-value,
@@ -419,13 +425,18 @@ with slope
 \begin{align\*}
 \lambda &= \frac{w_P - w_Q}{z_P - z_Q} \nl
 &= \sum_{i=0}^\infty A_i \frac{z_P^{3+i} - z_Q^{3+i}}{z_P - z_Q} \nl
-&= \sum_{i=0}^\infty \left( A_i \sum_{j=0}^{i+2} z_P^j z_Q^{i+2-j} \right)
+&= \sum_{i=0}^\infty \left( A_i \sum_{j=0}^{i+2} z_P^j z_Q^{i+2-j} \right) \nl
+&= \BigO{z^2}
 \end{align\*}
 %%
 and @@w@@-intercept
-%% \nu = w_P - \lambda z_P = w_Q - \lambda z_Q. %%
+%%
+\nu = w_P - \lambda z_P = w_Q - \lambda z_Q.
+%%
 We then substitute @@w=\lambda z + \nu@@ and solve for @@z_R@@ in
-%% c(z-z_P)(z-z_Q)(z-z_R) = z^3 + azw^2 + bw^3 - w. %%
+%%
+c(z-z_P)(z-z_Q)(z-z_R) = z^3 + azw^2 + bw^3 - w.
+%%
 Expanding then equating the cubic and quadratic coefficients gives
 %%
 \begin{align\*}
@@ -434,20 +445,26 @@ c &= 1 + a\lambda^2 + b\lambda^3 \nl
 \end{align\*}
 %%
 from which we get
-%% z_R = -z_P - z_Q - \frac{2a\lambda\nu+3b\lambda^2\nu}{1+a\lambda^2+b\lambda^3}. %%
+%%
+z_R = -z_P - z_Q - \frac{2a\lambda\nu+3b\lambda^2\nu}{1+a\lambda^2+b\lambda^3}.
+%%
 However, this isn't the formula for point addition. We defined @@P+Q+R@@ to
 equal @@\ecid@@ since they're colinear. Thus, @@P+Q=-R@@. We invert a point in
 @@x@@-@@y@@-space by negating its @@y@@-coordinate. So in @@z@@-@@w@@-space, we
 invert a point by negating both its @@z@@- and @@w@@-values. Thus
-%% z_{P+Q} = z_P + z_Q + \frac{2a\lambda\nu+3b\lambda^2\nu}{1+a\lambda^2+b\lambda^3}. %%
+%%
+z_{P+Q} = z_P + z_Q + \frac{2a\lambda\nu+3b\lambda^2\nu}{1+a\lambda^2+b\lambda^3}.
+%%
 
 That fraction looks nasty to work with. Thankfully, we don't need to. Note that
 @@\lambda@@ only contains terms of degree two or higher, and the same is thus
 true for the numerator in that last term. The denominator is a unit power series
 --- a formal power series with a nonzero constant term. So, it's invertible as a
-power series in @@z_P@@ and @@z_Q@@, and more importantly won't change the
-degree of the numerator. Therefore
-%% z_{P+Q} = z_P + z_Q + \BigO{z^2}, %%
+power series in @@z_P@@ and @@z_Q@@, and more importantly it won't change the
+degree of the numerator after division. Therefore
+%%
+z_{P+Q} = z_P + z_Q + \BigO{z^2},
+%%
 which simplifies things greatly.
 
 So we have this very simple addition law when we view points in @@E\[\QQ_p\]@@
@@ -471,32 +488,38 @@ we can work around that.
 ---
 
 After covering all that background material, we're finally ready to see Smart's
-attack. Let's look back to the CTF problem that started this whole post. Suppose
-we have some elliptic curve @@E\[\FF{p}\]@@, defined by @@a@@ and @@b@@, with
-order @@\\#E=p@@. Furthermore, we're given two points on the curve related by
+attack. Let's look back to the CTF problem that started this whole post. We have
+some elliptic curve @@E\[\FF{p}\]@@, defined by @@a@@ and @@b@@, with order
+@@\\#E=p@@. Furthermore, we're given two points on the curve related by
 @@P-dG=\ecid@@, and we're asked to solve for @@d@@.
 
 Smart's attack starts by lifting @@E@@ and its points to a curve over @@\QQ_p@@.
-We get as a result that
-%% P^\* - dG^\* \in \kernl{\rho} %%
+We get that
+%%
+P^\* - dG^\* \in \kernl{\rho}
+%%
 since reduction modulo @@p@@ is a group homomorphism. Now, we'd like to use the
 mapping @@\theta@@, described in the last section, to exploit that simple
-addition law. We know that
-%% \theta(P^\* - dG^\*) = k p + \BigO{p^2}. %%
-We'd like to say something along the lines of
-%% \theta(P^\*) - d\cdot\theta(G^\*) \equiv k p \mod p^2, %%
+addition law. We know
+%%
+\theta(P^\* - dG^\*) = k p + \BigO{p^2},
+%%
+and we'd like to say something along the lines of
+%%
+\theta(P^\*) - d\cdot\theta(G^\*) \equiv k p \mod p^2,
+%%
 since from there, solving for @@d@@ is straightforward. But, we run into two
 issues. First, @@P^\*,G^\*\notin\kernl{\rho}@@, so passing them to @@\theta@@ is
-ill-defined. Second, we don't know what @@k@@ is, so solving in terms of it is
-kind of useless.
+ill-defined. Second, since we don't know what @@d@@ is, we don't know @@k@@
+either, and solving in terms of it is kind of useless.
 
-To solve both of these problems at once, we require @@\\#E=p@@. Why? We're going
+To fix both of these problems at once, we require @@\\#E=p@@. Why? We're going
 to multiply both sides of the equation by @@p@@. On the LHS, note that
 @@pG=\ecid@@, so @@pG^\*\in\kernl{\rho}@@ and taking @@\theta@@ of it is
 well-defined. Likewise for @@P@@. Meanwhile, multiplying the RHS by @@p@@ will
-cause it to vanish modulo @@p^2@@. We can see this either as multiplication by
+cause it to vanish modulo @@p^2@@. We can see this, either as multiplication by
 @@p@@ corresponding to a "shift" in a number's @@p@@-adic expansion, or as the
-@@p@@s digit of the RHS operating as in @@\FF{p}^+@@.
+@@p@@s digit of the RHS operating in @@\FF{p}^+@@.
 
 Thus we get
 %%
@@ -506,13 +529,15 @@ p \cdot \theta( P^\* - dG^\* ) &= k p^2 + \BigO{p^3} \nl
 \theta(pP^\*) - d \cdot \theta(pG^\*) &= \BigO{p^2},
 \end{align\*}
 %%
-from where it's easy to solve for @@d@@ as
-%% d = \frac{\theta(pP^\*)}{\theta(pG^\*)} + \BigO{p}. %%
+from which it's easy to solve for @@d@@ as
+%%
+d = \frac{\theta(pP^\*)}{\theta(pG^\*)} + \BigO{p}.
+%%
 Of course, we only care about @@d@@ modulo @@\\#E@@, so we can drop the
 @@\BigO{p}@@ term and simply look at the ones place of the result.
 
 This method allows us to find @@d@@ for the curve given in `handout.txt`. We can
-give it to the challenge server to get the flag:
+give it and the challenge server to get the flag:
 {% highlight plaintext %}
 flag{wh0_sa1d_e11ipt1c_curv3z_r_s3cur3??}
 {% endhighlight %}
@@ -522,10 +547,10 @@ flag{wh0_sa1d_e11ipt1c_curv3z_r_s3cur3??}
 ### Resources
 
 This post may or may not have helped you understand Smart's attack. Ultimately,
-there's no substitute for practice --- struggling through the material yourself.
-I've linked a few resources below, some which I've mirrored on my site in case
-the original link breaks. I found Koc's tutorial on @@p@@-adic arithmetic and
-Novotney's summary of Smart's attack particularly helpful.
+there's no substitute for practice --- for struggling through the material
+yourself. I've linked a few resources below, some which I've mirrored on my site
+in case the original link breaks. I found Koc's and Novotney's papers
+particularly helpful.
 * [Koc, C. K. (2002). A Tutorial on p-adic Arithmetic. *Electrical and Computer
   Engineering*, *Oregon State University*, *Corvallis*, *Oregon*, *97331*.
   `http://www.cryptocode.net/docs/r09.pdf`][5]
