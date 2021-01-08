@@ -1,6 +1,7 @@
 version: 2.1
 
 
+
 # This project uses both jekyll and npm
 # We'd like both orbs for this to work
 orbs:
@@ -8,16 +9,28 @@ orbs:
     node: circleci/node@4.1.0
 
 
-# We will only be running on docker
-# Define a name for it to prevent duplication
+
+# Define names for executors to prevent duplication
 executors:
-    docker-exec:
+
+    # Executor for the build-and-test job
+    # Has ruby, node, and browsers installed
+    build-and-test-exec:
         resource_class: small
         docker:
             - image: cimg/ruby:2.7-browsers
 
+    # Executor for the rebuild-master job
+    # We only need a minimal system since we just call Github
+    rebuild-master-exec:
+        resource_class: small
+        docker:
+            - image: cimg/base:stable
 
-# Different commands for the different "phases"
+
+
+# Commands for all our logically separate tasks
+# Most of them pertain to building and testing
 commands:
 
     # Do the setup steps
@@ -55,22 +68,55 @@ commands:
         steps:
             - run: npx percy snapshot ./_site
 
+    # Force a rebuild of the master branch on Github
+    # Use the API for this
+    rebuild-master:
+        description: Rebuilding and publishing the master branch
+        steps:
+            - run: |
+                curl \
+                    https://api.github.com/repos/ammrat13/ammrat13.github.io/pages/builds \
+                    --request POST \
+                    --user "ammrat13:${GITHUB_PERSONAL_ACCESS_TOKEN}" \
+                    --header "Accept: application/vnd.github.v3+json"
 
 
-# Job to do the build and test it
+
 jobs:
+
+    # Job to do the build and test it
     build-and-test:
-        executor: docker-exec
+        executor: build-and-test-exec
         steps:
             - setup
             - build
             - test-links
             - test-visual
 
+    # Job to force a rebuild of master
+    rebuild-master:
+        executor: rebuild-master-exec
+        steps:
+            - rebuild-master
 
-# Workflow to call the job
-# Don't do it on master
+
+
+# Workflows to call the jobs
 workflows:
+
+    # Defaults for building and testing
     build-and-test:
         jobs:
             - build-and-test
+
+    # Run rebuild-master every day
+    rebuild-master:
+        jobs:
+            - rebuild-master
+        triggers:
+            - schedule:
+                cron: "0 0 * * *"
+                filters:
+                    branches:
+                        only:
+                            - master
