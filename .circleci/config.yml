@@ -36,7 +36,7 @@ commands:
     build:
         description: Building the site
         steps:
-            - run: bundle exec jekyll build
+            - run: bundle exec jekyll build --future
 
     # Test that all the links work as expected
     # Ignore some problematic sites
