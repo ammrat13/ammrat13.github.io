@@ -41,11 +41,11 @@ us two points on the curve @@P = dG@@, and asks us to solve for the integer
 @@d@@.
 
 This is a [discrete-log problem](https://wikipedia.org/wiki/Discrete_logarithm),
-which is hard to solve in general. In CTFs, however, there is generally some
+which is hard to solve in general. In CTFs, however, there's generally some
 additional structure in place to make the problem easier. For a challenge like
 this, they might use a weak elliptic curve --- a curve in some class for which
-there are known attacks. The challenge is often just finding and implementing
-that exploit, hence the low point value.
+there are known attacks. The challenge is often just finding the exploit, hence
+the low point value.
 
 Indeed, that is the case here. Plugging @@E@@ into SageMath gives that the
 number of points on the elliptic curve @@\\#E@@ is equal to @@p@@.
@@ -57,8 +57,8 @@ Googling attacks on this class of curves.
 
 I found a [StackExchange thread](https://crypto.stackexchange.com/q/71525) which
 linked to [a paper][2] by Novotney surveying weak elliptic curves. It had some
-SageMath code in the back implementing Smart's attack. During the competition, I
-just copied the program, and it worked. But, I didn't understand how. The math
+SageMath code at the back implementing Smart's attack. During the competition, I
+just copied the program, and it worked. But I didn't understand how. The math
 is actually pretty involved, and it took me about a month of reading and
 re-reading to gain some deeper understanding of it.
 
@@ -67,12 +67,11 @@ re-reading to gain some deeper understanding of it.
 The first piece of the attack has to do with @@p@@-adic numbers. I've thought a
 lot about how to briefly summarize them, and what follows is my best attempt.
 
-Consider the numbers @@1=\hex{0001}@@ and @@257=\hex{0101}@@. They're very far
-apart in the conventional sense, but in another sense they're very close
-together. So close, in fact, that an 8-bit computer has a hard time telling them
-apart. Recall that most arithmetic instructions on an @@n@@-bit computer are
-executed modulo @@2^n@@, and both of these numbers are congruent to @@1
-\modulo{256}@@.
+Consider the numbers @@1=\hex{0001}@@ and @@257=\hex{0101}@@. They're far apart
+in the conventional sense, but in another sense they're very close together. So
+close, in fact, that an 8-bit computer has a hard time telling them apart.
+Recall that most arithmetic instructions on an @@n@@-bit computer are executed
+modulo @@2^n@@, and both of these numbers are congruent to @@1\modulo{256}@@.
 
 In some sense, eight bits of "precision" isn't enough - you'd need nine to
 distinguish the two numbers. But it goes deeper. You'd need thirteen bits of
@@ -85,7 +84,7 @@ significant digit, how many bits of "precision" do we need to distinguish two
 numbers? With this metric, we also get the @@2@@-adic integers @@\ZZ_2@@, which
 are all the numbers that can be expressed as a sum of *non-negative* powers of
 two, or all the "binary" integers. Even though @@\ZZ_2@@ contains many of the
-expected values --- all natural numbers for instance, it also contains many
+expected values --- all the natural numbers for instance, it also contains many
 unexpected numbers. For example, @@-1\in\ZZ_2@@. How? Note that in two's
 complement, we can express @@-1@@ as all ones. If we take ones stretching all
 the way to the left: @@\rep{1}=\cdots111@@, we should get a number
@@ -144,10 +143,10 @@ whatever that's supposed to mean. It contains all the rings @@\ZZ/p^k\ZZ@@, each
 embedded in the last @@k@@ digits, so @@\ZZ_p@@ can easily be used to reason
 about them. For example, division over @@\ZZ_p@@ (when it works) looks like
 inversion modulo @@p@@ when looking at the ones digit. In addition, working over
-@@\QQ_p@@ often seems to be nicer than working over finite fields. Thus, one
-might solve a problem in @@\FF{p}@@ by "lifting" it to @@\QQ_p@@, solving it
-there, then "reducing" by taking the result modulo @@p@@ --- by looking at the
-ones place in the expansion.
+@@\QQ_p@@ is often nicer than working over finite fields. Thus, one might solve
+a problem in @@\FF{p}@@ by "lifting" it to @@\QQ_p@@, solving it there, then
+"reducing" by taking the result modulo @@p@@ --- by looking at the ones place in
+the expansion.
 
 ---
 
@@ -166,17 +165,17 @@ kernel of this reduction homomorphism.
 Oh by the way, this mapping @@\rho:E\[\QQ_p\]\to\bar{E}\[\FF{p}\]@@ is a group
 homomorphism --- a transformation which respects group addition. It doesn't take
 much effort to get the intuition behind this, but the details are somewhat
-hairy. We'll use the same notation for elliptic curve operations as
-[Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication).
-It's immediately clear that @@\rho@@ respects "most" point additions. As long as
-two points (that *don't* map to @@\ecid@@) don't share an @@\bar{x}@@, their
-calculation of @@\lambda@@ wouldn't care about this transformation, again since
-division in @@\QQ_p@@ when taken modulo @@p@@ looks exactly like division in
-@@\FF{p}@@. Even if they do share an @@\bar{x}@@, the computation still works if
-they have different @@\bar{y}@@. The numerator in @@\lambda@@ would have degree
-zero while the denominator would have degree at least one. The results for
-@@\lambda@@, @@x@@, and @@y@@ would be fractional, so the sum would map to
-@@\ecid@@, as expected.
+hairy. We'll use the same notation as
+[Wikipedia](https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication)
+for elliptic curve operations. It's immediately clear that @@\rho@@ respects
+"most" point additions. As long as two points (that *don't* map to @@\ecid@@)
+don't share an @@\bar{x}@@, their calculation of @@\lambda@@ wouldn't care about
+this transformation, again since division in @@\QQ_p@@ when taken modulo @@p@@
+looks exactly like division in @@\FF{p}@@. Even if they do share an @@\bar{x}@@,
+the computation still works if they have different @@\bar{y}@@. The numerator in
+@@\lambda@@ would have degree zero while the denominator would have degree at
+least one. The results for @@\lambda@@, @@x@@, and @@y@@ would be fractional, so
+the sum would map to @@\ecid@@, as expected.
 
 Now for the details. Feel free to skip to the last paragraph of this section if
 you don't care about them. Otherwise, consider the trickier case when both
@@ -269,8 +268,8 @@ transformation is quite nice. It's a group homomorphism, which is the most we
 can ask for. I guess it goes to show how closely @@\QQ_p@@ is related to
 @@\FF{p}@@. Sadly, we won't really use @@\rho@@ in Smart's attack. The most
 we'll see is that the points in @@\kernl{\rho}@@ are precisely those with
-fractional coordinates, which is true almost by definition. Instead, most of our
-time will be spent going the opposite direction. We'll lift our elliptic curve
+fractional coordinates, which is true almost by definition. Instead, we'll spend
+most of our time going the opposite direction. We'll lift our elliptic curve
 from @@\FF{p}@@ to @@\QQ_p@@ and do all our math there.
 
 ---
@@ -288,24 +287,24 @@ of what the lemma says, which will hopefully provide some intuition as to why
 we're using it. Suppose we have some polynomial @@f@@ and we'd like to find one
 of its roots @@n\in\ZZ_p@@. *A priori* we won't know all the digits of @@n@@,
 but suppose we know the last @@k@@ digits. Then, Hensel's lemma allows us to
-find the next digit in the expansion, so that we now know the last @@k+1@@
-digits of @@n@@. This process can then be repeated indefinitely --- we can find
-the last @@k+2@@ digits, then @@k+3@@, *ad infinitum*.
+find the next digit in the expansion, so that we know the last @@k+1@@ digits of
+@@n@@. This process can then be repeated indefinitely --- we can find the last
+@@k+2@@ digits, then @@k+3@@, *ad infinitum*.
 
 How's this useful? Well, by moving everything to the LHS, we can see our
-original elliptic curve @@E\[\FF{p}\]@@ as a polynomial @@y^2-x^3-ax-b@@ for
-which we know a root @@P=(x,y)@@. Remember that @@\FF{p}@@ is just the ones
+original elliptic curve @@E@@ as a polynomial @@y^2-x^3-ax-b@@ for which we know
+a root @@P=(x,y)@@ in @@\FF{p}@@. Remember that @@\FF{p}@@ is just the ones
 place of @@\ZZ_p@@, so we can apply Hensel's lifting lemma with @@k=1@@. We can
 choose one of the variables to treat as a constant, say @@x@@, then repeatedly
-lift the other variable to find a root of this polynomial in
-@@\ZZ_p\subset\QQ_p@@, and thus a point @@P^\*\in E^\*\[\QQ_p\]@@.
+lift the other to find a root of this polynomial in @@\ZZ_p\subset\QQ_p@@, and
+thus find a point @@P^\*\in E^\*\[\QQ_p\]@@.
 
 That's the idea, but there are some details to be mindful of. First, I used
 @@a@@ and @@b@@ as the coefficients in the polynomial above. That usually works,
-but it will cause Smart's attack to fail about @@\frac{1}{p}@@-th of the time.
-It fails when the lifted curve, defined by @@a@@ and @@b@@ over @@\QQ_p@@,
-happens to be isomorphic to that over @@\FF{p}@@. Smart actually notes this in
-his [paper][1], and this
+but will cause Smart's attack to fail about @@\frac{1}{p}@@-th of the time. It
+fails when the lifted curve, defined by @@a@@ and @@b@@ over @@\QQ_p@@, happens
+to be isomorphic to that over @@\FF{p}@@. Smart actually notes this in his
+[paper][1], and this
 [StackExchange thread](https://crypto.stackexchange.com/a/70508) provides a
 solution for these "canonical lifts". Note that @@E^\*@@ isn't unique --- we can
 lift the original curve @@E@@ in infinitely many ways. So, before trying to lift
@@ -323,19 +322,19 @@ constant instead, then @@f^\prime(x)=3x^2-a^\*@@ which can be a multiple of
 
 With that out of the way, let's look at the surprisingly simple proof. But
 first, we need to clarify what exactly we're trying to prove. The formulation
-from three paragraphs ago isn't exactly nice to work with, but we can make it
+from three paragraphs ago isn't exactly easy to work with, but we can make it
 so. Suppose we have the last @@k@@ digits of @@n@@, a root of @@f@@ in
 @@\ZZ_p@@. This is equivalent to saying we have a root @@r@@ of @@f@@ modulo
 @@p^k@@. We'd like to find the next digit in the expansion of @@n@@ --- some
 root @@s@@ of @@f@@ modulo @@p^{k+1}@@. Moreover, we require that @@s\equiv
 r\modulo{p^k}@@. The last @@k@@ digits are set once they're "discovered", and we
-never go back and change them.
+never go back to change them.
 
-This formulation is much easier to work with. Now we just need to solve for
-@@s@@! Though, we do need one more trick. We start by
+This formulation is much nicer. Now we just need to solve for @@s@@! Though, we
+do need one more trick. We start by
 [Taylor-expanding](https://en.wikipedia.org/wiki/Taylor_series) @@f@@ about
-@@r@@. This is why we require @@f@@ to be a polynomial: they have finite
-Taylor series. So we expand
+@@r@@. This is why we require @@f@@ to be a polynomial: they have finite Taylor
+series. So we expand
 %%
 \begin{align\*}
 f(s) &\equiv \sum_{i=0}^N \frac{f^{(i)}(r)}{i!} (s-r)^i &\mod p^{k+1} &\nl
@@ -416,7 +415,7 @@ in @@x@@-@@y@@-space will be colinear in @@z@@-@@w@@-space, and vice-versa since
 @@\theta@@ is invertible.
 
 Because of this line-preservation property, we can derive the formula for point
-addition in terms of @@z@@ alone. Recall that we define three colinear points
+addition in terms of @@z@@. Recall that we define three colinear points
 @@P@@,@@Q@@,@@R@@ as summing to @@\ecid@@. Suppose we know @@P@@ and @@Q@@ and
 wish to find @@R@@. We'll do so much the same way we would for any other
 elliptic curve. We start by finding the line between @@P@@ and @@Q@@ --- the one
@@ -480,15 +479,15 @@ the least significant non-zero digit and since none of the higher order terms in
 the addition law affect it.
 
 We know how to solve the discrete-log problem in @@\FF{p}^+@@ --- it's just
-inversion modulo @@p@@. So, we can take advantage of the fact noted in the last
-paragraph to construct an attack. Of course, we have to be mindful of the fact
-@@\theta@@ is only defined for points that reduce to @@\ecid@@ modulo @@p@@, but
-we can work around that.
+inversion modulo @@p@@. So, we can take advantage of this structure to construct
+an attack. Of course, we have to be mindful of the fact @@\theta@@ is only
+defined for points that reduce to @@\ecid@@ modulo @@p@@, but we can work around
+that.
 
 ---
 
 After covering all that background material, we're finally ready to see Smart's
-attack. Let's look back to the CTF problem that started this whole post. We have
+attack. Let's look back at the CTF problem that started this whole post. We have
 some elliptic curve @@E\[\FF{p}\]@@, defined by @@a@@ and @@b@@, with order
 @@\\#E=p@@. Furthermore, we're given two points on the curve related by
 @@P-dG=\ecid@@, and we're asked to solve for @@d@@.
@@ -517,9 +516,9 @@ To fix both of these problems at once, we require @@\\#E=p@@. Why? We're going
 to multiply both sides of the equation by @@p@@. On the LHS, note that
 @@pG=\ecid@@, so @@pG^\*\in\kernl{\rho}@@ and taking @@\theta@@ of it is
 well-defined. Likewise for @@P@@. Meanwhile, multiplying the RHS by @@p@@ will
-cause it to vanish modulo @@p^2@@. We can see this, either as multiplication by
-@@p@@ corresponding to a "shift" in a number's @@p@@-adic expansion, or as the
-@@p@@s digit of the RHS operating in @@\FF{p}^+@@.
+cause it to vanish modulo @@p^2@@. We can see this either as the @@p@@s digit of
+the RHS operating in @@\FF{p}^+@@ or as multiplication by @@p@@ corresponding to
+a "shift" in a number's @@p@@-adic expansion.
 
 Thus we get
 %%
@@ -537,7 +536,7 @@ Of course, we only care about @@d@@ modulo @@\\#E@@, so we can drop the
 @@\BigO{p}@@ term and simply look at the ones place of the result.
 
 This method allows us to find @@d@@ for the curve given in `handout.txt`. We can
-give it and the challenge server to get the flag:
+give it to the challenge server and get the flag:
 {% highlight plaintext %}
 flag{wh0_sa1d_e11ipt1c_curv3z_r_s3cur3??}
 {% endhighlight %}
