@@ -10,8 +10,8 @@
     "mathematics",
     "computer-science"
   ],
-  "dependencies": {
+  "devDependencies": {
     "linkinator": "^2.11.2",
-    "percy": "^0.28.5"
+    "percy": "^0.28.6"
   }
 }
