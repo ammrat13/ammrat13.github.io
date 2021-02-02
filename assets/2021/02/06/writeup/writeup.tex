@@ -1,0 +1,377 @@
+\documentclass{letter}
+
+% Reduce the margins somewhat
+\usepackage[margin=1in]{geometry}
+% For hyperlinks
+\usepackage{hyperref}
+% Packages for math typesetting
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{siunitx}
+% Packages and fonts for code typesetting
+\usepackage{listings}
+\usepackage{courier}
+% Packages useful for creating pictures
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+
+% Increase the number of columns matrices can have
+\setcounter{MaxMatrixCols}{16}
+
+% Required for PGFPlots backwards compatibility
+\pgfplotsset{compat=1.17}
+
+% Set listings to use Courier - the same font as \texttt
+% Also make them smaller
+\lstset{basicstyle=\footnotesize\ttfamily}
+% Default settings for listings
+\lstdefinestyle{default}{numbers=left,showstringspaces=false}
+\lstset{style=default}
+
+% Letters don't come with figures
+% https://tex.stackexchange.com/questions/226812/graphics-graphicx-and-texlive2014/226833
+\newfloat{figure}{htbp}{figs}
+
+
+% Useful macro for making pictures with Tikz
+\newenvironment{tikzfigure}
+    {\begin{figure}[H] \centering \begin{tikzpicture}}
+    {\end{tikzpicture} \end{figure}}
+
+
+% Don't use page numbers in a letter
+\pagestyle{empty}
+% Set the signature and address
+\signature{\vspace{-4em}Ammar Ratnani}
+
+% Setup boilerplate
+\begin{document}
+\longindentation=0pt
+\begin{letter}{NSA Codebreaker 2020\\Mr. Todd Mateer}
+\opening{Mr. Mateer,}
+
+% Increase the spacing between paragaphs
+% Useful for formulas
+\setlength{\parskip}{2em}
+
+
+Thank you again for reaching out to me about Task 6. I'm fairly new to
+college-level CTFs, so it means a lot that you're commending my efforts. As you
+suggested, I'll document here my thought process when solving the problem, and
+tell you about what little background I have in coding theory.
+
+
+To start, I wanted to take the signal we were given and make it into something
+more readable. So, I wrote a simple Python program to parse each of the 16-bit
+floats and print them out. I was worried I'd have to write a parser myself,
+based off the Wikipedia article on the
+\href{https://en.wikipedia.org/wiki/Half-precision_floating-point_format}
+{Half-precision Floating-point Format}, but thankfully Python's \texttt{struct}
+library supports 16-bit floats \href{https://bugs.python.org/issue11734}{since
+Python 3.6}.
+\lstinputlisting[language=Python]{../solution/initial_processing/code.py}
+
+
+The result of this was a long list of floats, as expected. I didn't notice that
+the task stated the signal had already been demodulated, so I went and tried to
+plot the floats as a waveform. I thought the signal was still BPSK encoded and
+that I'd have to demodulate it, so I wanted to at least see the data before
+working with it.
+\begin{tikzfigure}
+    \begin{axis}[
+        xlabel=\(t\),
+        xticklabels={,,},
+        ylabel=\(s\),
+        yticklabels={,,},
+        title={Plot of Part of the Signal},
+    ]
+        \addplot[
+            color=black,
+            mark=*,
+        ] coordinates {
+            (0, -0.59228515625)
+            (1, 1.2001953125)
+            (2, -1.505859375)
+            (3, 0.9169921875)
+            (4, -0.9189453125)
+            (5, -0.55908203125)
+            (6, 0.53955078125)
+            (7, -1.1044921875)
+            (8, -1.322265625)
+            (9, 0.8515625)
+            (10, -0.5888671875)
+            (11, 1.046875)
+            (12, 1.3916015625)
+            (13, -0.5703125)
+            (14, 0.406005859375)
+            (15, 0.58203125)
+            (16, -0.93017578125)
+            (17, -0.79443359375)
+            (18, 0.42724609375)
+            (19, -1.47265625)
+        };
+    \end{axis}
+\end{tikzfigure}
+
+
+\newpage
+It became clear that I wouldn't have to demodulate the signal. There weren't any
+smooth sine curves like I'd expect the actual transmission to have. So, I went
+on assuming that the transmission was already demodulated, with each float
+presumably corresponding to a single bit. That is, the recon team did the first
+step of BPSK demodulation for us, then sampled it using a bit-clock, but just
+didn't convert it to binary. (Note that I did the task before the clarification
+about one bit per float was given.)
+
+
+To make the rest of the sections easier to follow, I'll diverge a bit from my
+process while I was solving the problem. I'll make a file that just contains a
+``bitstring'' of the data. I use quotes since I'm just going to use the ASCII
+characters ``0'' and ``1'' to represent the data. Having this makes the
+following code much easier to follow. The actual Python code to do this is very
+much like the initial decoding step. The inner part of the loop is the only
+change.
+\begin{lstlisting}[language=Python]
+for f in float_iter:
+    print(1 if f[0] > 0 else 0, end='')
+\end{lstlisting}
+
+
+Coming back to my actual workflow, at this point it was simply a question of
+getting details about the Hamming code the signal used. I'd recently watched
+\href{https://youtu.be/X8jsijhllIA}{3Blue1Brown's video on Hamming codes}. It
+introduced the concept very well, and gave me a few takeaways useful in this
+task. One was that Hamming codes use blocks of size \(2^r\) or \(2^r-1\). So, if
+the signal was Hamming encoded, I'd expect its length to have factors of that
+form:
+\begin{lstlisting}
+sage: divisors(9572547)
+[1,
+ 3,
+ 17,
+ 51,
+ 61,
+ ...
+\end{lstlisting}
+
+
+The only factors of \(\num{9572547}\) that looked promising were \(3=2^2-1\) and
+\(17=2^4+1\). I first tried \(3\) since it was the only factor that fit the
+required form exactly. A Hamming code on three bits is just the three-bit
+repetition code, so I quickly implemented that in Python. The script outputs
+ASCII ``0''s and ``1''s, so I converted it to a sequence of bytes by piping the
+result through the Perl command I found on
+\href{https://unix.stackexchange.com/a/212208}{Stackexchange}.
+\lstinputlisting[language=Python]{../solution/three_bit_repetition_code//code.py}
+\begin{lstlisting}[language=Bash]
+perl -pe 'BEGIN { binmode \*STDOUT } chomp; $_ = pack "B*", $_'
+\end{lstlisting}
+
+
+\newpage
+Unsuprisingly, this didn't work. I just got garbage data out the other end. So,
+I reasoned that the data probably came in packets of seventeen, with some extra
+padding in each group. To actually see how this might be being done, I took my
+``bitstring'' and \texttt{fold}ed it to seventeen characters.
+\begin{lstlisting}[language=Bash]
+$ cat solution/to_bitstring/result.txt | fold -w 17 | head
+01010010010110110
+01001010001011110
+10010001100110110
+11000101101111010
+00000000101110110
+10000000001101000
+00000101010101010
+11001001001100110
+00100000010011000
+01100010010100010
+\end{lstlisting}
+
+
+I quickly noticed that the last bit in each group of seventeen was almost always
+zero, and I assumed that it was just a padding bit. Using this, I was able to
+approximate the error rate in this data. There were \(\num{689}\) lines ending
+with a padding bit of one and \(\num{563090}\) lines total, giving an error
+probability of about \(\num{0,12}\%\) per bit. More importantly, I now had
+groups of sixteen, a common size for Hamming codes. I assumed the data was using
+a \((15,11)\) Hamming code with an extra parity bit, backing this by the fact
+many lines had even parity, as expected.
+
+
+Now, I wanted to work out which bits were parity and which were data. I was
+given that the code was systematic, and looking up the definition on
+\href{https://en.wikipedia.org/wiki/Systematic_code}{Wikipedia} gives that the
+``plaintext'' data appears inside the encoded data somewhere. So, I made the
+assumption that the first few groups had no errors, found an
+\href{http://www.ecs.umass.edu/ece/koren/FaultTolerantSystems/simulator/Hamming/HammingCodes.html}
+{online Hamming code calculator}, and started plugging in consecutive bits of
+the data.
+
+
+I had no luck with this method. Counting the expected number of parity ones and
+zeros seldom gave consistent matches. Slowly it dawned on me that the data
+probably didn't use the ``standard'' Hamming code, and that I'd have to figure
+out what it was using. Granted, this makes sense since the task asks for the
+parity-check matrix, which wouldn't be very useful unless it was non-standard.
+
+
+But before diving head-first into error correction, I wanted to make sure I was
+at least on the right track. The Wikipedia article on
+\href{https://en.wikipedia.org/wiki/Hamming_code}{Hamming codes} gives
+systematic code-generation and parity-check matricies for the \((7,4)\) case. It
+seems that systematic Hamming codes have the left-most minor of \(\mathbf{G}\)
+be the identity matrix, meaning the first \(11\) bits (in our case) would be
+the original data, assuming no errors. To test this, I took the first \(11\)
+bits in each group of \(17\) and wrote the data into a file using the Perl
+command from earlier.
+\begin{lstlisting}[language=Bash]
+$ cat solution/to_bitstring/result.txt                                  \
+    | fold -w 17                                                        \
+    | sed -E -e 's/[0-1]{6}$//g'                                        \
+    | tr -d '\n'                                                        \
+    | perl -pe 'BEGIN { binmode \*STDOUT } chomp; $_ = pack "B*", $_'   \
+    > solution/sixteen_bit_no_error_correction/result.avi
+\end{lstlisting}
+
+
+Miraculously, this worked, kind of. It produced a file recognized as an AVI by
+\texttt{file}. However, VLC complained that the file's index was missing, and
+trying to play the video anyway resulted in garbage. Nonetheless, the fact that
+the magic bytes were correct gave me the confidence to move forward with this
+form of error correction.
+
+
+\newpage
+To proceed, I first tried to find the code-generation matrix. I read a bit on
+them, and most of the material was familar to me.
+\href{https://youtu.be/X8jsijhllIA}{3Blue1Brown's aforementioned video}
+mentioned XOR, priming me to think back to my experience working with
+\(\mathbb{F}_2\). Most of the Linear Algebra we did in Georgia Tech's MATH 1564
+was over \(\mathbb{R}\), but we discussed how the theory can be extended to an
+arbitrary field, so working over \(\mathbb{F}_2\) wasn't that much of a stretch.
+
+
+Before going forward however, I'll introduce some notation for vectors. For some
+row or column vector \(\mathbf{v}\), I denote its \(k\)-th component as \(v_k\).
+In order to denote a sequence of vectors, I'll write
+\(\mathbf{v}^{(1)},\mathbf{v}^{(2)},\cdots\). This way, I can still reference
+the components of each vector. For instance, \(v^{(j)}_i\) denotes the \(i\)-th
+component of the \(j\)-th vector in the sequence \(\mathbf{v}\).
+
+
+From my previous experiment, it became clear that the code-generation matrix
+\(\mathbf{G} \in M_{11\times16}(\mathbb{F}_2)\) had form
+\[ \mathbf{G} = \begin{bmatrix}\mathbf{I}_{11} & \mathbf{A}\end{bmatrix}. \]
+To solve for \(\mathbf{A} \in M_{11\times5}(\mathbb{F}_2)\), I considered its
+column vectors \(\mathbf{a}^{(i)}\) as well as some messages, each consisting of
+eleven data bits \(\mathbf{d}^{(j)}\) and five parity bits \(\mathbf{p}^{(j)}\).
+I assumed the messages to be uncorrupted, hoping I could recognize and replace
+ones that were. Under that assumption
+\[ \mathbf{d}^{(j)} \cdot \mathbf{a}^{(i)} = p^{(j)}_{i} \]
+for \(i=1,\cdots,5\) and any \(j\), where I use \(\cdot\) to mean a dot-product.
+To write this in matrix form, we can take \(N\) messages in total and define
+(using \(\mathbf{d}^{(j)}\) and \(\mathbf{p}^{(j)}\) as row vectors)
+\begin{align*}
+    \mathbf{D} &= \begin{bmatrix}\mathbf{d}^{(1)}\\\mathbf{d}^{(2)}\\\vdots\\\mathbf{d}^{(N)}\\\end{bmatrix} \\
+    \mathbf{P} &= \begin{bmatrix}\mathbf{p}^{(1)}\\\mathbf{p}^{(2)}\\\vdots\\\mathbf{p}^{(N)}\\\end{bmatrix} \\
+\end{align*}
+to get
+\[ \mathbf{D}\mathbf{A} = \mathbf{P}. \]
+
+
+I arbitrarily read in the first \(N=20\) groups, however any group of \(11\) or
+more uncorrupted messages would've worked. I wrote some SageMath code to do the
+calculations (in \texttt{solve\_a}), and fed it \texttt{to\_bitstring}'s result.
+The output was
+\[ \mathbf{A} = \begin{bmatrix}
+    1 & 1 & 0 & 1 & 0 \\
+    1 & 0 & 1 & 1 & 0 \\
+    1 & 0 & 0 & 1 & 1 \\
+    1 & 1 & 0 & 0 & 1 \\
+    1 & 1 & 1 & 0 & 0 \\
+    0 & 0 & 1 & 1 & 1 \\
+    0 & 1 & 0 & 1 & 1 \\
+    0 & 1 & 1 & 0 & 1 \\
+    1 & 0 & 1 & 0 & 1 \\
+    1 & 1 & 1 & 1 & 1 \\
+    0 & 1 & 1 & 1 & 0 \\
+\end{bmatrix}. \]
+From there, I found the parity-check matrix using the formula on the
+\href{https://en.wikipedia.org/wiki/Parity-check_matrix}{Parity-check Matrix}'s
+Wikipedia article:
+\begin{align*}
+    \mathbf{H} &= \begin{bmatrix} -\mathbf{A}^\top & \mathbf{I}_5 \end{bmatrix} \\
+        &= \begin{bmatrix} \mathbf{A}^\top & \mathbf{I}_5 \end{bmatrix} \\
+        &= \begin{bmatrix}
+            1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 1 & 1 & 0 & 1 & 0 & 0 & 0 & 0 \\
+            1 & 0 & 0 & 1 & 1 & 0 & 1 & 1 & 0 & 1 & 1 & 0 & 1 & 0 & 0 & 0 \\
+            0 & 1 & 0 & 0 & 1 & 1 & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 1 & 0 & 0 \\
+            1 & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 0 & 1 & 0 \\
+            0 & 0 & 1 & 1 & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 1 \\
+        \end{bmatrix}.
+\end{align*}
+This solves the first half of the task.
+
+
+As for the second half, we start by finding all the possible syndromes as
+\(\mathbf{s}^{(i)}=\mathbf{H}\cdot\mathbf{e}^{(i)}\), where \(\mathbf{e}^{(i)}\)
+is the \(i\)-th basis vector in \(\mathbb{F}_2^{16}\). I used these syndromes
+for \href{https://en.wikipedia.org/wiki/Decoding_methods#Syndrome_decoding}
+{Syndrome Decoding}, again heavily referencing the Wikipedia article. It appears
+the basic idea is to observe that \(\mathbf{H}\cdot\mathbf{m}^\top=\mathbf{0}\)
+for any ``valid'' message \(\mathbf{m}\). If it experiences a one bit error ---
+it's added to \((\mathbf{e}^{(i)})^\top\) --- then the result of computing the
+parity check will simply be \(\mathbf{s}^{(i)}\), due to the linearity of
+transposition and of matrix multiplication. We then look-up this syndrome and
+see what error could cause it.
+
+
+During the task, I computed all the syndromes as
+\(\mathbf{H}\cdot\mathbf{I}_{16}\), however it occurs to me now that the result
+is just \(\mathbf{H}\). So here, I just used that as our syndrome look-up table.
+
+
+I went through each of the 16-bit groups, computed its syndrome, and if it
+wasn't \(\mathbf{0}\), I looked up the column in \(\mathbf{H}\) and subtracted
+out the error. If I couldn't find the syndrome, I just gave up. There might be a
+way to correct two- or more-bit errors with the information we have, but we'll
+see later it's not needed. Again, I wrote some SageMath code to do the
+calculations for me, and piped the result through the Perl script to get a
+binary file.
+\begin{lstlisting}
+$ sage solution/sixteen_bit_one_bit_error_correction/code.sage solution/to_bitstring/result.txt \
+    | perl -pe 'BEGIN { binmode \*STDOUT } chomp; $_ = pack "B*", $_'                           \
+    > solution/sixteen_bit_one_bit_error_correction/result.avi
+\end{lstlisting}
+
+
+The result produced by \texttt{sixteen\_bit\_one\_bit\_error\_correction} is
+still very corrupted, but it's nonetheless playable by VLC. The video starts by
+showing an empty room, with the timestamp in the top left. The screen then fades
+to black, then fades back in with the hostage being dragged to the chair in the
+center of the room, all amidst significant data corruption. The timestamp was
+sufficiently legible while the hostage was being shown, so I read it and
+submitted it, solving the second half of the task.
+
+
+That's more or less how I solved Task 6. I have no idea how closely I followed
+the intended solution, and I would like you to send it to me if you feel
+comfortable doing so. I also wrote down some of the information I came across on
+Wikipedia when researching how to do this challenge. Please do correct me if any
+of that is wrong. Finally, please ask me any questions you have about this
+writeup. I noticed this task was much easier than last year's Task 7, but I
+guess most of the difficulty will be in Part 2. Other than that, it was an
+interesting challenge. As a person recreationally interested in math, I liked
+getting to apply some of the more ``advanced'' stuff I've learned. I look
+forward to seeing more challenges from you.
+
+
+% Ending boilerplate
+\closing{Thank you,}
+\end{letter}
+\end{document}
