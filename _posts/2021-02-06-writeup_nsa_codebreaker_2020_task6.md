@@ -63,7 +63,119 @@ plot the floats as a waveform. I thought the signal was still BPSK encoded and
 that I'd have to demodulate it, so I wanted to at least see the data before
 working with it.
 
+![Plot of Part of the Signal](/assets/2021/02/06/zres_img/signal_time.svg)
+
+It became clear that I wouldn't have to demodulate the signal. There weren't any
+smooth sine curves like I'd expect the actual transmission to have. So, I went
+on assuming that the transmission was already demodulated, with each float
+presumably corresponding to a single bit. That is, the recon team did the first
+step of BPSK demodulation for us, then sampled it using a bit-clock, but just
+didn't convert it to binary. (Note that I did the task before the clarification
+about one bit per float was given.)
+
+To make the rest of the sections easier to follow, I'll diverge a bit from my
+process while I was solving the problem. I'll make a file that just contains a
+"bitstring" of the data. I use quotes since I'm just going to use the ASCII
+characters "0" and "1" to represent the data. Having this makes the following
+code much easier to follow. The actual Python code to do this is very much like
+the initial decoding step. The inner part of the loop is the only change.
+{% highlight python %}
+for f in float_iter:
+    print(1 if f[0] > 0 else 0, end='')
+{% endhighlight %}
+
+Coming back to my actual workflow, at this point it was simply a question of
+getting details about the Hamming code the signal used. I'd recently watched
+[3Blue1Brown's video on Hamming codes][4]. It introduced the concept very well,
+and gave me a few takeaways useful in this task. One was that Hamming codes use
+blocks of size @@2^r@@ or @@2^r-1@@. So, if the signal was Hamming encoded, I'd
+expect its length to have factors of that form:
+{% highlight python %}
+sage: divisors(9572547)
+[1,
+ 3,
+ 17,
+ 51,
+ 61,
+ ...
+{% endhighlight %}
+
+The only factors of @@9\,572\,547@@ that looked promising were @@3=2^2-1@@ and
+@@17=2^4+1@@. I first tried @@3@@ since it was the only factor that fit the
+required form exactly. A Hamming code on three bits is just the three-bit
+repetition code, so I quickly implemented that in Python. The script outputs
+ASCII "0"s and "1"s, so I converted it to a sequence of bytes by piping the
+result through the Perl command I found on [StackExchange][5].
+
+{% highlight python %}
+import sys
+
+file_name = sys.argv[1]
+file_handle = open(file_name, 'r')
+
+# While the file has stuff in it
+while True:
+    # Check if we’re done
+    bit_chars = file_handle.read(3)
+    if len(bit_chars) != 3:
+        break
+
+    # Check which bit is in the majority
+    bit_ints = map(lambda c: int(c) - int(b'0'), bit_chars)
+    sum_over = sum(bit_ints)
+    print(1 if sum_over >= 2 else 0, end='')
+{% endhighlight %}
+
+{% highlight bash %}
+$ perl -pe 'BEGIN { binmode \*STDOUT } chomp; $_ = pack "B*", $_'
+{% endhighlight %}
+
+Unsuprisingly, this didn't work. I just got garbage data out the other end. So,
+I reasoned that the data probably came in packets of seventeen, with some extra
+padding in each group. To actually see how this might be being done, I took my
+"bitstring" and `fold`ed it to seventeen characters.
+
+{% highlight bash %}
+$ cat solution/to_bitstring/result.txt | fold -w 17 | head
+01010010010110110
+01001010001011110
+10010001100110110
+11000101101111010
+00000000101110110
+10000000001101000
+00000101010101010
+11001001001100110
+00100000010011000
+01100010010100010
+{% endhighlight %}
+
+I quickly noticed that the last bit in each group of seventeen was almost always
+zero, and I assumed that it was just a padding bit. Using this, I was able to
+approximate the error rate in this data. There were @@689@@ lines ending with a
+padding bit of one and @@563\,090@@ lines total, giving an error probability of
+about @@0.12\%@@ per bit. More importantly, I now had groups of sixteen, a
+common size for Hamming codes. I assumed the data was using a @@(15,11)@@
+Hamming code with an extra parity bit, backing this by the fact many lines had
+even parity, as expected.
+
+Now, I wanted to work out which bits were parity and which were data. I was
+given that the code was systematic, and looking up the definition on
+[Wikipedia][6] gives that the "plaintext" data appears inside the encoded data
+somewhere. So, I made the assumption that the first few groups had no errors,
+found an [online Hamming code calculator][7], and started plugging in
+consecutive bits of the data.
+
+I had no luck with this method. Counting the expected number of parity ones and
+zeros seldom gave consistent matches. Slowly it dawned on me that the data
+probably didn't use the "standard" Hamming code, and that I'd have to figure out
+what it was using. Granted, this makes sense since the task asks for the
+parity-check matrix, which wouldn't be very useful unless it was non-standard.
+
 
 [1]: <https://github.com/ammrat13/ammrat13.github.io/tree/master/assets/2021/02/06> "My GitHub"
 [2]: <https://en.wikipedia.org/wiki/Half-precision_floating-point_format> "Half-precision Floating-point Format"
 [3]: <https://bugs.python.org/issue11734> "Python Supports 16-Bit Floats"
+[4]: <https://youtu.be/X8jsijhllIA> "Hamming Codes and Error Correction"
+[5]: <https://unix.stackexchange.com/a/212208> "How can I convert two-valued text data to binary (bit-representation)"
+[6]: <https://en.wikipedia.org/wiki/Systematic_code> "Systematic Code"
+[7]: <http://www.ecs.umass.edu/ece/koren/FaultTolerantSystems/simulator/Hamming/HammingCodes.html> "Hamming Code"
