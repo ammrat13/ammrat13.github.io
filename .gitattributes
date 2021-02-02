@@ -1,0 +1,2 @@
+# Some particularly large files
+assets/2021/02/06/challenge/signal.ham filter=lfs diff=lfs merge=lfs -text
