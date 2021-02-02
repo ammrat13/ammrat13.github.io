@@ -47,6 +47,7 @@ but thankfully Python's `struct` library supports 16-bit floats
 [since Python 3.6][3].
 
 {% highlight python %}
+# From 01-initial_processing
 import struct
 import sys
 
@@ -80,6 +81,7 @@ characters "0" and "1" to represent the data. Having this makes the following
 code much easier to follow. The actual Python code to do this is very much like
 the initial decoding step. The inner part of the loop is the only change.
 {% highlight python %}
+# From 02-to_bitstring
 for f in float_iter:
     print(1 if f[0] > 0 else 0, end='')
 {% endhighlight %}
@@ -108,6 +110,7 @@ ASCII "0"s and "1"s, so I converted it to a sequence of bytes by piping the
 result through the Perl command I found on [StackExchange][5].
 
 {% highlight python %}
+# From 03-three_bit_code
 import sys
 
 file_name = sys.argv[1]
@@ -134,9 +137,8 @@ Unsuprisingly, this didn't work. I just got garbage data out the other end. So,
 I reasoned that the data probably came in packets of seventeen, with some extra
 padding in each group. To actually see how this might be being done, I took my
 "bitstring" and `fold`ed it to seventeen characters.
-
 {% highlight bash %}
-$ cat solution/to_bitstring/result.txt | fold -w 17 | head
+$ cat 02-to_bitstring/result.txt | fold -w 17 | head
 01010010010110110
 01001010001011110
 10010001100110110
@@ -171,6 +173,37 @@ probably didn't use the "standard" Hamming code, and that I'd have to figure out
 what it was using. Granted, this makes sense since the task asks for the
 parity-check matrix, which wouldn't be very useful unless it was non-standard.
 
+But before diving head-first into error correction, I wanted to make sure I was
+at least on the right track. The Wikipedia article on [Hamming codes][8] gives
+systematic code-generation and parity-check matricies for the @@(7,4)@@ case. It
+seems that systematic Hamming codes have the left-most minor of @@\mathbf{G}@@
+be the identity matrix, meaning the first @@11@@ bits (in our case) would be the
+original data, assuming no errors. To test this, I took the first @@11@@ bits in
+each group of @@17@@ and wrote the data into a file using the Perl command from
+earlier.
+{% highlight bash %}
+$ cat 02-to_bitstring/result.txt                                        \
+    | fold -w 17                                                        \
+    | sed -E -e 's/[0-1]{6}$//g'                                        \
+    | tr -d '\n'                                                        \
+    | perl -pe 'BEGIN { binmode \*STDOUT } chomp; $_ = pack "B*", $_'   \
+    > 04-sixteen_bit_code_no_correction/result.avi
+{% endhighlight %}
+
+Miraculously, this worked, kind of. It produced a file recognized as an AVI by
+`file`. However, VLC complained that the file's index was missing, and trying to
+play the video anyway resulted in garbage. Nonetheless, the fact that the magic
+bytes were correct gave me the confidence to move forward with this form of
+error correction.
+
+To proceed, I first tried to find the code-generation matrix. I read a bit on
+them, and most of the material was familar to me.
+[3Blue1Brown's aforementioned video][4] mentioned XOR, priming me to think back
+to my experience working with @@\mathbb{F}_2@@. Most of the Linear Algebra we
+did in Georgia Tech's MATH 1564 was over @@\mathbb{R}@@, but we discussed how
+the theory can be extended to an arbitrary field, so working over
+@@\mathbb{F}_2@@ wasn't that much of a stretch.
+
 
 [1]: <https://github.com/ammrat13/ammrat13.github.io/tree/master/assets/2021/02/06> "My GitHub"
 [2]: <https://en.wikipedia.org/wiki/Half-precision_floating-point_format> "Half-precision Floating-point Format"
@@ -179,3 +212,4 @@ parity-check matrix, which wouldn't be very useful unless it was non-standard.
 [5]: <https://unix.stackexchange.com/a/212208> "How can I convert two-valued text data to binary (bit-representation)"
 [6]: <https://en.wikipedia.org/wiki/Systematic_code> "Systematic Code"
 [7]: <http://www.ecs.umass.edu/ece/koren/FaultTolerantSystems/simulator/Hamming/HammingCodes.html> "Hamming Code"
+[8]: <https://en.wikipedia.org/wiki/Hamming_code> "Hamming code"
