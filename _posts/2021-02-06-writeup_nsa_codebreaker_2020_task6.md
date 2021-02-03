@@ -11,7 +11,7 @@ libs: [mathjax]
 *This post is lifted from a letter I wrote to Mr. Todd Mateer, the designer of
 Task 6 for NSA Codebreaker 2020. I was one of the first to solve it, and he
 inquired about my approach. The relevant files supporting files can be found on
-my [GitHub][1]*
+[GitHub][1].*
 
 > **Task 6 - Proof of Life (1300 Points)**
 >
@@ -286,7 +286,7 @@ output was
 %%
 
 From there, I found the parity-check matrix using the formula on the
-[Parity-Check Matrix's Wikipedia article][9]:
+[Parity-Check Matrix][9]'s Wikipedia article:
 
 %%
 \begin{align\*}
@@ -345,6 +345,7 @@ the room, all amidst significant data corruption. The timestamp was sufficiently
 legible while the hostage was being shown, so I read it and submitted it,
 solving the second half of the task.
 
+
 That's more or less how I solved Task 6. I have no idea how closely I followed
 the intended solution, and I would like you to send it to me if you feel
 comfortable doing so. I also wrote down some of the information I came across on
@@ -355,6 +356,11 @@ guess most of the difficulty will be in Part 2. Other than that, it was an
 interesting challenge. As a person recreationally interested in math, I liked
 getting to apply some of the more "advanced" stuff I've learned. I look forward
 to seeing more challenges from you.
+
+
+Thank you,
+
+Ammar Ratnani
 
 
 
