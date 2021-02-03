@@ -305,6 +305,58 @@ From there, I found the parity-check matrix using the formula on the
 This solves the first half of the task.
 
 
+As for the second half, we start by finding all the possible syndromes as
+@@\mathbf{s}^{(i)}=\mathbf{H}\cdot\mathbf{e}^{(i)}@@, where @@\mathbf{e}^{(i)}@@
+is the @@i@@-th basis vector in @@\mathbb{F}_2^{16}@@. I used these syndromes
+for [Syndrome Decoding][10], again heavily referencing the Wikipedia article. It
+appears the basic idea is to observe that
+@@\mathbf{H}\cdot\mathbf{m}^\top=\mathbf{0}@@ for any "valid" message
+@@\mathbf{m}@@. If it experiences a one bit error --- it's added to
+@@(\mathbf{e}^{(i)})^\top@@ --- then the result of computing the parity check
+will simply be @@\mathbf{s}^{(i)}@@, due to the linearity of transposition and
+of matrix multiplication. We then look-up this syndrome and see what error could
+cause it.
+
+During the task, I computed all the syndromes as
+@@\mathbf{H}\cdot\mathbf{I}_{16}@@, however it occurs to me now that the result
+is just @@\mathbf{H}@@. So here, I just used that as our syndrome look-up table.
+
+
+I went through each of the 16-bit groups, computed its syndrome, and if it
+wasn't @@\mathbf{0}@@, I looked up the column in @@\mathbf{H}@@ and subtracted
+out the error. If I couldn't find the syndrome, I just gave up. There might be a
+way to correct two- or more-bit errors with the information we have, but we'll
+see later it's not needed. Again, I wrote some SageMath code to do the
+calculations for me, and piped the result through the Perl script to get a
+binary file.
+
+{% highlight bash %}
+$ sage 06-sixteen_bit_code_one_bit_correction/code.sage 02-to_bitstring/result.txt \
+    | perl -pe 'BEGIN { binmode \*STDOUT } chomp; $_ = pack "B*", $_'              \
+    > 06-sixteen_bit_code_one_bit_correction/result.avi
+{% endhighlight %}
+
+
+The result produced by `06-sixteen_bit_code_one_bit_correction` is still very
+corrupted, but it's nonetheless playable by VLC. The video starts by showing an
+empty room, with the timestamp in the top left. The screen then fades to black,
+then fades back in with the hostage being dragged to the chair in the center of
+the room, all amidst significant data corruption. The timestamp was sufficiently
+legible while the hostage was being shown, so I read it and submitted it,
+solving the second half of the task.
+
+That's more or less how I solved Task 6. I have no idea how closely I followed
+the intended solution, and I would like you to send it to me if you feel
+comfortable doing so. I also wrote down some of the information I came across on
+Wikipedia when researching how to do this challenge. Please do correct me if any
+of that is wrong. Finally, please ask me any questions you have about this
+writeup. I noticed this task was much easier than last year's Task 7, but I
+guess most of the difficulty will be in Part 2. Other than that, it was an
+interesting challenge. As a person recreationally interested in math, I liked
+getting to apply some of the more "advanced" stuff I've learned. I look forward
+to seeing more challenges from you.
+
+
 
 [1]: <https://github.com/ammrat13/ammrat13.github.io/tree/master/assets/2021/02/06> "My GitHub"
 [2]: <https://en.wikipedia.org/wiki/Half-precision_floating-point_format> "Half-precision Floating-point Format"
@@ -315,3 +367,4 @@ This solves the first half of the task.
 [7]: <http://www.ecs.umass.edu/ece/koren/FaultTolerantSystems/simulator/Hamming/HammingCodes.html> "Hamming Code"
 [8]: <https://en.wikipedia.org/wiki/Hamming_code> "Hamming code"
 [9]: <https://en.wikipedia.org/wiki/Parity-check_matrix> "Parity-Check matrix"
+[10]: <https://en.wikipedia.org/wiki/Decoding_methods#Syndrome_decoding> "Syndrome Decoding"
