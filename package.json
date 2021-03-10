@@ -11,7 +11,7 @@
     "computer-science"
   ],
   "devDependencies": {
-    "linkinator": "^2.11.2",
+    "linkinator": "^2.13.6",
     "percy": "^0.28.6"
   }
 }
