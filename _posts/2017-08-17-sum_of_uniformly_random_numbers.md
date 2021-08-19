@@ -9,7 +9,7 @@ libs: [mathjax]
     @@\newcommand{\nl}{\\}@@
 </div>
 
-_This post used to be hosted at [ammrat13/proofs](https://github.com/ammrat13/proofs),
+_This post used to be hosted on my [GitHub](https://github.com/ammrat13),
 but I felt it would fit better here. I found this fact online somewhere, and I
 wanted to try and prove it myself. The way I did so is far from elegant. In
 particular, I didn't see the connection between uniformly choosing then summing
