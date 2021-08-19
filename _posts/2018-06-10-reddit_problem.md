@@ -7,7 +7,7 @@ libs: [mathjax]
     @@\newcommand{\nl}{\\}@@
 </div>
 
-_This post used to be hosted at [ammrat13/proofs](https://github.com/ammrat13/proofs),
+_This post used to be hosted on my [GitHub](https://github.com/ammrat13),
 but I felt it would fit better here. I was intrigued by this problem because it
 tied into what I learned in Calculus BC. Only now do I know I didn't have the
 techniques I needed to tackle this problem. I can't quite put my finger on why,
