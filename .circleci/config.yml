@@ -56,11 +56,7 @@ commands:
     test-links:
         description: Running Linkinator
         steps:
-            - run: |
-                npx linkinator \
-                    --recurse \
-                    --skip https://www.linkedin.com/in/ammar-ratnani \
-                    ./_site
+            - run: npx linkinator ./_site
 
     # Do visual regression testing
     test-visual:
