@@ -22,15 +22,14 @@ to attain this minimum.
 
 I actually discovered this fact in a context completely separate from graph
 theory. This semester, I served as a TA for [CS
-2110](http://www.icc.gatech.edu/files/syllabus/undergrad/CS-2110_Syllabus.pdf)
-at Georgia Tech. It was fun, though time consuming, and I thought a lot about
-how to best teach struggling students. I remembered that pair programming is a
-common technique used to guide new developers, but it could never be implemented
-in the course. Nonetheless, I went on a tangent thinking about how one could
-implement pair programming in a class. Ideally, the same students wouldn't work
-together all the time --- usually the teacher would mix them around. How long it
-would take before we're forced to repeat, and a student is paired with someone
-they've already worked with?
+2110](/assets/2020/12/31/CS2110Syl.pdf) at Georgia Tech. It was fun, though time
+consuming, and I thought a lot about how to best teach struggling students. I
+remembered that pair programming is a common technique used to guide new
+developers, but it could never be implemented in the course. Nonetheless, I went
+on a tangent thinking about how one could implement pair programming in a class.
+Ideally, the same students wouldn't work together all the time --- usually the
+teacher would mix them around. How long it would take before we're forced to
+repeat, and a student is paired with someone they've already worked with?
 
 I assumed the number of students @@n@@ was even for simplicity. Each day, we
 take @@\frac{1}{2}n@@ subsets of size two, making sure none of them share an
