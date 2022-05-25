@@ -1,0 +1,8 @@
+{
+    "recurse": true,
+    "timeout": 5000,
+    "skip": [
+        "https://www.linkedin.com/in/ammar-ratnani",
+        "http://www.ecs.umass.edu/ece/koren/FaultTolerantSystems/simulator/Hamming/HammingCodes.html"
+    ]
+}
