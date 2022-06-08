@@ -6,6 +6,8 @@ libs: [mathjax]
 <div class="mathjaxDeclarations">
     @@\newcommand{\nl}{\\}@@
     @@\newcommand{\FF}{\mathbb{F}}@@
+    @@\newcommand{\ZZ}{\mathbb{Z}}@@
+    @@\newcommand{\vect}[1]{\mathbf{#1}}@@
 </div>
 
 My family came over for my sister's graduation, so I chose to spend time with
@@ -49,13 +51,16 @@ data from the corrupted copy.
 
 In the specific case of CRCs, they treat each bit as an element of @@\FF_2@@: an
 element of @@\\{0,1\\}@@ where addition is XOR and multiplication is AND. This
-definition was chosen to make @@\FF_2@@ a *field*, a set of numbers where the
-usual operations (addition, subtraction, multiplication, division) are defined
-and behave the way you'd expect with regular numbers. To represent bitstrings,
-CRCs work over @@\FF_2[x]@@: the ring of polynomials with coefficients in
-@@\FF_2@@, with polynomial addition and multiplication defined in the usual way.
-For example, the string `1010` is represented as @@x^3 + x@@, where @@x@@ is
-just a formal symbol not representing any underlying value.
+definition was chosen to make @@\FF_2@@ a *field*, a set where the usual
+operations (addition, subtraction, multiplication, division) are defined and
+behave the way you'd expect with regular numbers. To represent bitstrings, CRCs
+work over @@\FF_2[x]@@: the ring of polynomials with coefficients in @@\FF_2@@,
+with polynomial addition and multiplication defined in the usual way. For
+example, the string `1010` is represented as @@x^3 + x@@, where @@x@@ is just a
+formal symbol not representing any underlying value. Again, this choice was made
+to make CRCs easy to reason about mathematically. Polynomials are some of the
+nicest objects out there, but they have just enough depth to admit sophisticated
+algorithms.
 
 To calculate the checksum, CRCs reduce the bitstream modulo some polynomial. For
 the case of CRC-32, it's
@@ -67,34 +72,104 @@ the case of CRC-32, it's
         &+ x^2 + x + 1,
 \end{align\*}%%
 the symbol @@\pi@@ of course standing for πolynomial. You can construct the
-polynomial and then reduce it by polynomial long division, however it's more
-economical to do the reduction after each operation. Effectively, you work over
-@@\FF_2[x] / \langle\pi\rangle@@: the space of polynomials but you treat those
-that differ by some multiple of @@\pi@@ as the same polynomial. Again, long
-division can take any element to its "canonical" form.
+message's polynomial and then take the remainder by polynomial long division,
+however it's more economical to do the reduction after each operation.
+Effectively, you work over @@\FF_2[x] / \langle\pi\rangle@@: the space of
+polynomials but you treat those that differ by some multiple of @@\pi@@ as the
+same polynomial. Again, long division can take any element to its "canonical"
+form.
 
 That's CRCs in a nutshell. Treat your data as a polynomial @@p \in \FF_2[x] /
 \langle\pi\rangle@@ and reduce it to its canonical form by polynomial long
 division. Implementation is a bit more complicated than that, of course. For
-instance, you actually reduce @@p \cdot x^{32}@@. When sending the message, you
-can just append the checksum to it, and the check passes if the recieved message
-is congruent to zero modulo @@\pi@@. Some implementations NOT the output.
-Some reflect the bits of the output (so bit 31 maps to bit 0, 30 to 1, ...).
-Some reflect the bits of each input byte individually. Most importantly, many
-implementations use a table-driven approach, computing one word at a time
-instead of just one bit. Exploring that is worth an entire post, but the upshot
-is that it's only equivalent to this method when the algorithm is seeded with
-zero. Some implementations seed it with `0xffff_ffff` instead, which has the
-effect of NOTing the first 32 bits of the input. Equivalently, it prepends
+instance, you actually start with @@p \cdot x^{32}@@. That way, you can just
+append the checksum to the message when sending it, and the check passes if the
+recieved data is congruent to zero modulo @@\pi@@. Additionally, some
+implementations perform superficial changes to the data. Some NOT the output.
+Some reflect the output's bits (so bit 31 maps to bit 0, 30 to 1, ...). Some
+reflect the bits of each input byte individually.
+
+Most importantly, many implementations use a table-driven approach, computing
+one word at a time instead of just one bit. Exploring that is worth an entire
+post, but the upshot is that it's only equivalent to this method when the
+algorithm is seeded with zero. Some implementations seed it with `0xffff_ffff`
+instead, which has the effect of NOTing the first 32 bits of the input.
+Equivalently, it prepends
 %%\begin{equation\*}
-    \frac{1}{x^{32}} \cdot \left( \sum_{i=0}^{31} x^i \right)
+    \frac{1}{x^{32}} \cdot \left( \sum_{i=0}^{31} x^i \right).
 \end{equation\*}%%
-to the input. In general, if the table method is seeded with @@p@@, it XORs that
-with the first 32 bits of the input, or it equivalently prepends @@p \cdot
-x^{-32}@@.
+In general, if the table method is seeded with @@p@@, it XORs that with the
+first 32 bits of the input, or it equivalently prepends @@p \cdot x^{-32}@@.
 
 
 #### The Choice of π
 
+It's worth noting some properties of CRC-32's choice of @@\pi@@. That polynomial
+is *irreducible* over @@\FF_2@@, meaning it can't be factored any further
+without introducing numbers other than @@\\{0,1\\}@@. A nice result of this
+choice is that @@\FF_{2^{32}} = \FF_2[x] / \langle\pi\rangle@@ is itself a
+field. Every element has a multiplicative inverse, and it makes sense to talk
+about things like @@x^{-32}@@. The polynomial @@\pi@@ is also *primitive*,
+meaning the formal symbol @@x@@ generates the multiplicative group. Taking the
+powers of @@x@@ will go over every other element (except zero) before cycling
+back to @@x@@. Again, these choices were made to make reasoning about this
+structure easier.
+
+The notation @@\FF_{2^{32}}@@ is no accident either. It's a field with exactly
+that many elements --- a binary choice for each coefficient from @@x^0@@ to
+@@x^{31}@@. It's also *the* field with that many elements, since all of them are
+isomorphic. Additionally, all finite fields have prime power sizes, and it's
+worth exploring why that is, since the same methods are used in the attack
+later.
+
+> *Lemma:* A field @@F@@ can be viewed as a vector space over any of its
+> subfields @@K@@.
+
+The required axioms can easily be checked. Those for vector addition are almost
+trivially satisfied, as are those for identity and distributivity. The only
+important thing to check happens with vector multiplication. We require that
+%%\begin{equation\*}
+    a \cdot b\vect{v} = (ab) \cdot \vect{v}
+\end{equation\*}%%
+where @@a,b \in K@@ and @@ab \in K@@. That's why we needed @@K@@ to be a
+subfield. □
+
+An easy example is @@\FF_{2^{32}}@@ itself. The elements @@1, x, x^2, \cdots@@
+can be thought of as basis "vectors," scaled by either zero or one: an element
+of @@\FF_2@@. This line of thinking extends quite well.
+
+> *Theorem:* A finite field @@F@@ has order @@\|F\| = p^n@@ for @@p@@ prime.
+
+Consider the additive group generated by @@1@@, so
+%%\begin{align\*}
+& 0 \nl
+& 0 + 1 \nl
+& 0 + 1 + 1 \nl
+& \cdots.
+\end{align\*}%%
+It can be checked that these elements form a subfield @@K \subseteq F@@.
+Additionally, since @@F@@ is finite, continuting to add ones in this manner will
+eventually start to repeat elements, meaning @@K \cong \ZZ/p\ZZ@@. For that to
+be a field, @@p@@ must be prime.
+
+By the lemma above @@F@@ is a vector space over @@K@@, and since it's finite,
+it's finitely generated. Let @@\\{\vect{b}\_1, \cdots, \vect{b}\_n\\}@@ be a
+basis, so every linear combination
+%%\begin{equation\*}
+    \alpha\_1 \vect{b}\_1 + \cdots + \alpha\_n \vect{b}\_n
+\end{equation\*}%%
+gives a unique element of @@F@@. With each @@\alpha@@ in @@K@@, we get @@p@@
+possibilities for each coefficient, giving a total of @@p^n@@ different
+elements. □
+
+This proof was found on [MathOverflow][2], but it's not the only one. Another,
+also from [MathOverflow][3], uses Bézout's identity to show by contradiction that the
+field would have zero divisors otherwise.
+
+
+#### The Approach
+
 
 [1]: https://github.com/Nautilus-Institute/quals-2022/tree/main/sameold "sameold Challenge Solution"
+[2]: https://math.stackexchange.com/a/132383 "Number of elements of a finite field"
+[3]: https://math.stackexchange.com/a/1230045 "Order of finite fields is $p^n$"
