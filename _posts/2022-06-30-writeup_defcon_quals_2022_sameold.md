@@ -220,7 +220,70 @@ vectors for a baisis and thus too few for a spanning set. The least you can
 possibly get away with is @@\dim\FF_{2^{32}} = 32@@. I assert that @@32@@ is
 also sufficient, and you'll never require more.
 
+> *Lemma ([Freshman's Dream][4]):* Over a ring @@R@@ of prime characteristic
+> @@p@@, any @@x,y \in R@@ satisfy @@(x+y)^p = x^p+y^p@@.
 
-[1]: https://github.com/Nautilus-Institute/quals-2022/tree/main/sameold "sameold Challenge Solution"
+Simply expand via binomial theorem. All the "impure" terms drop out because
+their coefficients are all multiples of @@p@@. Why? Remember that
+%%\begin{align\*}
+    \binom{p}{k}
+        &= \frac{p!}{k! \cdot (p-k)!} \nl
+        &= \frac{1}{k!} \cdot p \cdot (p-1) \cdots (p-k+1).
+\end{align\*}%%
+Since @@p@@ is prime, it's not possible for @@k!@@ to divide @@p@@ with @@k <
+p@@. So, the factor remains, and @@\binom{p}{k}@@ is divisible by @@p@@. The
+only places this argument breaks are when @@k=p@@ and when @@k=0@@ where
+expanding the numerator just results in @@1@@. In those cases,
+@@\binom{p}{k}=1@@. Thus, over this ring where multiples of @@p@@ vanish, only
+the first and last terms of the binomial expansion remain. □
+
+This result holds over @@\FF_{2^{32}}@@ where @@p=2@@.
+
+> *Lemma ([Lemma 1.6 of this][5]):* The multiplicative group @@F^\times@@ of a
+> finite field @@F@@ is cyclic.
+
+Remember that, over fields, polynomials can have at most as many roots as their
+degree. If it has a root @@r@@, a factor of @@(X-r)@@ can be divided out. This
+can be repeated until the degree of the polynomial is reduced to a constant. We
+can use that fact to show the following: if @@F^\times@@ has at least one
+element of order @@d@@, then it has exactly @@\phi(d)@@ of them. Let @@g@@ be an
+element such that @@g^d@@ is the lowest power of @@g@@ equaling the group
+identity @@1@@. Every other element @@X@@ in the group it generates @@\langle
+g\rangle@@ will also satisfy @@X^d - 1 = 0@@. There are @@d@@ such other
+elements, so we've found all the possible roots of that polynomial. To find
+objects in @@F^\times@@ of order exactly @@d@@, it suffices to restrict our
+search to @@\langle g\rangle@@. By basic number theory, out of the @@d@@
+elements in that cycle with order dividing @@d@@, exactly @@\varphi(d)@@ of them
+will have order exactly @@d@@.
+
+Define @@\text{NumElementsOfOrder}(d)@@ to be the number of elements in
+@@F^\times@@ such that their @@d@@-th power is the smallest power equaling
+@@1@@. As discussed above, that function returns either @@\varphi(d)@@ or @@0@@.
+Clearly, summing over all the values @@d@@ can take will give the size of the
+group:
+%%\begin{align\*}
+    \|F^\times\|
+        &= \sum\_{d \text{ dividing } \|F^\times\|} \text{NumElementsOfOrder}(d) \nl
+        &\leq \sum\_{d \text{ dividing } \|F^\times\|} \varphi(d) \nl
+        &\leq \|F^\times\|, \nl
+\end{align\*}%%
+with the last step deriving from [Gauss's formula][6]. Since the first sum
+attains its maximum value, it must agree with the second sum on every term. In
+particular, this means
+%%\begin{align\*}
+    \text{NumElementsOfOrder}(|F^\times|)
+        &= \varphi(|F^\times|) \nl
+        &\neq 0.
+\end{align\*}%%
+There is at least one element whose powers generate the whole group. □
+
+This result isn't strictly needed, but it's helpful to get intuition, and the
+methods used are cool.
+
+
+[1]: https://github.com/Nautilus-Institute/quals-2022/tree/main/sameold "sameold challenge solution"
 [2]: https://math.stackexchange.com/a/132383 "Number of elements of a finite field"
 [3]: https://math.stackexchange.com/a/1230045 "Order of finite fields is $p^n$"
+[4]: https://en.wikipedia.org/wiki/Freshman%27s_dream "Freshman's dream"
+[5]: https://kconrad.math.uconn.edu/blurbs/galoistheory/finitefields.pdf "Finite fields"
+[6]: https://en.wikipedia.org/wiki/Euler%27s_totient_function#Divisor_sum "Totient function: Divisor sum"
