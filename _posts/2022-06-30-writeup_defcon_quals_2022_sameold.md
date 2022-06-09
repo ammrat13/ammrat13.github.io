@@ -7,6 +7,7 @@ libs: [mathjax]
     @@\newcommand{\nl}{\\}@@
     @@\newcommand{\FF}{\mathbb{F}}@@
     @@\newcommand{\ZZ}{\mathbb{Z}}@@
+    @@\newcommand{\matr}[1]{\mathbf{#1}}@@
     @@\newcommand{\vect}[1]{\mathbf{#1}}@@
 </div>
 
@@ -90,7 +91,7 @@ Some reflect the output's bits (so bit 31 maps to bit 0, 30 to 1, ...). Some
 reflect the bits of each input byte individually.
 
 Most importantly, many implementations use a table-driven approach, computing
-one word at a time instead of just one bit. Exploring that is worth an entire
+one byte at a time instead of just one bit. Exploring that is worth an entire
 post, but the upshot is that it's only equivalent to this method when the
 algorithm is seeded with zero. Some implementations seed it with `0xffff_ffff`
 instead, which has the effect of NOTing the first 32 bits of the input.
@@ -153,10 +154,10 @@ eventually start to repeat elements, meaning @@K \cong \ZZ/p\ZZ@@. For that to
 be a field, @@p@@ must be prime.
 
 By the lemma above @@F@@ is a vector space over @@K@@, and since it's finite,
-it's finitely generated. Let @@\\{\vect{b}\_1, \cdots, \vect{b}\_n\\}@@ be a
+it's finitely generated. Let @@\\{b\_1, \cdots, b\_n\\}@@ be a
 basis, so every linear combination
 %%\begin{equation\*}
-    \alpha\_1 \vect{b}\_1 + \cdots + \alpha\_n \vect{b}\_n
+    \alpha\_1 b\_1 + \cdots + \alpha\_n b\_n
 \end{equation\*}%%
 gives a unique element of @@F@@. With each @@\alpha@@ in @@K@@, we get @@p@@
 possibilities for each coefficient, giving a total of @@p^n@@ different
@@ -168,6 +169,56 @@ field would have zero divisors otherwise.
 
 
 #### The Approach
+
+With all the introductory material out of the way, we can start tackling the
+actual problem. As a reminder, we want to find a string that starts with a
+specific substring (say `GreyHatGT`) whose CRC-32 is a particular value. I'll
+actually restrict the search space a bit more. I'll look for a string that
+starts with `GreyHatGT` then contains exactly @@\ell@@ characters, each either
+@@c@@ or @@d@@. Originally I chose `0` and `1` because their ASCII codes differ
+by @@1@@, but that's not required. Just let @@\delta = d - c@@. Now compute
+@@p@@ the CRC-32 of the original message: `GreyHatGT` followed by the character
+@@c@@ repeated @@\ell@@ times. Of course, this will likely differ from the
+target polynomial @@t@@, but we can change the message by substituting some
+instances of @@c@@ with @@d@@ --- by adding @@\delta@@s shifted by the
+appropriate amounts.
+
+Specifically, we wish to solve for @@\alpha_i \in \FF_2@@ in
+%%\begin{equation\*}
+    x^{32} \cdot \sum\_{i=0}^{\ell-1} \alpha\_i \cdot x^{8i}\delta = t - p.
+\end{equation\*}%%
+The @@x^{8i}@@ term in the sum shifts the correction into the correct place. For
+example, setting @@i=0@@ will shift the correction to the last place in the
+string, setting @@i=1@@ will be the second to last, and so on. Choosing
+@@\alpha_i=1@@ means to substitute that character, while choosing it zero means
+to leave it as @@c@@. The extra shift of @@x^{32}@@ corresponds to the message
+being multiplied by that before taking the remainder. Ultimately, changing the
+message leads to predictable effects on the output --- if you add something to
+the input, you just add the same thing to the output too. So, we take a look at
+the difference and try to solve for the required change.
+
+We can rearrange the above equation to read
+%%\begin{equation\*}
+    \sum\_{i=0}^{\ell-1} \alpha\_i \cdot \left(x^8\right)^i = \frac{t - p}{x^{32}\delta}.
+\end{equation\*}%%
+On the LHS we have a linear combination of constant elements, and on the RHS we
+have a constant. To solve this, we suddenly remember that this field
+@@\FF_{2^{32}}@@ can be expressed as a vector space over a subfield. Taking
+@@K=\\{0,1\\}=\FF_2@@ allows us to operate under the standard basis
+@@\\{1,x,x^2,\cdots,x^{31}\\}@@. The constants can be rewritten in this basis to
+get
+%%\begin{align\*}
+    \sum\_{i=0}^{\ell-1} \alpha\_i \vect{v}\_i &= \vect{y} \nl
+    \matr{V}\vect{\alpha} &= \vect{y},
+\end{align\*}%%
+where @@\matr{V}@@ is the matrix with column vectors @@\vect{v}\_i = x^{8i}@@.
+This system can be easily solved, though not necessarily uniquely, as long as
+@@\matr{V}@@'s columns span @@\FF_{2^{32}}@@.
+
+So when does that fail? Clearly, when @@\ell@@ is too small, there aren't enough
+vectors for a baisis and thus too few for a spanning set. The least you can
+possibly get away with is @@\dim\FF_{2^{32}} = 32@@. I assert that @@32@@ is
+also sufficient, and you'll never require more.
 
 
 [1]: https://github.com/Nautilus-Institute/quals-2022/tree/main/sameold "sameold Challenge Solution"
