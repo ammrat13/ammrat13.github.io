@@ -69,10 +69,10 @@ To calculate the checksum, CRCs reduce the bitstream modulo some polynomial. For
 the case of CRC-32, it's
 %%\begin{align\*}
     \pi =&\,
-        x^{32} + x^{26} + x^{23} + x^{22} \nl
-        &+ x^{16} + x^{12} + x^{11} + x^{10} \nl
-        &+ x^8 + x^7 + x^5 + x^4 \nl
-        &+ x^2 + x + 1,
+        1 + x + x^2 + x^4  + x^5 \nl
+        &+ x^7 + x^8 + x^{10} + x^{11} \nl
+        &+ x^{12} + x^{16} + x^{22} + x^{23} \nl
+        &+ x^{26} + x^{32},
 \end{align\*}%%
 the symbol @@\pi@@ of course standing for πolynomial. You can construct the
 message's polynomial and then take the remainder by polynomial long division,
@@ -340,6 +340,61 @@ above still technically holds, in the case of multiple displacement vectors,
 it's clearly very loose. Intuitively, we'd expect it to be close to
 @@\frac{32}{K}@@. Future work could try to relax these restrictions and get a
 tighter bound on the number of bytes needed.
+
+
+#### Worked Example
+
+Suppose I want to find a string that starts with `DC`, only contains the letters
+`G` and `T` after that, and whose CRC-32 is the same as the string `the`. I
+compute the target CRC to be `0x3C456DE6`, and undoing the post-processing by
+reversing the bits and NOTing gives
+%%\begin{align\*}
+    t =&\,
+        1 + x + x^6 + x^7 + x^8 \nl
+        &+ x^{10} + x^{11} + x^{12} + x^{14} \nl
+        &+ x^{16} + x^{19} + x^{22} \nl
+        &+ x^{27} + x^{28} + x^{31}.
+\end{align\*}%%
+Taking @@\ell=32@@ gives the original message `DCG...G`, and computing its CRC
+gives `0xBAAB7C95`, or
+%%\begin{align\*}
+    p =&\,
+        x + x^5 + x^7 + x^9 + x^{11} \nl
+        &+ x^{13} + x^{16} + x^{22} + x^{23} \nl
+        &+ x^{25} + x^{26} + x^{28} + x^{30}.
+\end{align\*}%%
+This gives a difference of
+%%\begin{align\*}
+    t-p =&\,
+        1 + x^5 + x^6 + x^8 + x^9 \nl
+        &+ x^{10} + x^{12} + x^{13} + x^{14} \nl
+        &+ x^{19} + x^{23} + x^{25} + x^{26} \nl
+        &+ x^{27} + x^{30} + x^{31}.
+\end{align\*}%%
+The characters we can use have ASCII codes `0x47` and `0x54` respectively.
+Remembering that the bytes will be reflected on the input, the polynomials are
+%%\begin{align\*}
+    c &= x + x^5 + x^6 + x^7 \nl
+    d &= x + x^3 + x^5 \nl
+    \delta &= x^3 + x^6 + x^7.
+\end{align\*}%%
+I then compute
+%%\begin{align\*}
+    \vect{y} =&\, \frac{t-p}{x^{32}\delta} \nl
+        =&\, 1 + x + x^4 + x^6 + x^7 \nl
+        &+ x^9 + x^{18} + x^{19} + x^{21} \nl
+        &+ x^{22} + x^{24} + x^{25} + x^{26} \nl
+        &+ x^{27} + x^{29} + x^{30}.
+\end{align\*}%%
+Solving gives
+%%\begin{align\*}
+    \alpha = [\,\,
+        &0, 1, 1, 0, 0, 0, 1, 1, \nl
+        &1, 1, 1, 1, 1, 1, 0, 1, \nl
+        &0, 1, 1, 1, 1, 0, 1, 1, \nl
+        &1, 1, 1, 0, 1, 1, 0, 0 \,\,],
+\end{align\*}%%
+which corresponds to the message `DCGGTTGTTTTTGTTTTGTGTTTTTTTTGGGTTG`.
 
 
 #### Appendix: Previous Results
