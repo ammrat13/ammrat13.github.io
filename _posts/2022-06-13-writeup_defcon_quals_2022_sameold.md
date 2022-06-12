@@ -13,7 +13,7 @@ libs: [mathjax]
 
 My family came over for my sister's graduation, so I chose to spend time with
 them instead of competing in the 2022 DEF CON CTF Qualifiers. Still, I briefly
-looked over the challenges, and I later solved this "mic test" challenge.
+looked over the challenges, and I later solved this "mic test" problem.
 
 > **sameold**
 >
@@ -45,7 +45,7 @@ faster than the straightforward but exponential method.
 
 First, it's necessary to understand some of the math underlying CRCs.
 Ultimately, the goal of any checksum is to take in some data and derive from it
-a "check value" of a fixed length --- 32-bit in our case. It just has to
+a "check value" of a fixed length --- 32-bit in our case. They just have to
 withstand random mutations, not adversarial changes to the input. As such, these
 algorithms can (and should) be simpler than hashes. They should be
 mathematically nice to ease reasoning about how they respond to different
@@ -59,14 +59,14 @@ operations (addition, subtraction, multiplication, division) are defined and
 behave the way you'd expect with regular numbers. To represent bitstrings, CRCs
 work over @@\FF_2[x]@@: the ring of polynomials with coefficients in @@\FF_2@@,
 with polynomial addition and multiplication defined in the usual way. For
-example, the string `1010` is represented as @@x^3 + x@@, where @@x@@ is just a
-formal symbol not representing any underlying value. Again, this choice was made
-to make CRCs easy to reason about mathematically. Polynomials are some of the
-nicest objects out there, but they have just enough depth to admit sophisticated
-algorithms.
+example, the string `1010` is represented as the polynomial @@x^3 + x@@, where
+@@x@@ is just a formal symbol not representing any underlying value. Again, this
+choice was made to make CRCs easy to reason about mathematically. Polynomials
+are some of the nicest objects out there, but they have just enough depth to
+admit sophisticated algorithms.
 
-To calculate the checksum, CRCs reduce the bitstream modulo some polynomial. For
-the case of CRC-32, it's
+To calculate the checksum, CRCs reduce the bitstream's polynomial with respect
+to some modulus. For CRC-32, the modulus is
 %%\begin{align\*}
     \pi =&\,
         1 + x + x^2 + x^4  + x^5 \nl
@@ -76,33 +76,33 @@ the case of CRC-32, it's
 \end{align\*}%%
 the symbol @@\pi@@ of course standing for πolynomial. You can construct the
 message's polynomial and then take the remainder by polynomial long division,
-however it's more economical to do the reduction after each operation.
-Effectively, you work over @@\FF_2[x] / \langle\pi\rangle@@: the space of
-polynomials but you treat those that differ by some multiple of @@\pi@@ as the
-same polynomial. Again, long division can take any element to its "canonical"
-form.
+but it's more economical to do the reduction after each operation. Effectively,
+you work over @@\FF_2[x] / \langle\pi\rangle@@: the space of polynomials but you
+treat those that differ by some multiple of @@\pi@@ as equal. Again, long
+division can take any element to its "canonical" form.
 
 That's CRCs in a nutshell. Treat your data as a polynomial @@p \in \FF_2[x] /
 \langle\pi\rangle@@ and reduce it to its canonical form by polynomial long
 division. Implementation is a bit more complicated than that, of course. For
-instance, you actually start with @@p \cdot x^{32}@@. That way, you can just
-append the checksum to the message when sending it, and the check passes if the
+instance, you actually reduce @@p \cdot x^{32}@@. That way, you can just append
+the checksum to the message when sending it, and the check passes if the
 recieved data is congruent to zero modulo @@\pi@@. Additionally, some
 implementations perform superficial changes to the data. Some NOT the output.
 Some reflect the output's bits (so bit 31 maps to bit 0, 30 to 1, ...). Some
-reflect the bits of each input byte individually.
+reflect the bits of each individual input byte.
 
 Most importantly, many implementations use a table-driven approach, computing
 one byte at a time instead of just one bit. Exploring that is worth an entire
 post, but the upshot is that it's only equivalent to this method when the
-algorithm is seeded with zero. Some implementations seed it with `0xffff_ffff`
+algorithm is seeded with zero. Some implementations seed it with `0xffffffff`
 instead, which has the effect of NOTing the first 32 bits of the input.
 Equivalently, it prepends
 %%\begin{equation\*}
-    \frac{1}{x^{32}} \cdot \left( \sum_{i=0}^{31} x^i \right).
+    \frac{1}{x^{32}} \cdot \left( \sum_{i=0}^{31} x^i \right)
 \end{equation\*}%%
-In general, if the table method is seeded with @@p@@, it XORs that with the
-first 32 bits of the input, or it equivalently prepends @@p \cdot x^{-32}@@.
+to the message. In general, if the table method is seeded with @@p@@, it XORs
+that with the first 32 bits of the input, or it equivalently prepends @@p \cdot
+x^{-32}@@.
 
 ##### The Choice of π
 
@@ -176,27 +176,26 @@ With all the introductory material out of the way, we can start tackling the
 actual problem. As a reminder, we want to find a string that starts with a
 specific substring (say `DC`) whose CRC-32 is a particular value. I'll actually
 restrict the search space a bit more. I'll look for a string that starts with
-`DC` then contains exactly @@\ell@@ characters, each either @@c@@ or @@d@@.
-Originally I chose `0` and `1` because their ASCII codes differ by @@1@@, but
-that's not required. Just let @@\delta = d - c@@. Now compute @@p@@ the CRC-32
-of the original message: `DC` followed by the character @@c@@ repeated @@\ell@@
-times. Of course, this will likely differ from the target polynomial @@t@@, but
-we can change the message by substituting some instances of @@c@@ with @@d@@ ---
-by adding instances of @@\delta@@ shifted by the appropriate amount.
+`DC` then contains exactly @@\ell@@ characters, each either @@c@@ or @@d@@. Let
+@@\delta = d - c@@ and compute @@p@@ the CRC-32 of the original message: `DC`
+followed by the character @@c@@ repeated @@\ell@@ times. Of course, this will
+likely differ from the target polynomial @@t@@, but we can change the message by
+substituting some instances of @@c@@ with @@d@@ --- by adding instances of
+@@\delta@@ shifted by the appropriate amount. Intuitively, changing the message
+leads to predictable effects on the output --- if you add something to the
+input, you just add the same thing to the output. So, we look at the difference
+and solve for the required change.
 
 Specifically, we wish to solve for @@\alpha_i \in \FF_2@@ in
 %%\begin{equation\*}
     x^{32} \cdot \sum\_{i=0}^{\ell-1} \alpha\_i \cdot x^{8i}\delta = t - p.
 \end{equation\*}%%
-The @@x^{8i}@@ term in the sum shifts the correction into the correct place. For
+The @@x^{8i}@@ term in the sum shifts the correction into the right place. For
 example, setting @@i=0@@ will shift the correction to the last character in the
 string, setting @@i=1@@ will be the second to last, and so on. Choosing
 @@\alpha_i=1@@ means to substitute that character into @@d@@, while choosing it
 zero means to leave it as @@c@@. The extra shift of @@x^{32}@@ corresponds to
-the message being multiplied by that before taking the remainder. Ultimately,
-changing the message leads to predictable effects on the output --- if you add
-something to the input, you just add the same thing to the output too. So, we
-take a look at the difference and try to solve for the required change.
+the CRC algorithm multiplying the message by that before taking the remainder.
 
 We can rearrange the above equation to read
 %%\begin{equation\*}
@@ -228,10 +227,10 @@ that's also sufficient.
 
 Specifically, when the attacker can choose to substitute individual words
 independently of each other, assuming a word's length is a power of two @@2^w@@,
-@@\ell=32@@ is sufficient. This is because going through the above process
-results in the vectors @@\vect{v}\_i@@ being @@x^{2^w i}@@. I'll prove that this
-set is a basis iff the set of @@x^i@@ is a basis, which it obviously is for @@i
-= 0, \cdots, 31@@.
+@@\ell=32@@ is sufficient. This is because going through the above process with
+this setup results in the vectors @@\vect{v}\_i@@ being @@x^{2^w i}@@. I'll
+prove that this set is a basis iff the set of @@x^i@@ is a basis, which it
+obviously is for @@i = 0, \cdots, 31@@.
 
 > *Theorem:* The set @@B = \\{b_0,\cdots,b_{\ell-1}\\}@@ of elements in
 > @@\FF_{p^n}@@ spans its field iff the set @@B^p =
@@ -269,7 +268,8 @@ The result in the previous section was agnostic to our choice of @@b_i@@.
 However, our basis is usually quite "nice". For example, in the last section, we
 chose the standard basis @@\\{1,x,x^2,\cdots,x^{31}\\}@@. Moreover, since
 multiplication by a constant is a linear automorphism, we could have chosen any
-32 consecutive powers of @@x@@. These same results hold for other elements too.
+32 consecutive powers of @@x@@. These same results hold for some other elements
+too.
 
 In particular, it holds for primitive elements of @@\FF_{2^{32}}@@. This fact
 could've been used to prove the result in the last section. Unfortunately, it
@@ -290,7 +290,7 @@ Then by definition @@g@@ satisfies this polynomial nonzero of degree at most
 □
 
 > *Theorem:* If @@g \in \FF_{p^n}@@ is primitive, then its minimal polynomial
-> has degree at least @@n@@.
+> has degree at least (exactly) @@n@@.
 
 Again, I'll proceed by contraposition. Without loss of generality, suppose @@g@@
 satisfies some monic polynomial of degree @@d < n@@. We can move all the lower
@@ -346,7 +346,7 @@ tighter bound on the number of bytes needed.
 
 Suppose I want to find a string that starts with `DC`, only contains the letters
 `G` and `T` after that, and whose CRC-32 is the same as the string `the`. I
-compute the target CRC to be `0x3C456DE6`, and undoing the post-processing by
+compute the target CRC to be `0x3c456de6`, and undoing the post-processing by
 reversing the bits and NOTing gives
 %%\begin{align\*}
     t =&\,
@@ -355,8 +355,9 @@ reversing the bits and NOTing gives
         &+ x^{16} + x^{19} + x^{22} \nl
         &+ x^{27} + x^{28} + x^{31}.
 \end{align\*}%%
-Taking @@\ell=32@@ gives the original message `DCG...G`, and computing its CRC
-gives `0xBAAB7C95`, or
+Taking @@\ell=32@@ gives the original message
+`DCGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG`, and computing its CRC gives `0xbaab7c95`,
+or
 %%\begin{align\*}
     p =&\,
         x + x^5 + x^7 + x^9 + x^{11} \nl
@@ -388,13 +389,14 @@ I then compute
 \end{align\*}%%
 Solving gives
 %%\begin{align\*}
-    \alpha = [\,\,
+    \vect{\alpha} = [\,\,
         &0, 1, 1, 0, 0, 0, 1, 1, \nl
         &1, 1, 1, 1, 1, 1, 0, 1, \nl
         &0, 1, 1, 1, 1, 0, 1, 1, \nl
         &1, 1, 1, 0, 1, 1, 0, 0 \,\,],
 \end{align\*}%%
-which corresponds to the message `DCGGTTGTTTTTGTTTTGTGTTTTTTTTGGGTTG`.
+which corresponds to the message `DCGGTTGTTTTTGTTTTGTGTTTTTTTTGGGTTG`. Remeber
+that @@\vect{\alpha}[0]@@ corresponds to the last character of the string.
 
 
 #### Resources
@@ -411,23 +413,22 @@ This section lists facts I used to prove my main results.
 
 Remember that, over fields, polynomials can have at most as many roots as their
 degree. If it has a root @@r@@, a factor of @@(X-r)@@ can be divided out. This
-can be repeated until the degree of the polynomial is reduced to zero. We can
-use that fact to show the following: if @@F^\times@@ has at least one element of
-order @@d@@, then it has exactly @@\varphi(d)@@ of them. Let @@g@@ be an element
-such that @@g^d@@ is the lowest power of @@g@@ equaling the group identity
-@@1@@. Every element @@X@@ in the group it generates @@\langle g\rangle@@ will
-satisfy @@X^d - 1 = 0@@. There are @@d@@ such elements in this subgroup, so
-we've found all the possible roots of that polynomial. To find objects in
-@@F^\times@@ of order exactly @@d@@, it suffices to restrict our search to
-@@\langle g\rangle@@. By basic number theory, out of the @@d@@ elements in that
-cycle with order dividing @@d@@, exactly @@\varphi(d)@@ of them will have order
-exactly @@d@@.
+can be repeated until the polynomial is reduced to a constant. We can use that
+fact to show the following: if @@F^\times@@ has at least one element of order
+@@d@@, then it has exactly @@\varphi(d)@@ of them. Let @@g@@ be an element such
+that @@g^d@@ is the lowest power of @@g@@ equaling the group identity @@1@@.
+Every element @@X@@ in the group it generates @@\langle g\rangle@@ will satisfy
+@@X^d - 1 = 0@@. There are @@d@@ such elements in this subgroup, so we've found
+all the possible roots of that polynomial. To find objects in @@F^\times@@ of
+order exactly @@d@@, it suffices to restrict our search to @@\langle g\rangle@@.
+By basic number theory, out of the @@d@@ elements in that cycle with order
+dividing @@d@@, exactly @@\varphi(d)@@ of them will have order exactly @@d@@.
 
 Define @@\text{NumElementsOfOrder}(d)@@ to be the number of elements in
 @@F^\times@@ such that their @@d@@-th power is their smallest power equaling
 @@1@@. As discussed above, that function returns either @@\varphi(d)@@ or @@0@@.
-Clearly, summing over all the values @@d@@ can take will give the size of the
-group:
+Clearly, summing over all the values possible @@d@@ can take will give the size
+of the group:
 %%\begin{align\*}
     \|F^\times\|
         &= \sum\_{d \text{ dividing } \|F^\times\|} \text{NumElementsOfOrder}(d) \nl
@@ -460,8 +461,7 @@ their coefficients are all multiples of @@p@@. Why? Remember that
 \end{align\*}%%
 Since @@p@@ is prime, it's not possible for @@k!@@ to divide @@p@@ with @@k <
 p@@. So, the factor remains, and @@\binom{p}{k}@@ is divisible by @@p@@. The
-only places this argument breaks are when @@k=p@@ and when @@k=0@@ where
-expanding the numerator just results in @@1@@. In those cases,
+only places this argument breaks are when @@k=p@@ and @@k=0@@. In those cases,
 @@\binom{p}{k}=1@@. Thus, over this ring where multiples of @@p@@ vanish, only
 the first and last terms of the binomial expansion remain. □
 

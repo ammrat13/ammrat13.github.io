@@ -5,7 +5,7 @@
 # The modulus for the CRC
 # Should be expressed in hexadecimal in the normal ordering, so bit 0 should
 # correspond to the 1s place. The most significant digit should be left off.
-MODULUS_RAW = 0x04C11DB7
+MODULUS_RAW = 0x04c11db7
 
 # Initial value of the CRC
 # It turns out that this value is not reflected first. Keep that in mind.
@@ -20,7 +20,7 @@ XOR_OUT = 0xffffffff
 # The target CRC
 # This should be the output of the CRC algorithm, with REF_OUT and XOR_OUT
 # applied if needed. Those transformations will be undone.
-TARGET_RAW = 0x3C456DE6
+TARGET_RAW = 0x3c456de6
 
 # What the output should start with
 OUTPUT_START = b'DC'
@@ -33,7 +33,6 @@ OUTPUT_CHARS_RAW = (b'G', b'T')
 # The field over which we'll work
 F.<x> = GF(2**32, modulus = (MODULUS_RAW | 2**32).digits(2))
 
-
 # Utility function
 def pad_to_length(to_pad, pad_with = 0, length = 32, left_side = False):
     padding = [pad_with] * (length - len(to_pad))
@@ -42,14 +41,13 @@ def pad_to_length(to_pad, pad_with = 0, length = 32, left_side = False):
 # Utility function
 # Handling reflections is a bit counterintuitive. After the calls to digits and
 # enumerate, the x**i term's coefficient is at index i. We reflect if needed by
-# mapping i -> 31 - i.
+# mapping index i -> length - 1 - i.
 def word_to_polynomial(word, length = 32, reflect = False):
     dig_list = pad_to_length(Integer(word).digits(2), length = length)
     return sum(map(
         lambda iv: iv[1] * x**(iv[0] if not reflect else length-1-iv[0]),
         enumerate(dig_list)
     ))
-
 
 # Compute the target as a polynomial over F
 # Undo the post-processing to the output too.
