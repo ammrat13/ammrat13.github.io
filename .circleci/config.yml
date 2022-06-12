@@ -89,6 +89,15 @@ jobs:
             - test-visual
             - test-links
 
+    # Job to test only links
+    # Links to external sources can go stale, so check that every week or so
+    build-and-test-links-only:
+        executor: build-and-test-exec
+        steps:
+            - setup
+            - build
+            - test-links
+
     # Job to force a rebuild of master
     rebuild-master:
         executor: rebuild-master-exec
@@ -112,6 +121,18 @@ workflows:
         triggers:
             - schedule:
                 cron: "0 0 * * *"
+                filters:
+                    branches:
+                        only:
+                            - master
+
+    # Check that links are not broken every week
+    build-and-test-links-only:
+        jobs:
+            - build-and-test-links-only
+        triggers:
+            - schedule:
+                cron: "0 0 * * 0"
                 filters:
                     branches:
                         only:
