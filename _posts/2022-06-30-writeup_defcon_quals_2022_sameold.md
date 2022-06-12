@@ -397,6 +397,11 @@ Solving gives
 which corresponds to the message `DCGGTTGTTTTTGTTTTGTGTTTTTTTTGGGTTG`.
 
 
+#### Resources
+
+* [Code implementing this solution][10]
+
+
 #### Appendix: Previous Results
 
 This section lists facts I used to prove my main results.
@@ -495,3 +500,4 @@ whole group, so we get @@p@@ divides @@p^n-1@@, which is false. □
 [7]: https://en.wikipedia.org/wiki/Fermat's_little_theorem "Fermat's little theorem"
 [8]: https://en.wikipedia.org/wiki/Frobenius_endomorphism "Frobenius endomorphism"
 [9]: https://math.stackexchange.com/a/2485017 "When is the Frobenius endomorphism an automorphism?"
+[10]: https://github.com/ammrat13/ammrat13.github.io/blob/posts/defcon-2022-sameold/assets/2022/06/30/solve.sage "Code implementing this solution"
