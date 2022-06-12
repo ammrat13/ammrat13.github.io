@@ -189,7 +189,7 @@ Specifically, we wish to solve for @@\alpha_i \in \FF_2@@ in
     x^{32} \cdot \sum\_{i=0}^{\ell-1} \alpha\_i \cdot x^{8i}\delta = t - p.
 \end{equation\*}%%
 The @@x^{8i}@@ term in the sum shifts the correction into the correct place. For
-example, setting @@i=0@@ will shift the correction to the last place in the
+example, setting @@i=0@@ will shift the correction to the last character in the
 string, setting @@i=1@@ will be the second to last, and so on. Choosing
 @@\alpha_i=1@@ means to substitute that character into @@d@@, while choosing it
 zero means to leave it as @@c@@. The extra shift of @@x^{32}@@ corresponds to
@@ -219,13 +219,132 @@ This system can be easily solved, though not necessarily uniquely, as long as
 
 #### Failure Resistance
 
-##### "2<sup>k</sup>-Periodic" Basis
-
 So when does that fail? Clearly, when @@\ell@@ is too small, there aren't enough
 vectors for a baisis and thus too few for a spanning set. The least you can
-possibly get away with is @@\ell = \dim\FF_{2^{32}} = 32@@. I assert that, in
-cases similar to that above, @@32@@ is also sufficient, and you'll never require
-more.
+possibly get away with is @@\ell = \dim\FF_{2^{32}} = 32@@. In some cases,
+that's also sufficient.
+
+##### On "2<sup>*w*</sup>-Periodic" Bases
+
+Specifically, when the attacker can choose to substitute individual words
+independently of each other, assuming a word's length is a power of two @@2^w@@,
+@@\ell=32@@ is sufficient. This is because going through the above process
+results in the vectors @@\vect{v}\_i@@ being @@x^{2^w i}@@. I'll prove that this
+set is a basis iff the set of @@x^i@@ is a basis, which it obviously is for @@i
+= 0, \cdots, 31@@.
+
+> *Theorem:* The set @@B = \\{b_0,\cdots,b_{\ell-1}\\}@@ of elements in
+> @@\FF_{p^n}@@ spans its field iff the set @@B^p =
+> \\{b_0^p,\cdots,b_{\ell-1}^p\\}@@ does.
+
+For the "only if" direction, observe that if @@v@@ can be expressed as a linear
+combination of basis elements in @@B@@, then
+%%\begin{align\*}
+    v^p
+        &= \left( \sum\_{i=0}^{\ell-1} \alpha_i b_i \right)^p \nl
+        &= \sum\_{i=0}^{\ell-1} \alpha_i^p b_i^p \nl
+\end{align\*}%%
+by Freshman's Dream. Since the Frobenius endomorphism is bijective over finite
+fields, one can make any target vector out of elements of @@B^p@@ by making its
+preimage using @@B@@ then raising it to the @@p@@-th power.
+
+For the "if" direction, we use a similar argument. To construct a target element
+@@v@@, construct @@v^p@@ using elements of @@B^p@@, then construct @@v@@ by
+taking the @@p@@-th root of all the coefficients and using them on the basis
+@@B@@. Again, doing this is well defined since the Frobenius endomorphism is
+bijective over @@\FF_{p^n}@@. □
+
+> *Corollary:* Same as the above theorem, but with the set @@B^{p^k} =
+> \\{b_0^{p^k},\cdots,b_{\ell-1}^{p^k}\\}@@ instead of @@B^p@@, where @@k@@ is
+> an arbitrary natural number.
+
+Apply the above theorem @@k@@ times. □
+
+The result we set out to prove is this corollary with @@p=2@@, @@k=w@@, and
+@@b_i = x^i@@.
+
+##### On *n* Consecutive Powers of Primitive Elements
+
+The result in the previous section was agnostic to our choice of @@b_i@@.
+However, our basis is usually quite "nice". For example, in the last section, we
+chose the standard basis @@\\{1,x,x^2,\cdots,x^{31}\\}@@. Moreover, since
+multiplication by a constant is a linear automorphism, we could have chosen any
+32 consecutive powers of @@x@@. These same results hold for other elements too.
+
+In particular, it holds for primitive elements of @@\FF_{2^{32}}@@. This fact
+could've been used to prove the result in the last section. Unfortunately, it
+has limited utility since it requires consecutive powers of that element, which
+might be hard to guarantee for non-powers of two.
+
+> *Lemma:* If the minimal polynomial of @@g \in \FF_{p^n}@@ has degree at least
+> (so, exactly) @@n@@, then the set @@\\{1,g,g^2,\cdots,g^{n-1}\\}@@ is linearly
+> independent and therefore a basis for @@\FF_{p^n}@@.
+
+I'll prove by contraposition. Suppose there were some constants @@\alpha_i \in
+\FF_p@@, not all zero, such that
+%%\begin{equation\*}
+    \sum\_{i=0}^{n-1} \alpha_i g^i = 0.
+\end{equation\*}%%
+Then by definition @@g@@ satisfies this polynomial nonzero of degree at most
+@@n-1@@, and its minimal polynomial must have degree less than or equal to that.
+□
+
+> *Theorem:* If @@g \in \FF_{p^n}@@ is primitive, then its minimal polynomial
+> has degree at least @@n@@.
+
+Again, I'll proceed by contraposition. Without loss of generality, suppose @@g@@
+satisfies some monic polynomial of degree @@d < n@@. We can move all the lower
+degree terms to one side to get
+%%\begin{equation\*}
+    g^d = \sum\_{i=0}^{d-1} \alpha_i g^i.
+\end{equation\*}%%
+Then, all subsequent powers of @@g@@ can be expressed as a linear combination of
+@@\\{1,g,g^2,\cdots,g^{d-1}\\}@@. Just keep substituting this identity until all
+instances of @@g@@ have power at most @@d-1@@. Therefore, the set of elements
+@@\langle g\rangle \subseteq \FF_{p^n}^\times@@ that can be reached via powers
+of @@g@@ has at most @@p^d - 1@@ elements. We get @@p@@ choices for each
+coefficient, minus one because zero can't be reached. This is strictly fewer
+elements than are contained in the whole field, so @@g@@ cannot be primitive. □
+
+> *Corollary:* If @@g \in \FF_{p^n}@@ is primitive, any @@n@@ consecutive powers
+> of @@g@@ are linearly independent and therefore form a basis.
+
+To show @@\\{1,g,g^2,\cdots,g^n\\}@@ is linearly independent, simply compose the
+above theorem and the lemma before it. As for any @@n@@ consecutive powers, with
+@@g^d@@ being the lowest power among them, linearly transform this basis via
+multiplication with @@g^d@@. □
+
+
+#### Future Work
+
+Characterizing powers of two and consecutive powers is relatively easy. However,
+real-world situations might not afford this structure. Attackers might only be
+able to choose bits at irregular positions, and the above guarantees about how
+many choices are needed to span might not hold. Future work might focus on
+getting a tighter bound on which and how many elements are needed to guarantee a
+spanning set.
+
+Additionally, I assumed for simplicity that the attacker would choose once per
+byte --- either @@c@@ or @@d@@. They usually have more choices than that though,
+and it would be good to take advantage of them. By introducing @@K@@ independent
+displacement vectors @@\delta_k@@, it's possible to use an alphabet @@\Sigma@@
+that has @@2^K@@ characters. In that case, you need to solve
+%%\begin{align\*}
+    x^{32} \cdot \sum\_{i=0}^{\ell-1}\sum_{k=1}^K \alpha_{i,k} \cdot x^{8i} \delta_k &= t - p \nl
+    \sum\_{i=0}^{\ell-1}\sum_{k=1}^K \alpha_{i,k} \cdot x^{8i} \delta_k &= \frac{t - p}{x^{32}}.
+\end{align\*}%%
+Additionally, @@\Sigma@@ has to be an affine space over @@\FF_2@@, otherwise it
+wouldn't be possible to safely take linear combinations of the vectors
+@@\delta_k@@ as we require. Finally, while the bound on @@\ell@@ established
+above still technically holds, in the case of multiple displacement vectors,
+it's clearly very loose. Intuitively, we'd expect it to be close to
+@@\frac{32}{K}@@. Future work could try to relax these restrictions and get a
+tighter bound on the number of bytes needed.
+
+
+#### Appendix: Previous Results
+
+This section lists facts I used to prove my main results.
 
 > *Lemma ([Conrad § 1.6][5]):* The multiplicative group @@F^\times@@ of a
 > finite field @@F@@ is cyclic.
@@ -286,9 +405,6 @@ expanding the numerator just results in @@1@@. In those cases,
 @@\binom{p}{k}=1@@. Thus, over this ring where multiples of @@p@@ vanish, only
 the first and last terms of the binomial expansion remain. □
 
-This result holds over @@\FF_{2^{32}}@@ where @@p=2@@. While this is a basic
-result, I thought I'd include it since my proof depends on it, along with...
-
 > *Lemma ([Frobenius Endomorphism][8]):* Over the finite field @@\FF_{p^n}@@,
 > the map @@X \mapsto X^p@@ is an automorphism --- an isomorphism from
 > @@\FF_{p^n}@@ to itself.
@@ -313,33 +429,6 @@ maps some @@g \neq 1@@ to the identity. That element @@g@@ satisfies @@X^p - 1 =
 has @@p@@ elements, we've found all solutions to @@X^p = 1@@, which is @@\ker
 X^p@@ by definition. Recall that the size of a subgroup divides the size of the
 whole group, so we get @@p@@ divides @@p^n-1@@, which is false. □
-
-> *Theorem:* The set @@B = \\{b_0,\cdots,b_{\ell-1}\\}@@ of elements in
-> @@\FF_{p^n}@@ spans its field iff the set @@B^p =
-> \\{b_0^p,\cdots,b_{\ell-1}^p\\}@@ does.
-
-For the "only if" direction, observe that if @@v@@ can be expressed as a linear
-combination of basis elements in @@B@@, then
-%%\begin{align\*}
-    v^p
-        &= \left( \sum\_{i=0}^{\ell-1} \alpha_i b_i \right)^p \nl
-        &= \sum\_{i=0}^{\ell-1} \alpha_i^p b_i^p \nl
-\end{align\*}%%
-by Freshman's Dream. Since the Frobenius endomorphism is bijective over finite
-fields, one can make any target vector out of elements of @@B^p@@ by making its
-preimage using @@B@@ then raising it to the @@p@@-th power.
-
-For the "if" direction, we use a similar argument. To construct a target element
-@@v@@, construct @@v^p@@ using elements of @@B^p@@, then construct @@v@@ by
-taking the @@p@@-th root of all the coefficients and using them on the basis
-@@B@@. Again, doing this is well defined since the Frobenius endomorphism is
-bijective over @@\FF_{p^n}@@. □
-
-> *Corollary:* Same as the above theorem, but with the set @@B^{p^k} =
-> \\{b_0^{p^k},\cdots,b_{\ell-1}^{p^k}\\}@@ instead of @@B^p@@, where @@k@@ is
-> an arbitrary natural number.
-
-Apply the above theorem @@k@@ times. □
 
 
 [1]: https://github.com/Nautilus-Institute/quals-2022/tree/main/sameold "sameold challenge solution"
