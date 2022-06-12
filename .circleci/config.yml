@@ -51,18 +51,18 @@ commands:
         steps:
             - run: bundle exec jekyll build --future
 
+    # Do visual regression testing
+    test-visual:
+        description: Performing visual regression tests
+        steps:
+            - run: npx percy snapshot ./_site
+
     # Test that all the links work as expected
     # Ignore some problematic sites
     test-links:
         description: Running Linkinator
         steps:
             - run: npx linkinator ./_site
-
-    # Do visual regression testing
-    test-visual:
-        description: Performing visual regression tests
-        steps:
-            - run: npx percy snapshot ./_site
 
     # Force a rebuild of the master branch on Github
     # Use the API for this
@@ -86,8 +86,17 @@ jobs:
         steps:
             - setup
             - build
-            - test-links
             - test-visual
+            - test-links
+
+    # Job to test only links
+    # Links to external sources can go stale, so check that every week or so
+    build-and-test-links-only:
+        executor: build-and-test-exec
+        steps:
+            - setup
+            - build
+            - test-links
 
     # Job to force a rebuild of master
     rebuild-master:
@@ -112,6 +121,18 @@ workflows:
         triggers:
             - schedule:
                 cron: "0 0 * * *"
+                filters:
+                    branches:
+                        only:
+                            - master
+
+    # Check that links are not broken every week
+    build-and-test-links-only:
+        jobs:
+            - build-and-test-links-only
+        triggers:
+            - schedule:
+                cron: "0 0 * * 0"
                 filters:
                     branches:
                         only:
