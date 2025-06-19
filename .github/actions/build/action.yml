@@ -8,5 +8,6 @@ runs:
   using: "composite"
   steps:
     - name: "Generate HTML"
+      shell: "bash"
       run: |
         bundle exec jekyll build --future

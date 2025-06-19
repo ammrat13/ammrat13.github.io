@@ -1,0 +1,23 @@
+# Every week, check that the links are not broken.
+
+name: "Check Links"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  check-links:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup"
+        uses: "./.github/actions/setup"
+
+      - name: "Generate HTML"
+        uses: "./.github/actions/build"
+
+      - name: "Check links"
+        uses: "JustinBeckwith/linkinator-action@v1"
