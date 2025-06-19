@@ -29,3 +29,5 @@ jobs:
 
       - name: "Test links"
         uses: "JustinBeckwith/linkinator-action@v1"
+        with:
+          paths: "./_site/"

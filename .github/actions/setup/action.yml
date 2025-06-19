@@ -13,11 +13,7 @@ runs:
       uses: "ruby/setup-ruby@v1"
       with:
         ruby-version: "3.3"
-
-    - name: "Install Ruby dependencies"
-      shell: "bash"
-      run: |
-        bundle install --deployment
+        bundler-cache: true
 
     - name: "Set up Node.js"
       uses: "actions/setup-node@v4"
