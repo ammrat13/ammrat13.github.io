@@ -23,11 +23,10 @@ jobs:
         uses: "./.github/actions/build"
 
       - name: "Run visual regression tests"
-        run: "npx percy snapshot ./_site"
+        run: |
+          npx percy snapshot ./_site
         env:
           PERCY_TOKEN: "${{ secrets.PERCY_TOKEN }}"
 
-      - name: "Test links"
-        uses: "JustinBeckwith/linkinator-action@v1"
-        with:
-          paths: "./_site/"
+      - name: "Check for broken links"
+        uses: "./.github/actions/link-test"

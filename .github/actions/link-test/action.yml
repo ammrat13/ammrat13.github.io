@@ -1,0 +1,14 @@
+# Action to test for broken links in the site with `linkinator`. We do this in
+# multiple places - both on every push and weekly, so DRY.
+
+name: "Test for Broken Links"
+author: "Ammar Ratnani <ammrat13@gmail.com>"
+description: "Test for broken links on `ammrat13.github.io` with `linkinator`"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Check links"
+      uses: "JustinBeckwith/linkinator-action@v1"
+      with:
+        paths: "./_site/"

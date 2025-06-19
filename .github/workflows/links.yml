@@ -19,7 +19,5 @@ jobs:
       - name: "Generate HTML"
         uses: "./.github/actions/build"
 
-      - name: "Check links"
-        uses: "JustinBeckwith/linkinator-action@v1"
-        with:
-          paths: "./_site/"
+      - name: "Check for broken links"
+        uses: "./.github/actions/link-test"
