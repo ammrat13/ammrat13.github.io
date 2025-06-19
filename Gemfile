@@ -1,9 +1,9 @@
 source "https://rubygems.org"
 
 # For Github Pages integration
-# Jekyll for Github Pages doesn't support Ruby 3.0
-ruby "~> 2.7"
-gem "github-pages", group: :jekyll_plugins
+gem "github-pages", "~> 232", group: :jekyll_plugins
+# Required for Ruby 3.0
+gem "webrick", "~> 1.9"
 
 # For syntax highlighting
 gem "rouge"
