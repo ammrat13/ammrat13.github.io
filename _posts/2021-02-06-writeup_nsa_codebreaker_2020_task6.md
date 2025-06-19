@@ -364,7 +364,7 @@ Ammar Ratnani
 
 
 
-[1]: <https://github.com/ammrat13/ammrat13.github.io/tree/master/assets/2021/02/06> "My GitHub"
+[1]: <https://github.com/ammrat13/ammrat13.github.io/tree/main/assets/2021/02/06> "My GitHub"
 [2]: <https://en.wikipedia.org/wiki/Half-precision_floating-point_format> "Half-precision Floating-point Format"
 [3]: <https://bugs.python.org/issue11734> "Python Supports 16-Bit Floats"
 [4]: <https://youtu.be/X8jsijhllIA> "Hamming Codes and Error Correction"

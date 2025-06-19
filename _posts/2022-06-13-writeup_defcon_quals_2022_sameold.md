@@ -500,4 +500,4 @@ whole group, so we get @@p@@ divides @@p^n-1@@, which is false. □
 [7]: https://en.wikipedia.org/wiki/Fermat's_little_theorem "Fermat's little theorem"
 [8]: https://en.wikipedia.org/wiki/Frobenius_endomorphism "Frobenius endomorphism"
 [9]: https://math.stackexchange.com/a/2485017 "When is the Frobenius endomorphism an automorphism?"
-[10]: https://github.com/ammrat13/ammrat13.github.io/blob/master/assets/2022/06/13/solve.sage "Code implementing this solution"
+[10]: https://github.com/ammrat13/ammrat13.github.io/blob/main/assets/2022/06/13/solve.sage "Code implementing this solution"

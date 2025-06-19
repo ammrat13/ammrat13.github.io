@@ -328,6 +328,6 @@ the realm of a student's understanding. That's why I do them.
 ---
 
 ### Resources
-* [Code to check my algorithm](https://github.com/ammrat13/ammrat13.github.io/blob/master/assets/2020/12/31/code/even_complete_edge_coloring.py)
-* [Code to display the results](https://github.com/ammrat13/ammrat13.github.io/blob/master/assets/2020/12/31/code/display_even_complete_edge_coloring.sage)
-* [Code to ensure no good paths](https://github.com/ammrat13/ammrat13.github.io/blob/master/assets/2020/12/31/code/has_good_ordering.py)
+* [Code to check my algorithm](https://github.com/ammrat13/ammrat13.github.io/blob/main/assets/2020/12/31/code/even_complete_edge_coloring.py)
+* [Code to display the results](https://github.com/ammrat13/ammrat13.github.io/blob/main/assets/2020/12/31/code/display_even_complete_edge_coloring.sage)
+* [Code to ensure no good paths](https://github.com/ammrat13/ammrat13.github.io/blob/main/assets/2020/12/31/code/has_good_ordering.py)

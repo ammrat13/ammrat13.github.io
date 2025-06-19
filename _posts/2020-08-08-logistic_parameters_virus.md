@@ -153,5 +153,5 @@ even though individual @@R_0@@s can vary wildly. It seems this simple logistic
 model is more versatile than I give it credit for.
 
 ### Resources
-* [Code for this post](https://github.com/ammrat13/ammrat13.github.io/tree/master/assets/2020/08/08/simulation)
+* [Code for this post](https://github.com/ammrat13/ammrat13.github.io/tree/main/assets/2020/08/08/simulation)
 * [Simulator for invent**summer**](https://github.com/ammrat13/inventsummer-2020/tree/master/covidsim)
