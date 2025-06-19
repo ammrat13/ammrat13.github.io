@@ -1,0 +1,25 @@
+# Every day, force a rebuild of the site. This is needed to publish posts that
+# were initially "posted" in the future.
+
+name: "Publish"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  publish:
+    runs-on: "ubuntu-latest"
+    steps:
+      # Use the GitHub Pages API to force a rebuild.
+      - name: "Force site rebuild"
+        run: |
+          curl \
+            https://api.github.com/repos/${{ github.repository }}/pages/builds \
+            --request POST \
+            --header "Accept: application/vnd.github.v3+json" \
+            --header "Authorization: Bearer ${TOKEN}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --fail-with-body
+        env:
+          TOKEN: "${{ secrets.TOKEN_PUBLISH }}"
