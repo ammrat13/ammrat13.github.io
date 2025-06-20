@@ -70,7 +70,7 @@ g@@ at the origin. However, note that the reverse is not true. If we consider
 
 %%\lim_{\left(x,y\right) \to \mathbf{0}} \frac{y^2}{x},%%
 
-we get @@\nabla f = \langle 0, 2y\rangle@@ and @@\nabla g = \langle 0,1
+we get @@\nabla f = \langle 0, 2y\rangle@@ and @@\nabla g = \langle 1,0
 \rangle@@. At the origin, the equality holds with @@\lambda = 0@@, but the limit
 does not exist as substituting @@x \mapsto y^2@@ shows.
 
