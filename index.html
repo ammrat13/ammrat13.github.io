@@ -4,14 +4,18 @@ stylesheet: index
 libs: [postsel, fa]
 ---
 
-<!-- We could build this up ourselves with Flex, but Bootstrap has it -->
+{% comment %}
+    We could build this up ourselves with Flex, but Bootstrap has it.
+{% endcomment %}
 <div class="container align-items-start">
     <div class="row">
 
         <div class="col-xl-4">
             <img id="profileImg" src="/assets/img/profile.jpg" alt="A picture of me" class="rounded"/>
 
-            <!-- Have the social media links be clickable -->
+            {% comment %}
+                Have the social media links be clickable.
+            {% endcomment %}
             <div id="socialMediaLinks">
                 <a href="https://www.linkedin.com/in/ammar-ratnani" class="text-body socialMediaLink"><i class="fab fa-linkedin"></i></a>
                 <a href="https://github.com/ammrat13" class="text-body socialMediaLink"><i class="fab fa-github-square"></i></a>

@@ -9,29 +9,31 @@ libs: []
 
     <head>
 
-        <!-- Boilerplate -->
+        {% comment %} Boilerplate {% endcomment %}
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{{site.description}}"/>
 
-        <!-- Bootstrap -->
-        <!-- JQuery -->
+        {% comment %} Bootstrap {% endcomment %}
+        {% comment %} JQuery {% endcomment %}
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
-        <!-- Process Includes -->
+        {% comment %} Process Includes {% endcomment %}
         {% assign libList = page.libs | concat: layout.libs %}
         {% for lib in libList %}
             {% if lib == "postsel" %}
-                <!-- If we use the post selector, import the styles -->
+                {% comment %}
+                    If we use the post selector, import the styles.
+                {% endcomment %}
                 <link rel="stylesheet" href="/assets/css/util/post_select.css"/>
             {% elsif lib == "fa" %}
-                <!-- Font Awesome -->
+                {% comment %} Font Awesome {% endcomment %}
                 <script src="https://kit.fontawesome.com/09a6f434c3.js" crossorigin="anonymous"></script>
             {% elsif lib == "mathjax" %}
-                <!-- MathJax -->
+                {% comment %} MathJax {% endcomment %}
                 <script>
                     MathJax = {
                         tex: {
@@ -42,23 +44,23 @@ libs: []
                 </script>
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.0.5/es5/tex-mml-chtml.js" crossorigin="anonymous"></script>
             {% elsif lib == "code" %}
-                <!-- Custom code highlighting -->
+                {% comment %} Custom code highlighting {% endcomment %}
                 <link rel="stylesheet" href="/assets/css/util/code.css"/>
             {% else %}
-                <!-- Error -->
+                {% comment %} Error {% endcomment %}
                 <script> console.error("Unknown library include: {{lib}}"); </script>
             {% endif %}
         {% endfor %}
 
-        <!-- My libraries -->
+        {% comment %} My libraries {% endcomment %}
         <link rel="stylesheet" href="/assets/css/{{page.stylesheet | default: layout.stylesheet}}.css"/>
 
-        <!-- If the page has a title, use that -->
+        {% comment %} If the page has a title, use that {% endcomment %}
         {% if page.title %}
-            <!-- Append the site name with a dash -->
+            {% comment %} Append the site name with a dash {% endcomment %}
             <title>{{ page.title | append: " - " | append: site.title }}</title>
         {% else %}
-            <!-- Otherwise, just use the site's title -->
+            {% comment %} Otherwise, just use the site's title {% endcomment %}
             <title>{{site.title}}</title>
         {% endif %}
 
@@ -66,17 +68,17 @@ libs: []
 
     <body>
 
-        <!-- Bootstrap navbar for navigation -->
+        {% comment %} Bootstrap navbar for navigation {% endcomment %}
         <nav id="topLevelNav" class="navbar navbar-expand-md navbar-light bg-light">
-            <!-- Brand -->
+            {% comment %} Brand {% endcomment %}
             <a class="navbar-brand" href="/index.html"/>{{site.title}}</a>
 
-            <!-- For collapsing -->
+            {% comment %} For collapsing {% endcomment %}
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topLevelNavCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- The thing to collapse -->
+            {% comment %} The thing to collapse {% endcomment %}
             <div class="collapse navbar-collapse" id="topLevelNavCollapse">
                 <ul class="navbar-nav ml-auto">
                     {% for link in site.data.navbar_links %}

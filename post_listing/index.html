@@ -21,10 +21,12 @@ libs: [postsel]
         </div>
     {% endfor %}
 
-    <!-- Add placeholders to make sure the items have equal width -->
-    <!-- We set the total number of items to be divisible by 1, 2, 3, ... -->
-    <!-- See: https://medium.com/developedbyjohn/equal-width-flex-items-a5ba1bfacb77 -->
-    {% assign totMod = 6 %} <!-- LCM(1,2,3) -->
+    {% comment %}
+        Add placeholders to make sure the items have equal width. We set the
+        total number of items to be divisible by 1, 2, 3, ...
+        See: https://medium.com/developedbyjohn/equal-width-flex-items-a5ba1bfacb77
+    {% endcomment %}
+    {% assign totMod = 6 %} {% comment %} LCM(1,2,3) {% endcomment %}
     {% assign numAlready = paginator.posts.size | modulo: totMod %}
     {% assign numPlaceholders = totMod | minus: numAlready %}
     {% for i in (1..numPlaceholders) %}
@@ -36,8 +38,10 @@ libs: [postsel]
     <nav id="postPagination">
         <ul class="pagination">
 
-            <!-- The templates for pages get a bit nasty -->
-            <!-- So, compute them once and store them in variables -->
+            {% comment %}
+                The templates for pages get a bit nasty. So, compute them once
+                and store them in variables
+            {% endcomment %}
             {% assign first_page_href = site.paginate_path | replace: ':num', '' | relative_url %}
             {% assign next_page_href = paginator.next_page_path | relative_url %}
             {% assign prev_page_href = paginator.previous_page_path | relative_url %}
@@ -50,8 +54,10 @@ libs: [postsel]
                 <a class="page-link" href="{{ prev_page_href }}">&lsaquo;</a>
             </li>
 
-            <!-- We want to show this page +/- DELTA pages -->
-            <!-- Always try to fill with extra pages on the left and right -->
+            {% comment %}
+                We want to show this page +/- DELTA pages. Always try to fill
+                with extra pages on the left and right though.
+            {% endcomment %}
             {% assign DELTA = 1 %}
             {% assign WINDOW = DELTA | times: 2 | plus: 1 %}
             {% assign start_page = paginator.page | minus: DELTA | at_least: 1 %}
@@ -60,8 +66,10 @@ libs: [postsel]
             {% assign end_page = start_page | plus: WINDOW | at_most: paginator.total_pages %}
 
             {% for page in (start_page..end_page) %}
-                <!-- Compute the path of this page -->
-                <!-- The pagination extension handles the first page specially -->
+                {% comment %}
+                    Compute the path of this page. The pagination extension
+                    handles the first page specially (for some reason).
+                {% endcomment %}
                 {% if page == 1 %}
                     {% assign page_href = first_page_href %}
                 {% else %}
