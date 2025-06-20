@@ -1,0 +1,5 @@
+# Data parameterizing the `post_listing` page
+
+# How many pages to show on each side of the current page in the pagination bar
+# The total number of pages shown will be 2 * paginationBarDelta + 1
+paginationBarDelta: 1
