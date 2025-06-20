@@ -1,0 +1,84 @@
+---
+layout: base
+title: Posts
+stylesheet: post_listing
+libs: [postsel]
+---
+
+<p>
+    <h1>All Posts</h1>
+</p>
+
+<div class="postSelectContainer">
+    {% for post in paginator.posts %}
+        <div class="card postSelectItem">
+            <div class="card-body">
+                <a href="{{post.url}}" class="text-body stretched-link postSelectLink"/>{{post.title}}</a>
+            </div>
+            <div class="card-footer">
+                <em class="text-secondary">On {{post.date | date: "%-d %B %Y"}}</em>
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- Add placeholders to make sure the items have equal width -->
+    <!-- We set the total number of items to be divisible by 1, 2, 3, ... -->
+    <!-- See: https://medium.com/developedbyjohn/equal-width-flex-items-a5ba1bfacb77 -->
+    {% assign totMod = 6 %} <!-- LCM(1,2,3) -->
+    {% assign numAlready = paginator.posts.size | modulo: totMod %}
+    {% assign numPlaceholders = totMod | minus: numAlready %}
+    {% for i in (1..numPlaceholders) %}
+        <div class="postSelectPlaceholder"></div>
+    {% endfor %}
+</div>
+
+{% if paginator.total_pages > 1 %}
+    <nav id="postPagination">
+        <ul class="pagination">
+
+            <!-- The templates for pages get a bit nasty -->
+            <!-- So, compute them once and store them in variables -->
+            {% assign first_page_href = site.paginate_path | replace: ':num', '' | relative_url %}
+            {% assign next_page_href = paginator.next_page_path | relative_url %}
+            {% assign prev_page_href = paginator.previous_page_path | relative_url %}
+            {% assign last_page_href = site.paginate_path | replace: ':num', paginator.total_pages | relative_url %}
+
+            <li class="page-item {% if paginator.page == 1 %} disabled {% endif %}">
+                <a class="page-link" href="{{ first_page_href }}">&laquo;</a>
+            </li>
+            <li class="page-item {% unless paginator.previous_page %} disabled {% endunless %}">
+                <a class="page-link" href="{{ prev_page_href }}">&lsaquo;</a>
+            </li>
+
+            <!-- We want to show this page +/- DELTA pages -->
+            <!-- Always try to fill with extra pages on the left and right -->
+            {% assign DELTA = 1 %}
+            {% assign WINDOW = DELTA | times: 2 | plus: 1 %}
+            {% assign start_page = paginator.page | minus: DELTA | at_least: 1 %}
+            {% assign end_page = paginator.page | plus: DELTA | at_most: paginator.total_pages %}
+            {% assign start_page = end_page | minus: WINDOW | at_least: 1 %}
+            {% assign end_page = start_page | plus: WINDOW | at_most: paginator.total_pages %}
+
+            {% for page in (start_page..end_page) %}
+                <!-- Compute the path of this page -->
+                <!-- The pagination extension handles the first page specially -->
+                {% if page == 1 %}
+                    {% assign page_href = first_page_href %}
+                {% else %}
+                    {% assign page_href = site.paginate_path | replace: ':num', page | relative_url %}
+                {% endif %}
+
+                <li class="page-item {% if page == paginator.page %} active {% endif %}">
+                    <a class="page-link" href="{{ page_href }}">{{ page }}</a>
+                </li>
+            {% endfor %}
+
+            <li class="page-item {% unless paginator.next_page %} disabled {% endunless %}">
+                <a class="page-link" href="{{ next_page_href }}">&rsaquo;</a>
+            </li>
+            <li class="page-item {% if paginator.page == paginator.total_pages %} disabled {% endif %}">
+                <a class="page-link" href="{{ last_page_href }}">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
+{% endif %}

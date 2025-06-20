@@ -9,6 +9,10 @@ repository: "ammrat13/ammrat13.github.io"
 baseurl: "/"
 url: "https://ammrat13.github.io"
 
+# Pagination settings
+paginate: 6
+paginate_path: "/post_listing/:num"
+
 # Build settings
 future: false
 markdown: kramdown

@@ -12,3 +12,13 @@
 .postLink {
     font-size: 130%;
 }
+
+
+#postPagination {
+    /* Have some margin between the posts and the pagination */
+    margin-top: 2rem;
+
+    /* Use flexbox to center the pagination */
+    display: flex;
+    justify-content: center;
+}
