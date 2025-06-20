@@ -11,6 +11,8 @@ libs: [mathjax]
 Santana Afton. They were my professor and my TA respectively for MATH 2551:
 Multivariable Calculus at Georgia Tech.*
 
+---
+
 Dr. Shuenn Siang Ng and TA Santana Afton,
 
 I was talking to you about finding the limits of ratios in higher dimensions
@@ -129,3 +131,55 @@ possible lines through the point the limit is being taken at. However, it might
 be useful since it may be easier and faster to execute. What do you think? Is my
 work correct? If it is, can I use this on quizzes and tests? I expect both
 answers to be "no", but it is worth asking.
+
+Thank you,
+
+\- Ammar Ratnani
+
+---
+
+Dr. Shuenn Siang Ng and TA Santana Afton,
+
+It occured to me in class today that, when I consider an arbitrary line in the
+direction of @@\mathbf{v}@@, I have to consider whether the values
+@@\mathbf{v}t@@ are in the domain of @@f/g@@. That is, whether @@g(\mathbf{v}t)
+\neq 0@@ for at least some neighborhood around the origin.
+
+However, looking over my arguments again, it seems this should be a non-issue.
+Why? Because the crux of my argument relies on determining the coefficients of a
+polynomial. In my original justification, I stated we can equate the
+coefficients since the two polynomials
+
+%%
+\sum_{\left|\alpha\right|=m} \frac{1}{\alpha!}\partial^\alpha f \,
+\mathbf{v}^\alpha = \sum_{\left|\alpha\right|=m}
+\frac{\lambda}{\alpha!}\partial^\alpha g \, \mathbf{v}^\alpha
+%%
+
+are equal for all possible @@\mathbf{v}^\alpha@@. However, we can also say the
+coefficients are equal if we know they agree on any region with "volume". Why?
+Well, pick a point "inside" that region and compute all the partial derivatives
+of the two relevant polynomoials up to order @@m@@. Those will all be equal
+since the polynomial's values are equal in a neighborhood around the point, and
+from there we can reason all the coefficients are equal. My argument here is
+very similar to
+[https://math.stackexchange.com/a/1354872](https://math.stackexchange.com/a/1354872).
+
+Let us assume there is at least one direction that ensures @@g(\mathbf{v}t) \neq
+0@@ for some neighborhood around @@t=0@@. Since @@g@@ is continuously
+differentiably sufficiently many times, we should be able to find some
+@@\epsilon > 0@@ such that all @@\left|\left|\mathbf{u}-\mathbf{v}\right|\right|
+< \epsilon@@ have @@g(\mathbf{u}t) \neq 0@@ in some neighborhood around @@t=0@@.
+We can then use all of these @@\mathbf{u}@@ in the formula above then equate the
+coefficients as I had originally planned.
+
+How exactly I would go about formalizing this argument, I don't know. Again,
+what do you think? Can you think of any counterexamples? I know I use
+L'Hôpital's rule and that it has a restriction that the limit of @@f^\prime /
+g^\prime@@ must exist, but that might just be for limits to infinity to prevent
+cases with infinitely many oscillations. However, I might be misinterpreting
+that. If I am, can you find a counterexample based on that?
+
+Thank you,
+
+\- Ammar Ratnani
