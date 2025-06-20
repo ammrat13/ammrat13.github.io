@@ -16,17 +16,6 @@ libs: [postsel]
 {% endfor %}
 
 {% comment %}
-    Calculate the starting index. Account for very early posts by subtracting
-    more.
-{% endcomment %}
-{% assign numPosts = site.posts | size %}
-{% assign postNumSel = site.data.post_select.postNumSel %}
-{% assign halfNumSel = postNumSel | divided_by: 2 %}
-{% assign earlyPostCorr = halfNumSel | minus: numPosts | plus: postIdx | plus: 1 | at_least: 0 %}
-{% assign startIdx = postIdx | minus: halfNumSel | minus: earlyPostCorr | at_least: 0 %}
-
-
-{% comment %}
     Have a separate paragraph for the title due to spacing.
 {% endcomment %}
 <p>
@@ -39,7 +28,31 @@ libs: [postsel]
 </div>
 <hr/>
 
+{% comment %}
+    Calculate the starting index we should display posts from. We get the total
+    number of posts we need to display. We should display half on each side of this
+    post, biasing towards more recent posts if needed.
+
+    Remember, the maximum index is `numPosts - 1`, not `numPosts`, since we
+    will be skipping the current post. Also, low indicies are more recent posts.
+{% endcomment %}
+{% assign numPosts = site.posts | size %}
+{% assign numSel = site.data.post_select.postNumSel %}
+{% assign halfNumSel = numSel | divided_by: 2.0 | ceil %}
+{% assign startIdx = postIdx | minus: halfNumSel %}
+
+{% comment %}
+    If we're toward the old posts - toward the end of the array - we want to
+    backfill with more recent posts.
+
+    Make sure the index doesn't go negative. If it does, we'll start taking from
+    the opposite end of the array, which isn't what we want. Instead, we want to
+    take the most recent posts.
+{% endcomment %}
+{% assign startIdxMax = numPosts | minus: numSel | minus: 1 %}
+{% assign startIdx = startIdx | at_most: startIdxMax | at_least: 0 %}
+
 <p>
     <h2>Related Posts</h2>
 </p>
-{% include post_select.html start=startIdx num=postNumSel skipId=page.id %}
+{% include post_select.html start=startIdx num=numSel skipId=page.id %}
