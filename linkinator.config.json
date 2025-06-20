@@ -3,7 +3,7 @@
     "timeout": 5000,
     "skip": [
         "https://www.linkedin.com/in/ammar-ratnani",
-        "https://(\\w+).stackexchange.com",
+        "https://\\w+.stackexchange.com",
         "http://www.ecs.umass.edu/ece/koren/FaultTolerantSystems/simulator/Hamming/HammingCodes.html"
     ]
 }

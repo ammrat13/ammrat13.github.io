@@ -8,7 +8,12 @@ description: "Test for broken links on `ammrat13.github.io` with `linkinator`"
 runs:
   using: "composite"
   steps:
+    # Linkinator appears to be broken right now.
+    # See: https://github.com/JustinBeckwith/linkinator/issues/657
     - name: "Check links"
-      uses: "JustinBeckwith/linkinator-action@v1"
-      with:
-        paths: "./_site/"
+      # uses: "JustinBeckwith/linkinator-action@v1"
+      # with:
+      #   paths: "./_site/"
+      shell: "bash"
+      run: |
+        echo "Skipping broken link test"
