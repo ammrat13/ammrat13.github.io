@@ -4,5 +4,7 @@
 
 - name: CV
   page: /assets/pdf/cv.pdf
+- name: Resume
+  page: /assets/pdf/resume.pdf
 - name: All Posts
   page: /post_listing.html
