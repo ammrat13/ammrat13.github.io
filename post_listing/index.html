@@ -42,16 +42,16 @@ libs: [postsel]
                 The templates for pages get a bit nasty. So, compute them once
                 and store them in variables
             {% endcomment %}
-            {% assign first_page_href = site.paginate_path | replace: ':num', '' | relative_url %}
-            {% assign next_page_href = paginator.next_page_path | relative_url %}
-            {% assign prev_page_href = paginator.previous_page_path | relative_url %}
-            {% assign last_page_href = site.paginate_path | replace: ':num', paginator.total_pages | relative_url %}
+            {% assign firstPageHref = site.paginate_path | replace: ':num', '' | relative_url %}
+            {% assign nextPageHref = paginator.next_page_path | relative_url %}
+            {% assign prevPageHref = paginator.previous_page_path | relative_url %}
+            {% assign lastPageHref = site.paginate_path | replace: ':num', paginator.total_pages | relative_url %}
 
             <li class="page-item {% if paginator.page == 1 %} disabled {% endif %}">
-                <a class="page-link" href="{{ first_page_href }}">&laquo;</a>
+                <a class="page-link" href="{{ firstPageHref }}">&laquo;</a>
             </li>
             <li class="page-item {% unless paginator.previous_page %} disabled {% endunless %}">
-                <a class="page-link" href="{{ prev_page_href }}">&lsaquo;</a>
+                <a class="page-link" href="{{ prevPageHref }}">&lsaquo;</a>
             </li>
 
             {% comment %}
@@ -60,32 +60,32 @@ libs: [postsel]
             {% endcomment %}
             {% assign delta = site.data.post_listing.paginationBarDelta %}
             {% assign window = delta | times: 2 | plus: 1 %}
-            {% assign start_page = paginator.page | minus: delta | at_least: 1 %}
-            {% assign end_page = paginator.page | plus: delta | at_most: paginator.total_pages %}
-            {% assign start_page = end_page | minus: window | at_least: 1 %}
-            {% assign end_page = start_page | plus: window | at_most: paginator.total_pages %}
+            {% assign startPage = paginator.page | minus: delta | at_least: 1 %}
+            {% assign endPage = paginator.page | plus: delta | at_most: paginator.total_pages %}
+            {% assign startPage = endPage | minus: window | at_least: 1 %}
+            {% assign endPage = startPage | plus: window | at_most: paginator.total_pages %}
 
-            {% for page in (start_page..end_page) %}
+            {% for page in (startPage..endPage) %}
                 {% comment %}
                     Compute the path of this page. The pagination extension
                     handles the first page specially (for some reason).
                 {% endcomment %}
                 {% if page == 1 %}
-                    {% assign page_href = first_page_href %}
+                    {% assign pageHref = firstPageHref %}
                 {% else %}
-                    {% assign page_href = site.paginate_path | replace: ':num', page | relative_url %}
+                    {% assign pageHref = site.paginate_path | replace: ':num', page | relative_url %}
                 {% endif %}
 
                 <li class="page-item {% if page == paginator.page %} active {% endif %}">
-                    <a class="page-link" href="{{ page_href }}">{{ page }}</a>
+                    <a class="page-link" href="{{ pageHref }}">{{ page }}</a>
                 </li>
             {% endfor %}
 
             <li class="page-item {% unless paginator.next_page %} disabled {% endunless %}">
-                <a class="page-link" href="{{ next_page_href }}">&rsaquo;</a>
+                <a class="page-link" href="{{ nextPageHref }}">&rsaquo;</a>
             </li>
             <li class="page-item {% if paginator.page == paginator.total_pages %} disabled {% endif %}">
-                <a class="page-link" href="{{ last_page_href }}">&raquo;</a>
+                <a class="page-link" href="{{ lastPageHref }}">&raquo;</a>
             </li>
         </ul>
     </nav>
