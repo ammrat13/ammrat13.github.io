@@ -1,5 +1,5 @@
 ---
-title: "DEF CON CTF 2022 Qualifiers Writeup: Same Old"
+title: "DEF CON CTF 2022 Qualifiers: Same Old"
 libs: [mathjax]
 ---
 

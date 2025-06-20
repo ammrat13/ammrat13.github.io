@@ -1,5 +1,5 @@
 ---
-title: "NSA Codebreaker 2020 Writeup: Proof of Life"
+title: "NSA Codebreaker 2020: Proof of Life"
 libs: [mathjax]
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "CSAW CTF 2020 Finals Writeup: Eccentric"
+title: "CSAW CTF 2020 Finals: Eccentric"
 libs: [mathjax]
 ---
 
