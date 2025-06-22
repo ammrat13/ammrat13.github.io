@@ -50,10 +50,10 @@ libs: [postsel]
             {% assign lastPageHref = site.paginate_path | replace: ':num', paginator.total_pages | relative_url %}
 
             <li class="page-item {% if paginator.page == 1 %} disabled {% endif %}">
-                <a class="page-link" href="{{ firstPageHref }}">&laquo;</a>
+                <a class="page-link" aria-label="First page" href="{{ firstPageHref }}">&laquo;</a>
             </li>
             <li class="page-item {% unless paginator.previous_page %} disabled {% endunless %}">
-                <a class="page-link" href="{{ prevPageHref }}">&lsaquo;</a>
+                <a class="page-link" aria-label="Previous page" href="{{ prevPageHref }}">&lsaquo;</a>
             </li>
 
             {% comment %}
@@ -79,15 +79,15 @@ libs: [postsel]
                 {% endif %}
 
                 <li class="page-item {% if page == paginator.page %} active {% endif %}">
-                    <a class="page-link" href="{{ pageHref }}">{{ page }}</a>
+                    <a class="page-link" aria-label="Page {{page}}" href="{{ pageHref }}">{{ page }}</a>
                 </li>
             {% endfor %}
 
             <li class="page-item {% unless paginator.next_page %} disabled {% endunless %}">
-                <a class="page-link" href="{{ nextPageHref }}">&rsaquo;</a>
+                <a class="page-link" aria-label="Next page" href="{{ nextPageHref }}">&rsaquo;</a>
             </li>
             <li class="page-item {% if paginator.page == paginator.total_pages %} disabled {% endif %}">
-                <a class="page-link" href="{{ lastPageHref }}">&raquo;</a>
+                <a class="page-link" aria-label="Last page" href="{{ lastPageHref }}">&raquo;</a>
             </li>
         </ul>
     </nav>
