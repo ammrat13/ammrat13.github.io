@@ -5,7 +5,7 @@ libs: []
 ---
 
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 
     <head>
 
@@ -42,7 +42,7 @@ libs: []
                         }
                     };
                 </script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.0.5/es5/tex-mml-chtml.js" crossorigin="anonymous"></script>
+                <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.0.5/es5/tex-mml-chtml.js" crossorigin="anonymous"></script>
             {% elsif lib == "code" %}
                 {% comment %} Custom code highlighting {% endcomment %}
                 <link rel="stylesheet" href="/assets/css/util/code.css"/>
@@ -68,13 +68,21 @@ libs: []
 
     <body>
 
+        {% comment %}
+            Link to jump to the main content of the page, for accessibility. We
+            assume someone else defines `#theMain`.
+        {% endcomment %}
+        <a id="skipToTheMain" href="#theMain" class="sr-only sr-only-focusable">Skip to main content</a>
+
         {% comment %} Bootstrap navbar for navigation {% endcomment %}
         <nav id="topLevelNav" class="navbar navbar-expand-md navbar-light bg-light">
             {% comment %} Brand {% endcomment %}
             <a class="navbar-brand" href="/index.html"/>{{site.title}}</a>
 
             {% comment %} For collapsing {% endcomment %}
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topLevelNavCollapse">
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+              data-target="#topLevelNavCollapse"
+              aria-label="Toggle top-level navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 

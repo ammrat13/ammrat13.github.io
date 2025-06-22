@@ -8,18 +8,25 @@ libs: [postsel, fa]
     We could build this up ourselves with Flex, but Bootstrap has it.
 {% endcomment %}
 <div class="container align-items-start">
-    <div class="row">
-
+    <main id="theMain" class="row">
         <div class="col-xl-4">
-            <img id="profileImg" src="/assets/img/profile.jpg" alt="A picture of me" class="rounded"/>
+            {% comment %}
+                We'll use a container for the profile picture so that we can set
+                the aspect ratio without having to load the image first. This
+                prevents the content from shifting around when the image loads.
+            {% endcomment %}
+            <div id="profileImgContainer">
+                <img id="profileImg" src="/assets/img/profile.webp"
+                  alt="A picture of Ammar Ratnani"/>
+            </div>
 
             {% comment %}
                 Have the social media links be clickable.
             {% endcomment %}
             <div id="socialMediaLinks">
-                <a href="https://www.linkedin.com/in/ammar-ratnani" class="text-body socialMediaLink"><i class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/ammrat13" class="text-body socialMediaLink"><i class="fab fa-github-square"></i></a>
-                <a href="mailto:ammrat13@gmail.com" class="text-body socialMediaLink"><i class="fas fa-envelope-square"></i></a>
+                <a href="https://www.linkedin.com/in/ammar-ratnani" aria-label="LinkedIn" class="text-body socialMediaLink"><i class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/ammrat13" aria-label="GitHub" class="text-body socialMediaLink"><i class="fab fa-github-square"></i></a>
+                <a href="mailto:ammrat13@gmail.com" aria-label="Email" class="text-body socialMediaLink"><i class="fas fa-envelope-square"></i></a>
             </div>
         </div>
 
@@ -27,8 +34,7 @@ libs: [postsel, fa]
             <h1>About Me</h1>
             {% include about_me.html %}
         </div>
-
-    </div>
+    </main>
 
     <hr/>
 

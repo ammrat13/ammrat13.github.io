@@ -3,10 +3,21 @@
 
 @import "shared";
 
+#profileImgContainer {
+    width: 100%;
+    margin-bottom: .7rem;
+
+    /*
+        Aspect ratio is hard-coded for `assets/img/profile.webp`. If that image
+        changes, this has to be changed too.
+    */
+    aspect-ratio: 789 / 928;
+}
 
 #profileImg {
-    margin-bottom: .7rem;
     width: 100%;
+    height: 100%;
+    border-radius: 0.25rem;
 }
 
 #socialMediaLinks {
