@@ -10,7 +10,15 @@ libs: [postsel, fa]
 <div class="container align-items-start">
     <main id="theMain" class="row">
         <div class="col-xl-4">
-            <img id="profileImg" src="/assets/img/profile.webp" alt="A picture of me" class="rounded"/>
+            {% comment %}
+                We'll use a container for the profile picture so that we can set
+                the aspect ratio without having to load the image first. This
+                prevents the content from shifting around when the image loads.
+            {% endcomment %}
+            <div id="profileImgContainer">
+                <img id="profileImg" src="/assets/img/profile.webp"
+                  alt="A picture of Ammar Ratnani"/>
+            </div>
 
             {% comment %}
                 Have the social media links be clickable.
