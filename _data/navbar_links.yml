@@ -6,5 +6,5 @@
   page: /assets/pdf/cv.pdf
 - name: Resume
   page: /assets/pdf/resume.pdf
-- name: All Posts
+- name: Posts
   page: /post_listing/
