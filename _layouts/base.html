@@ -68,6 +68,12 @@ libs: []
 
     <body>
 
+        {% comment %}
+            Link to jump to the main content of the page, for accessibility. We
+            assume someone else defines `#theMain`.
+        {% endcomment %}
+        <a id="skipToTheMain" href="#theMain" class="sr-only sr-only-focusable">Skip to main content</a>
+
         {% comment %} Bootstrap navbar for navigation {% endcomment %}
         <nav id="topLevelNav" class="navbar navbar-expand-md navbar-light bg-light">
             {% comment %} Brand {% endcomment %}

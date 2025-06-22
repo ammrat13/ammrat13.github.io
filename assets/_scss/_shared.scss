@@ -5,6 +5,15 @@ body {
     margin: 5rem 2rem;
 }
 
+/* Link to jump to the main content of the page, for accessibility */
+/* We'll put it in the very top left corner of the page */
+#skipToTheMain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
 /* Center objects in the page itself */
 /* Have some parameters for calculating the width of objects */
 $pageObjWidth: 50vw;
