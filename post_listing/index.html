@@ -49,12 +49,25 @@ libs: [postsel]
             {% assign prevPageHref = paginator.previous_page_path | relative_url %}
             {% assign lastPageHref = site.paginate_path | replace: ':num', paginator.total_pages | relative_url %}
 
-            <li class="page-item {% if paginator.page == 1 %} disabled {% endif %}">
-                <a class="page-link" aria-label="First page" href="{{ firstPageHref }}">&laquo;</a>
-            </li>
-            <li class="page-item {% unless paginator.previous_page %} disabled {% endunless %}">
-                <a class="page-link" aria-label="Previous page" href="{{ prevPageHref }}">&lsaquo;</a>
-            </li>
+            {% comment %}
+                Show "<<" and "<" buttons. If we're on the first page, we can't
+                go any earlier.
+            {% endcomment %}
+            {% if paginator.page == 1 %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="First page">&laquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Previous page">&lsaquo;</span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ firstPageHref }}" aria-label="First page">&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="{{ prevPageHref }}" aria-label="Previous page">&lsaquo;</a>
+                </li>
+            {% endif %}
 
             {% comment %}
                 We want to show this page +/- paginationBarDelta pages. Always
@@ -83,12 +96,25 @@ libs: [postsel]
                 </li>
             {% endfor %}
 
-            <li class="page-item {% unless paginator.next_page %} disabled {% endunless %}">
-                <a class="page-link" aria-label="Next page" href="{{ nextPageHref }}">&rsaquo;</a>
-            </li>
-            <li class="page-item {% if paginator.page == paginator.total_pages %} disabled {% endif %}">
-                <a class="page-link" aria-label="Last page" href="{{ lastPageHref }}">&raquo;</a>
-            </li>
+            {% comment %}
+                Show ">" and ">>" buttons. If we're on the last page, we can't
+                go any later.
+            {% endcomment %}
+            {% if paginator.page == paginator.total_pages %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Next page">&rsaquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Last page">&raquo;</span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ nextPageHref }}" aria-label="Next page">&rsaquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="{{ lastPageHref }}" aria-label="Last page">&raquo;</a>
+                </li>
+            {% endif %}
         </ul>
     </nav>
 {% endif %}
