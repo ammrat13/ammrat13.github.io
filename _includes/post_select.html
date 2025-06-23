@@ -26,7 +26,7 @@
     {% assign numAlready = include.num | modulo: totMod %}
     {% assign numPlaceholders = totMod | minus: numAlready %}
     {% for i in (1..numPlaceholders) %}
-        <div class="postSelectPlaceholder"></div>
+        <div class="postSelectPlaceholder" aria-hidden="true"></div>
     {% endfor %}
 
 </div>
