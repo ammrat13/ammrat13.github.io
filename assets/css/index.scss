@@ -20,11 +20,24 @@
     border-radius: 0.25rem;
 }
 
+
 #socialMediaLinks {
     font-size: 300%;
     text-align: right;
 }
 
+/*
+    Make the social media links slightly whiter on hover. We do this by blending
+    into the white background.
+*/
 .socialMediaLink:hover {
+    opacity: .7;
+}
+
+/*
+    The RSS link is placed in an H1, so we don't need to increase the font size.
+    We do want to make it slightly whiter on hover, though.
+*/
+.rssLink:hover {
     opacity: .7;
 }

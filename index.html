@@ -39,7 +39,10 @@ libs: [postsel, fa]
     <hr/>
 
     <p>
-        <h1>Recent Posts</h1>
+        <h1>
+            <a href="/feed.xml" aria-label="RSS Feed" class="text-body rssLink"><i class="fas fa-rss-square"></i></a>
+            Recent Posts
+        </h1>
     </p>
     {% include post_select.html start='0' num=site.data.post_select.homeNumSel %}
 </div>

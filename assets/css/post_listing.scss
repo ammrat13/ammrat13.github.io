@@ -14,6 +14,11 @@
 }
 
 
+/* Copy from `index.scss` */
+.rssLink:hover {
+    opacity: .7;
+}
+
 #postPagination {
     /* Have some margin between the posts and the pagination */
     margin-top: 2rem;

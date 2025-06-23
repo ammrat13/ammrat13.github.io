@@ -9,6 +9,15 @@ repository: "ammrat13/ammrat13.github.io"
 baseurl: "/"
 url: "https://ammrat13.github.io"
 
+plugins:
+    # Create an RSS feed for the posts
+  - jekyll-feed
+
+# RSS settings
+author:
+  name: Ammar Ratnani
+  email: ammrat13@gmail.com
+
 # Pagination settings
 paginate: 12
 paginate_path: "/post_listing/:num"
