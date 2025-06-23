@@ -24,9 +24,13 @@ libs: [postsel, fa]
                 Have the social media links be clickable.
             {% endcomment %}
             <div id="socialMediaLinks">
-                <a href="https://www.linkedin.com/in/ammar-ratnani" aria-label="LinkedIn" class="text-body socialMediaLink"><i class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/ammrat13" aria-label="GitHub" class="text-body socialMediaLink"><i class="fab fa-github-square"></i></a>
-                <a href="mailto:ammrat13@gmail.com" aria-label="Email" class="text-body socialMediaLink"><i class="fas fa-envelope-square"></i></a>
+                {% comment %}
+                    Yes, it is actually necessary to have everything on one
+                    line. Otherwise, we get an unsightly bar on hover.
+                {% endcomment %}
+                <a href="https://www.linkedin.com/in/ammar-ratnani" aria-label="LinkedIn" class="text-body socialMediaLink"><i class="fa-brands fa-linkedin" aria-hidden="true"></i></a>
+                <a href="https://github.com/ammrat13" aria-label="GitHub" class="text-body socialMediaLink"><i class="fa-brands fa-square-github" aria-hidden="true"></i></a>
+                <a href="mailto:ammrat13@gmail.com" aria-label="Email" class="text-body socialMediaLink"><i class="fa-solid fa-square-envelope" aria-hidden="true"></i></a>
             </div>
         </div>
 
@@ -39,7 +43,10 @@ libs: [postsel, fa]
     <hr/>
 
     <p>
-        <h1>Recent Posts</h1>
+        <h1>
+            <a href="/feed.xml" aria-label="RSS Feed" class="text-body rssLink"><i class="fa-solid fa-square-rss" aria-hidden="true"></i></a>
+            Recent Posts
+        </h1>
     </p>
     {% include post_select.html start='0' num=site.data.post_select.homeNumSel %}
 </div>
