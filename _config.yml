@@ -9,6 +9,15 @@ repository: "ammrat13/ammrat13.github.io"
 baseurl: "/"
 url: "https://ammrat13.github.io"
 
+collections:
+    # Collection for the "About Me" section. There's only one thing in it, but
+    # doing it this way means we can use Markdown instead of HTML.
+    #
+    # Just in case we want to add more things in the future, we'll specify a key
+    # to order by.
+    about:
+        sort_by: order
+
 plugins:
     # Create an RSS feed for the posts
   - jekyll-feed

@@ -35,8 +35,10 @@ libs: [postsel, fa]
         </div>
 
         <div class="col-xl-8">
-            <h1>About Me</h1>
-            {% include about_me.html %}
+            {% for abt in site.about %}
+                <h1>{{ abt.title }}</h1>
+                {{ abt.content }}
+            {% endfor %}
         </div>
     </main>
 
