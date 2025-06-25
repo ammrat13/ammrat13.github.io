@@ -31,9 +31,15 @@ is equal to the area of the parallelogram "spanned" by the latter.
 So let's try to build this from the ground up. What do we want the cross product
 to mean? We want to be able to measure how perpendicular two vectors
 (@@\mathbf{u}@@ and @@\mathbf{v}@@) are, and we can do this by using as a proxy
-the area of the parallelogram they span, as I think
-[this GIF](https://commons.wikimedia.org/wiki/File:Cross_product.gif) shows.
-![An animation showing the cross product](/assets/2020/06/22/cross_product_anim.gif)
+the area of the parallelogram they span, as I think the GIF below shows.
+
+<figure>
+<img src="/assets/2020/06/22/cross_product_anim.gif" alt="An animation showing the cross product"/>
+<figcaption>
+<a href="https://commons.wikimedia.org/wiki/File:Cross_product.gif">Lucas Vieira</a>, Public domain, via Wikimedia Commons
+</figcaption>
+</figure>
+
 Okay, how do we measure that area? _A priori_, I don't know how to
 measure areas in 3D space, but I do know how to measure volumes through the
 determinant.  Perhaps we could pick an arbitrary test vector @@\mathbf{t}@@,
