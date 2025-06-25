@@ -27,13 +27,22 @@ $pageObjMinWidth: 23rem;
     margin-bottom: 2rem;
 }
 
+/*
+    The navigation bar and the footer take up the "full" width of the page,
+    after centering.
+*/
 #topLevelNav {
     @extend %page-obj;
     width: $pageObjWidth;
     min-width: $pageObjMinWidth;
 }
+#footer {
+    @extend %page-obj;
+    width: $pageObjWidth;
+    min-width: $pageObjMinWidth;
+}
 
-/* Have the content inset somewhat */
+/* By contrast, the content is inset somewhat */
 $contentInset: 2rem;
 #content {
     @extend %page-obj;
