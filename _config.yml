@@ -51,7 +51,5 @@ exclude:
     # Exclude dependencies for Ruby and Node
   - vendor/
   - node_modules/
-    # Exclude the README
-  - README.md
     # Exclude other configuration files
   - linkinator.config.json
