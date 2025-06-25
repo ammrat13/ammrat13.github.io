@@ -41,3 +41,11 @@
 .rssLink:hover {
     opacity: .7;
 }
+
+/*
+    Similarly, the PGP link is placed inline. We don't need to increase the font
+    size, but we do want to make it slightly whiter on hover.
+*/
+.pgpLink:hover {
+    opacity: .7;
+}
