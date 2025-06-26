@@ -76,7 +76,7 @@ libs: [postsel, fa]
                 We want to show this page +/- paginationBarDelta pages. Always
                 try to fill with extra pages on the left and right though.
             {% endcomment %}
-            {% assign delta = site.data.post_listing.paginationBarDelta %}
+            {% assign delta = site.data.structure.post_listing.paginationBarDelta %}
             {% assign window = delta | times: 2 | plus: 1 %}
             {% assign startPage = paginator.page | minus: delta | at_least: 1 %}
             {% assign endPage = paginator.page | plus: delta | at_most: paginator.total_pages %}

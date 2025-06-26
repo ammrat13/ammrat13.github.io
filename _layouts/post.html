@@ -40,7 +40,7 @@ libs: [postsel]
     will be skipping the current post. Also, low indicies are more recent posts.
 {% endcomment %}
 {% assign numPosts = site.posts | size %}
-{% assign numSel = site.data.post_select.postNumSel %}
+{% assign numSel = site.data.structure.post_select.postNumSel %}
 {% assign halfNumSel = numSel | divided_by: 2.0 | ceil %}
 {% assign startIdx = postIdx | minus: halfNumSel %}
 
