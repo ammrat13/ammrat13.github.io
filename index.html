@@ -24,13 +24,13 @@ libs: [postsel, fa]
                 Have the social media links be clickable.
             {% endcomment %}
             <div id="socialMediaLinks">
-                {% comment %}
-                    Yes, it is actually necessary to have everything on one
-                    line. Otherwise, we get an unsightly bar on hover.
-                {% endcomment %}
-                <a href="https://www.linkedin.com/in/ammar-ratnani" aria-label="LinkedIn" class="text-body socialMediaLink"><i class="fa-brands fa-linkedin" aria-hidden="true"></i></a>
-                <a href="https://github.com/ammrat13" aria-label="GitHub" class="text-body socialMediaLink"><i class="fa-brands fa-square-github" aria-hidden="true"></i></a>
-                <a href="mailto:ammrat13@gmail.com" aria-label="Email" class="text-body socialMediaLink"><i class="fa-solid fa-square-envelope" aria-hidden="true"></i></a>
+                {% for link in site.data.content.social_links %}
+                    {% comment %}
+                        Yes, it is actually necessary to have everything on one
+                        line. Otherwise, we get an unsightly bar on hover.
+                    {% endcomment %}
+                    <a href="{{ link.url }}" aria-label="{{ link.name }}" class="text-body socialMediaLink"><i class="{{ link.icon_class }}" aria-hidden="true"></i></a>
+                {% endfor %}
             </div>
         </div>
 
@@ -50,5 +50,5 @@ libs: [postsel, fa]
             Recent Posts
         </h1>
     </p>
-    {% include post_select.html start='0' num=site.data.post_select.homeNumSel %}
+    {% include post_select.html start='0' num=site.data.structure.post_select.homeNumSel %}
 </div>

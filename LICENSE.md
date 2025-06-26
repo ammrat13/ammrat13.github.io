@@ -16,7 +16,7 @@ The text of the MIT License is given in `LICENSES/MIT.txt`. It covers all of the
     * `post_listing/*`
     * `_layouts/*`
     * `_includes/*`
-    * `_data/*`
+    * `_data/structure/*`
     * `assets/css/*` and `assets/_scss/*`
   * Build files, including
     * `.bundle/*`
@@ -36,6 +36,7 @@ covers all of the "creative" and "prose" assets in this repository. This
 includes:
   * `_about/*`
   * `_posts/*`
+  * `_data/content/*`
   * `assets/img/*`
   * `assets/pdf/*`
   * `assets/public.asc`

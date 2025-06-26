@@ -89,7 +89,7 @@ libs: []
             {% comment %} The thing to collapse {% endcomment %}
             <div class="collapse navbar-collapse" id="topLevelNavCollapse">
                 <ul class="navbar-nav ml-auto">
-                    {% for link in site.data.navbar_links %}
+                    {% for link in site.data.content.navbar_links %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{link.page}}">{{link.name}}</a>
                         </li>

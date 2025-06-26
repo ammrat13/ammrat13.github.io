@@ -1,0 +1,17 @@
+# Data for social media icons displayed under the profile picture in
+#   `index.html`
+#
+# It is a list of objects with the properties:
+# - name: The human-readable name of the social media platform
+# - url: The URL to go to on click
+# - icon_class: The FontAwesome icon classes
+
+- name: LinkedIn
+  url: https://www.linkedin.com/in/ammar-ratnani
+  icon_class: fa-brands fa-linkedin
+- name: GitHub
+  url: https://github.com/ammrat13
+  icon_class: fa-brands fa-square-github
+- name: Email
+  url: mailto:ammrat13@gmail.com
+  icon_class: fa-solid fa-square-envelope
