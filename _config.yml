@@ -1,6 +1,7 @@
 # Site settings
 title: Ammar Ratnani's Site
-email: ammrat13@gmail.com
+name: &name Ammar Ratnani
+email: &email ammrat13@gmail.com
 github_username: ammrat13
 description: >-
     Ammar Ratnani's personal website. It's fairly minimal, containing little
@@ -24,8 +25,8 @@ plugins:
 
 # RSS settings
 author:
-  name: Ammar Ratnani
-  email: ammrat13@gmail.com
+  name: *name
+  email: *email
 
 # Pagination settings
 paginate: 12
