@@ -14,9 +14,9 @@ libs: [postsel]
     "url": "{{ site.url }}{{ page.url }}",
     "inLanguage": "en-US",
 
-    "headline": "{{ page.title }}",
-    "dateModified": "{{ page.date | date_to_xmlschema }}",
-    "keywords": [{% for tag in page.tags %}"{{ tag | escape }}"{% unless forloop.last %},{% endunless %}{% endfor %}],
+    "headline": {{ page.title | jsonify }},
+    "datePublished": "{{ page.date | date_to_xmlschema }}",
+    "keywords": {% if page.tags %}{{ page.tags | jsonify }}{% else %}[]{% endif %},
 
     "author": {
         "@type": "Person",
