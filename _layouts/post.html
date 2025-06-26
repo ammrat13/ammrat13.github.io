@@ -11,7 +11,7 @@ libs: [postsel]
 {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "url": "{{ site.url }}{{ page.url }}",
+    "url": "{{ page.url | absolute_url }}",
     "inLanguage": "en-US",
 
     "headline": {{ page.title | jsonify }},
