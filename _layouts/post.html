@@ -4,6 +4,30 @@ stylesheet: post
 libs: [postsel]
 ---
 
+{% comment %}
+    See: https://developers.google.com/search/docs/appearance/structured-data/article
+{% endcomment %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "url": "{{ site.url }}{{ page.url }}",
+    "inLanguage": "en-US",
+
+    "headline": {{ page.title | jsonify }},
+    "datePublished": "{{ page.date | date_to_xmlschema }}",
+    "keywords": {% if page.tags %}{{ page.tags | jsonify }}{% else %}[]{% endif %},
+
+    "author": {
+        "@type": "Person",
+        "name": "{{ site.name }}",
+        "pronouns": "he/him",
+        "email": "{{ site.email }}",
+        "url": "{{ site.url }}"
+    }
+}
+</script>
+
 {% comment %} Find the index of this post {% endcomment %}
 {% for post in site.posts %}
     {% if post.id == page.id %}
