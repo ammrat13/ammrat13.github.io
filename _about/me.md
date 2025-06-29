@@ -17,7 +17,7 @@ even some math.
 
 I've done some side projects, and I figured my work wasn't doing much just
 sitting around. So, I started this site. Feel free to look through what I've
-done. You might also want to check out my [GitHub][2] . Don't be afraid to reach
+done. You might also want to check out my [GitHub][2]. Don't be afraid to reach
 out to me either. Shoot me an email, and I'll get back to you. (Eventually.)
 
 [1]: https://www.nvidia.com/en-us/geforce-now/ "NVIDIA: GeForce NOW"
