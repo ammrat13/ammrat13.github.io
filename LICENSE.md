@@ -42,6 +42,5 @@ includes:
   * `assets/public.asc`
   * Unless otherwise stated, any other images in the `assets/` directory, such
     as
-    * JPEG, PNG, and GIF files
-    * SVG files
-    * The TeX code used to generate the SVG files
+    * JPEG, PNG, GIF, and SVG files
+    * The TeX or Dot code used to generate the images
