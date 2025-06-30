@@ -2,6 +2,12 @@
 title: Faster Cubic Evaluation
 tags: ["mathematics", "algorithms"]
 libs: ["mathjax", "mermaidjs"]
+libs_config:
+    mermaidjs:
+        flowchart:
+            padding: 0
+            nodeSpacing: 25
+            rankSpacing: 25
 ---
 
 It's been a while; a lot's happened. I got accepted to Stanford's MS CS program,
@@ -73,12 +79,9 @@ flowchart TB
     a2 --> Output
 </pre>
 <figcaption>
-Data-flow graph of the na&iuml;ve cubic evaluation algorithm. The
-<code class="language-plaintext highlighter-rouge">*</code>
-nodes multiply their two inputs, while the
-<code class="language-plaintext highlighter-rouge">+</code>
-nodes add them. Furthermore, the input @@x@@ is duplicated and used in multiple
-places.
+Data-flow graph of the na&iuml;ve cubic evaluation algorithm. The "*" nodes
+multiply their two inputs, while the "+" nodes add them. Furthermore, the input
+@@x@@ is duplicated and used in multiple places.
 </figcaption>
 </figure>
 
@@ -90,7 +93,7 @@ It has a longer critical path, at three multipliers and three adders. But, it
 uses less area --- just the three multipliers and three adders. Possibly for
 that reason, this was the initial scheme used in MINOTAUR. Area is particularly
 important for its vector unit. Most of its operations are performed on 32-wide
-vectors in parallel, so any area savings are multiplied by 32.
+vectors, pipelined and in parallel. So, any area savings are multiplied by 32.
 
 <figure>
 <pre class="mermaid">
@@ -132,6 +135,71 @@ Data-flow graph of Horner's Scheme.
 </figcaption>
 </figure>
 
+Another improvement over the na&iuml;ve approach is to use [Estrin's Scheme][4],
+which instead recursively factorizes @@p@@ as
+
+%% p(x) = x^2 \cdot (c_3 x + c_2) + (c_1 x + c_0). %%
+
+In total, Estrin's Scheme uses four multipliers and three adders. Its critical
+path consists of two multipliers and two adders. In other words, for just an
+additional multiplier compared to Horner's Scheme, this algorithm improves on
+its critical path by a full Multiply-Accumulate (MAC). And in fact, when this
+approach was implemented in MINOTAUR, it saved area over Horner's Scheme. Its
+shorter critical path allowed the pipeline depth to be reduced by one stage,
+eliminating one set of pipeline registers.
+
+<figure>
+<pre class="mermaid">
+flowchart TB
+    xsq["`*x*`"]
+    xl["`*x*`"]
+    xr["`*x*`"]
+
+    sq["`\*`"]
+    xsq --> sq
+    xsq --> sq
+
+    c3["`*c<sub>3</sub>*`"]
+    c2["`*c<sub>2</sub>*`"]
+    ml["`\*`"]
+    al["`\+`"]
+    c3 --> ml
+    xl --> ml
+    ml --> al
+    c2 --> al
+
+    c3["`*c<sub>3</sub>*`"]
+    c2["`*c<sub>2</sub>*`"]
+    mr["`\*`"]
+    ar["`\+`"]
+    c1 --> mr
+    xr --> mr
+    mr --> ar
+    c0 --> ar
+
+    mt["`\*`"]
+    at["`\+`"]
+    sq --> mt
+    al --> mt
+    mt --> at
+    ar --> at
+
+    at --> Output
+</pre>
+<figcaption>
+Data-flow graph of Estrin's Scheme.
+</figcaption>
+</figure>
+
+The above approaches were actually synthesized in MINOTAUR. It's possible that
+they leave performance on the table though. Specifically, note that all the
+algorithms given above take in the "raw" coefficients @@c_3@@, ..., @@c_0@@ as
+input. But, Wikipedia's page on [Polynomial Evaluation][5] points out that
+pre-processing these coefficients can decrease the number of multipliers and
+adders required.
+
 [1]: https://priyanka-raina.github.io/ "Priyanka Raina: Assistant Professor, Stanford University"
 [2]: https://doi.org/10.1109/VLSITechnologyandCir46783.2024.10631515 "MINOTAUR: An Edge Transformer Inference and Training Accelerator with 12 MBytes On-Chip Resistive RAM and Fine-Grained Spatiotemporal Power Gating"
-[3]: https://en.wikipedia.org/w/index.php?title=Horner%27s_method&oldid=1292763330 "Horner's Method"
+[3]: https://en.wikipedia.org/w/index.php?title=Horner%27s_method&oldid=1292763330 "Horner's method"
+[4]: https://doi.org/10.1145/1460361.1460365 "Organization of computer systems: the fixed plus variable structure computer"
+[5]: https://en.wikipedia.org/w/index.php?title=Polynomial_evaluation&oldid=1296426370#Evaluation_with_preprocessing "Polynomial evaluation § Evaluation with preprocessing"
