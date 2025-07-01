@@ -1,5 +1,5 @@
 ---
-title: Faster Cubic Evaluation
+title: Algorithms for Fast Cubic Evaluation
 tags: ["mathematics", "algorithms"]
 libs: ["mathjax", "mermaidjs"]
 libs_config:
@@ -9,6 +9,10 @@ libs_config:
             nodeSpacing: 25
             rankSpacing: 25
 ---
+
+<div class="mathjaxDeclarations">
+    @@\newcommand{\nl}{\\}@@
+</div>
 
 It's been a while; a lot's happened. I got accepted to Stanford's MS CS program,
 and I even graduated from there last month. During my last quarter there, I took
@@ -196,10 +200,114 @@ they leave performance on the table though. Specifically, note that all the
 algorithms given above take in the "raw" coefficients @@c_3@@, ..., @@c_0@@ as
 input. But, Wikipedia's page on [Polynomial Evaluation][5] points out that
 pre-processing these coefficients can decrease the number of multipliers and
-adders required.
+adders required. [Knuth's Algorithm][6] provides a concrete way to do that.
+
+Knuth's Algorithm points out that, by applying polynomial long-division, we can
+write
+
+%% p(x) = (x^2 + \alpha) (k_1 x + k_0) + \beta x + \gamma, %%
+
+for some set of constants. The only knob we have is @@\alpha@@; once it's fixed,
+the divisor @@x^2 + \alpha@@ is set and the rest of the constants can be
+determined. The key idea is to pick @@\alpha@@ to be @@\alpha^*@@ such that
+@@\beta = 0@@. This can be done by setting
+
+%%
+\begin{align\*}
+    \alpha^\* &= \frac{c_1}{k_1^\*} \nl
+    \gamma^\* &= c_0 - \alpha^\* k_0^\* \nl
+    k_1^\* &= c_3 \nl
+    k_0^\* &= c_2,
+\end{align\*}
+%%
+
+which works so long as @@c_3 \neq 0@@. That case can be worked around for
+MINOTAUR. A few multiplexers can be used to reconfigure the existing multiplers
+and adders for Knuth's Algorithm to implement Horner's Scheme for quadratics. In
+the end, Knuth's Algorithm prescribes
+
+{% highlight python %}
+def preprocess(c: list[float]):
+    cubic = c[3] != 0
+    if cubic:
+        k1 = c[3]
+        k0 = c[2]
+        α = c[1] / k1
+        ɣ = c[0] - α * k0
+    else:
+        k1 = c[2]
+        k0 = c[1]
+        α = float('nan') # Don't care
+        ɣ = c[0]
+    return (cubic, k1, k0, α, ɣ)
+
+def hardware(
+    x: float,
+    cubic: bool,
+    k1: float, k0: float, α: float, ɣ: float,
+) -> float:
+    quotient = k1 * x + k0
+    divisor = x * x + α
+    whole = quotient * divisor if cubic else quotient
+    return whole + ɣ
+
+def evaluate(x: float, c: list[float]) -> float:
+    return hardware(x, *preprocess(c))
+{% endhighlight %}
+
+Ignoring MUX overhead, it requires three multipliers and three adders, and has a
+critical path of two multipliers and two adders. Thus, it is strictly better
+than both Horner's and Estrin's Schemes. It does require preprocessing, but
+that's okay for MINOTAUR.
+
+<figure>
+<pre class="mermaid">
+flowchart TB
+    xq["`*x*`"]
+    xd["`*x*`"]
+
+    k1["`*k<sub>1</sub>*`"]
+    k0["`*k<sub>0</sub>*`"]
+    mq["`\*`"]
+    aq["`\+`"]
+    k1 --> mq
+    xq --> mq
+    mq --> aq
+    k0 --> aq
+
+    alpha["`α`"]
+    md["`\*`"]
+    ad["`\+`"]
+    xd --> md
+    xd --> md
+    md --> ad
+    alpha --> ad
+
+    gamma["`ɣ`"]
+    mt["`\*`"]
+    at["`\+`"]
+    aq --> mt
+    ad --> mt
+    mt --> at
+    gamma --> at
+
+    at --> Output
+</pre>
+<figcaption>
+Data-flow graph of Knuth's Algorithm.
+</figcaption>
+</figure>
+
+To close, even though none of the algorithms described here are entirely new,
+they don't seem to be widely known. For instance, I independently rediscovered
+Estrin's Scheme, and I came to Knuth's Algorithm myself after seeing a different
+algorithm inspired by it in a source I have since lost. It was some work to find
+these algorithms, so hopefully this post can save someone else from doing the
+same thing.
 
 [1]: https://priyanka-raina.github.io/ "Priyanka Raina: Assistant Professor, Stanford University"
 [2]: https://doi.org/10.1109/VLSITechnologyandCir46783.2024.10631515 "MINOTAUR: An Edge Transformer Inference and Training Accelerator with 12 MBytes On-Chip Resistive RAM and Fine-Grained Spatiotemporal Power Gating"
 [3]: https://en.wikipedia.org/w/index.php?title=Horner%27s_method&oldid=1292763330 "Horner's method"
 [4]: https://doi.org/10.1145/1460361.1460365 "Organization of computer systems: the fixed plus variable structure computer"
 [5]: https://en.wikipedia.org/w/index.php?title=Polynomial_evaluation&oldid=1296426370#Evaluation_with_preprocessing "Polynomial evaluation § Evaluation with preprocessing"
+[6]: https://doi.org/10.1145/355580.369074 "Evaluation of polynomials by computer"
