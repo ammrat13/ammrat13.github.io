@@ -172,8 +172,8 @@ flowchart TB
     ml --> al
     c2 --> al
 
-    c3["`*c<sub>3</sub>*`"]
-    c2["`*c<sub>2</sub>*`"]
+    c1["`*c<sub>1</sub>*`"]
+    c0["`*c<sub>0</sub>*`"]
     mr["`\*`"]
     ar["`\+`"]
     c1 --> mr
