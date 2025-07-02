@@ -321,4 +321,4 @@ optimize that instead of total area.
 [5]: https://en.wikipedia.org/w/index.php?title=Polynomial_evaluation&oldid=1296426370#Evaluation_with_preprocessing "Polynomial evaluation § Evaluation with preprocessing"
 [6]: https://doi.org/10.1145/355580.369074 "Evaluation of polynomials by computer"
 [7]: https://jeffe.cs.illinois.edu/teaching/497/08-polynomials.pdf "CS 497: Concrete Models of Computation - Spring 2003 - Evaluating Polynomials (March 10)"
-[8]: /assets/2025/07/04/polynomials.pdf "CS 497: Concrete Models of Computation - Spring 2003 - Evaluating Polynomials (March 10)"
+[8]: /assets/2025/07/02/polynomials.pdf "CS 497: Concrete Models of Computation - Spring 2003 - Evaluating Polynomials (March 10)"
