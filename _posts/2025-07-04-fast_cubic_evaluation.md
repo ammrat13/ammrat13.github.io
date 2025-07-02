@@ -18,12 +18,12 @@ It's been a while; a lot's happened. I got accepted to Stanford's MS CS program,
 and I even graduated from there last month. During my last quarter there, I took
 *EE 372: Design Projects in VLSI Systems II*. In the iteration of the course I
 took, [Priyanka][1] essentially gave us the source code for [MINOTAUR][2], and
-asked us to improve it in whatever way we saw fit. I mainly focused on improving
-the vector unit --- the part of the accelerator that handles activations,
+asked us to improve it however we saw fit. I mainly focused on improving the
+vector unit --- the part of the accelerator that handles activations,
 element-wise operations, and other low arithmetic-intensity tasks.
 
 I was not the only one working on the vector unit though. Another group looked
-at changing the strategy it used to evaluate activation functions. Ultimately,
+at changing the strategy it used to compute activation functions. Ultimately,
 they settled on piecewise-cubic activations, with programmable coefficients and
 interval bounds. I interacted with them, and I investigated ways to make the
 computation of these cubic polynomials more efficient.
@@ -150,7 +150,7 @@ additional multiplier compared to Horner's Scheme, this algorithm improves on
 its critical path by a full Multiply-Accumulate (MAC). And in fact, when this
 approach was implemented in MINOTAUR, it saved area over Horner's Scheme. Its
 shorter critical path allowed the pipeline depth to be reduced by one stage,
-eliminating one set of pipeline registers.
+eliminating an entire set of pipeline registers.
 
 <figure>
 <pre class="mermaid">
@@ -197,7 +197,7 @@ Data-flow graph of Estrin's Scheme.
 
 The above approaches were actually synthesized in MINOTAUR. It's possible that
 they leave performance on the table though. Specifically, note that all the
-algorithms given above take in the "raw" coefficients @@c_3@@, ..., @@c_0@@ as
+algorithms given above take the "raw" coefficients @@c_3@@, ..., @@c_0@@ as
 input. But, Wikipedia's page on [Polynomial Evaluation][5] points out that
 pre-processing these coefficients can decrease the number of multipliers and
 adders required. [Knuth's Algorithm][6] provides a concrete way to do that.
@@ -209,8 +209,8 @@ write
 
 for some set of constants. The only knob we have is @@\alpha@@; once it's fixed,
 the divisor @@x^2 + \alpha@@ is set and the rest of the constants can be
-determined. The key idea is to pick @@\alpha@@ to be @@\alpha^*@@ such that
-@@\beta = 0@@. This can be done by setting
+determined. The key idea is to judiciously set @@\alpha := \alpha^*@@ such that
+@@\beta = 0@@. This can be done by picking
 
 %%
 \begin{align\*}
@@ -222,8 +222,8 @@ determined. The key idea is to pick @@\alpha@@ to be @@\alpha^*@@ such that
 %%
 
 which works so long as @@c_3 \neq 0@@. That case can be worked around for
-MINOTAUR. A few multiplexers can be used to reconfigure the existing multiplers
-and adders for Knuth's Algorithm to implement Horner's Scheme for quadratics. In
+MINOTAUR. A few multiplexers can be used to reconfigure the existing multipliers
+and adders for Knuth's Algorithm to implement Horner's Scheme on quadratics. In
 the end, Knuth's Algorithm prescribes
 
 {% highlight python %}
@@ -255,10 +255,10 @@ def evaluate(x: float, c: list[float]) -> float:
     return hardware(x, *preprocess(c))
 {% endhighlight %}
 
-Ignoring MUX overhead, it requires three multipliers and three adders, and has a
-critical path of two multipliers and two adders. Thus, it is strictly better
-than both Horner's and Estrin's Schemes. It does require preprocessing, but
-that's okay for MINOTAUR.
+Ignoring MUX overhead, it requires three multipliers and three adders, and it
+has a critical path of two multipliers and two adders. Thus, it is strictly
+better than both Horner's and Estrin's Schemes. It does require preprocessing,
+but that's okay for MINOTAUR.
 
 <figure>
 <pre class="mermaid">
@@ -301,9 +301,18 @@ Data-flow graph of Knuth's Algorithm.
 To close, even though none of the algorithms described here are entirely new,
 they don't seem to be widely known. For instance, I independently rediscovered
 Estrin's Scheme, and I came to Knuth's Algorithm myself after seeing a different
-algorithm inspired by it in a source I have since lost. It was some work to find
-these algorithms, so hopefully this post can save someone else from doing the
-same thing.
+algorithm inspired by it in a source I have since lost. Furthermore in my
+experience with MINOTAUR, Horner's Scheme is often treated as the "default"
+approach for polynomial evaluation in hardware, even when other approaches might
+be better. Either way, it was some work to find these algorithms, so hopefully
+this post can save someone else from doing redoing it.
+
+Another question that remains is whether Knuth's Algorithm is "optimal".
+According to [CS 497][7] at UIUC ([mirrored][8]), it is known that Knuth's
+Algorithm uses the lowest possible number of multiplications and additions
+(or&nbsp;subtractions). But, it does not show that it achieves the best possible
+critical path. As shown by Estrin's Scheme in MINOTAUR, it may be better to
+optimize that instead of total area.
 
 [1]: https://priyanka-raina.github.io/ "Priyanka Raina: Assistant Professor, Stanford University"
 [2]: https://doi.org/10.1109/VLSITechnologyandCir46783.2024.10631515 "MINOTAUR: An Edge Transformer Inference and Training Accelerator with 12 MBytes On-Chip Resistive RAM and Fine-Grained Spatiotemporal Power Gating"
@@ -311,3 +320,5 @@ same thing.
 [4]: https://doi.org/10.1145/1460361.1460365 "Organization of computer systems: the fixed plus variable structure computer"
 [5]: https://en.wikipedia.org/w/index.php?title=Polynomial_evaluation&oldid=1296426370#Evaluation_with_preprocessing "Polynomial evaluation § Evaluation with preprocessing"
 [6]: https://doi.org/10.1145/355580.369074 "Evaluation of polynomials by computer"
+[7]: https://jeffe.cs.illinois.edu/teaching/497/08-polynomials.pdf "CS 497: Concrete Models of Computation - Spring 2003 - Evaluating Polynomials (March 10)"
+[8]: /assets/2025/07/04/polynomials.pdf "CS 497: Concrete Models of Computation - Spring 2003 - Evaluating Polynomials (March 10)"
