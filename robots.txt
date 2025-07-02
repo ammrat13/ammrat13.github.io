@@ -1,0 +1,14 @@
+# GPG Public Keys should not be indexed
+User-agent: *
+Disallow: /assets/public.asc
+Disallow: /.well-known/openpgpkey/
+
+# Disallow some bots
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: FacebookBot
+User-agent: Meta-ExternalAgent
+User-agent: Meta-ExternalFetcher
+User-agent: Amazonbot
+Disallow: /
