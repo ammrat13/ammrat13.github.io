@@ -54,3 +54,7 @@ exclude:
   - node_modules/
     # Exclude other configuration files
   - linkinator.config.json
+
+# Explicitly include in processing
+include:
+  - .well-known

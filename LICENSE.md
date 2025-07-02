@@ -39,7 +39,6 @@ includes:
   * `_data/content/*`
   * `assets/img/*`
   * `assets/pdf/*`
-  * `assets/public.asc`
   * Unless otherwise stated, any other images in the `assets/` directory, such
     as
     * JPEG, PNG, GIF, and SVG files
