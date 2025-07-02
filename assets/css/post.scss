@@ -30,7 +30,7 @@ figure {
 figcaption {
     font-size: 90%;
     font-style: italic;
-    color: #6c757d;
+    color: var(--bs-secondary);
 }
 
 /* For code segments */
@@ -50,9 +50,10 @@ figure.highlight {
 /* Again, many of the colors were taken from Bootstrap */
 blockquote {
     /* Background same color as card footers */
-    background-color: rgba(0,0,0,0.03);
+    /* FIXME: Hardcoded alpha to match var(--bs-card-cap-bg) */
+    background-color: rgba(var(--bs-body-color-rgb), 0.03);
     /* Have a border on the left */
-    border-left: 0.4ch solid #6c757d;
+    border-left: 0.4ch solid var(--bs-secondary);
     /* Have some padding inside */
     padding: 0.5rem 1ch 0.5rem 1.6ch;
 }
