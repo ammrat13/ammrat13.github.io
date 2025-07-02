@@ -3,15 +3,17 @@
 
 @import "shared";
 
+/* FIXME: Dimensions of `assets/img/profile.webp` are hard-coded here */
+/* If that image changes, this has to be changed too */
+/* Needed to not shift the layout on load */
+$profileImgWidth: 789px;
+$profileImgHeight: 928px;
+
 #profileImgContainer {
     width: 100%;
     margin-bottom: .7rem;
 
-    /*
-        Aspect ratio is hard-coded for `assets/img/profile.webp`. If that image
-        changes, this has to be changed too.
-    */
-    aspect-ratio: 789 / 928;
+    aspect-ratio: $profileImgWidth / $profileImgHeight;
 }
 
 #profileImg {
