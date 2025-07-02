@@ -159,12 +159,15 @@ flowchart TB
     xl[$$x$$]
     xr[$$x$$]
 
+    c0[$$c_0$$]
+    c1[$$c_1$$]
+    c2[$$c_2$$]
+    c3[$$c_3$$]
+
     sq[$$\times$$]
     xsq --> sq
     xsq --> sq
 
-    c3[$$c_3$$]
-    c2[$$c_2$$]
     ml[$$\times$$]
     al[$$+$$]
     c3 --> ml
@@ -172,8 +175,6 @@ flowchart TB
     ml --> al
     c2 --> al
 
-    c1[$$c_1$$]
-    c0[$$c_0$$]
     mr[$$\times$$]
     ar[$$+$$]
     c1 --> mr
@@ -266,8 +267,11 @@ flowchart TB
     xq[$$x$$]
     xd[$$x$$]
 
-    k1[$$k_1$$]
+    alpha[$$\alpha$$]
+    gamma[$$\gamma$$]
     k0[$$k_0$$]
+    k1[$$k_1$$]
+
     mq[$$\times$$]
     aq[$$+$$]
     k1 --> mq
@@ -275,7 +279,6 @@ flowchart TB
     mq --> aq
     k0 --> aq
 
-    alpha[$$\alpha$$]
     md[$$\times$$]
     ad[$$+$$]
     xd --> md
@@ -283,7 +286,6 @@ flowchart TB
     md --> ad
     alpha --> ad
 
-    gamma[$$\gamma$$]
     mt[$$\times$$]
     at[$$+$$]
     aq --> mt
