@@ -40,18 +40,18 @@ two multipliers and two adders.
 <figure>
 <pre class="mermaid">
 flowchart TB
-    x3["`*x*`"]
-    x2["`*x*`"]
-    x1["`*x*`"]
+    x3[$$x$$]
+    x2[$$x$$]
+    x1[$$x$$]
 
-    c0["`*c<sub>0</sub>*`"]
-    c1["`*c<sub>1</sub>*`"]
-    c2["`*c<sub>2</sub>*`"]
-    c3["`*c<sub>3</sub>*`"]
+    c0[$$c_0$$]
+    c1[$$c_1$$]
+    c2[$$c_2$$]
+    c3[$$c_3$$]
 
-    c3m0["`\*`"]
-    c3m1["`\*`"]
-    c3m2["`\*`"]
+    c3m0[$$\times$$]
+    c3m1[$$\times$$]
+    c3m2[$$\times$$]
     c3 --> c3m0
     x3 --> c3m0
     x3 --> c3m1
@@ -59,20 +59,20 @@ flowchart TB
     c3m0 --> c3m2
     c3m1 --> c3m2
 
-    c2m0["`\*`"]
-    c2m1["`\*`"]
+    c2m0[$$\times$$]
+    c2m1[$$\times$$]
     c2 --> c2m0
     x2 --> c2m0
     c2m0 --> c2m1
     x2 --> c2m1
 
-    c1m0["`\*`"]
+    c1m0[$$\times$$]
     c1 --> c1m0
     x1 --> c1m0
 
-    a0["`\+`"]
-    a1["`\+`"]
-    a2["`\+`"]
+    a0[$$+$$]
+    a1[$$+$$]
+    a2[$$+$$]
     c3m2 --> a0
     c2m1 --> a0
     c1m0 --> a1
@@ -83,9 +83,9 @@ flowchart TB
     a2 --> Output
 </pre>
 <figcaption>
-Data-flow graph of the na&iuml;ve cubic evaluation algorithm. The "*" nodes
-multiply their two inputs, while the "+" nodes add them. Furthermore, the input
-@@x@@ is duplicated and used in multiple places.
+Data-flow graph of the na&iuml;ve cubic evaluation algorithm. The @@\times@@
+nodes multiply their two inputs, while the @@+@@ nodes add them. Furthermore,
+the input @@x@@ is duplicated and used in multiple places.
 </figcaption>
 </figure>
 
@@ -102,31 +102,31 @@ vectors, pipelined and in parallel. So, any area savings are multiplied by 32.
 <figure>
 <pre class="mermaid">
 flowchart TB
-    x3["`*x*`"]
-    x2["`*x*`"]
-    x1["`*x*`"]
+    x3[$$x$$]
+    x2[$$x$$]
+    x1[$$x$$]
 
-    c0["`*c<sub>0</sub>*`"]
-    c1["`*c<sub>1</sub>*`"]
-    c2["`*c<sub>2</sub>*`"]
-    c3["`*c<sub>3</sub>*`"]
+    c0[$$c_0$$]
+    c1[$$c_1$$]
+    c2[$$c_2$$]
+    c3[$$c_3$$]
 
-    c3m["`\*`"]
-    c2a["`\+`"]
+    c3m[$$\times$$]
+    c2a[$$+$$]
     c3 --> c3m
     x3 --> c3m
     c3m --> c2a
     c2 --> c2a
 
-    c2m["`\*`"]
-    c1a["`\+`"]
+    c2m[$$\times$$]
+    c1a[$$+$$]
     c2a --> c2m
     x2 --> c2m
     c2m --> c1a
     c1 --> c1a
 
-    c1m["`\*`"]
-    c0a["`\+`"]
+    c1m[$$\times$$]
+    c0a[$$+$$]
     c1a --> c1m
     x1 --> c1m
     c1m --> c0a
@@ -155,34 +155,34 @@ eliminating an entire set of pipeline registers.
 <figure>
 <pre class="mermaid">
 flowchart TB
-    xsq["`*x*`"]
-    xl["`*x*`"]
-    xr["`*x*`"]
+    xsq[$$x$$]
+    xl[$$x$$]
+    xr[$$x$$]
 
-    sq["`\*`"]
+    sq[$$\times$$]
     xsq --> sq
     xsq --> sq
 
-    c3["`*c<sub>3</sub>*`"]
-    c2["`*c<sub>2</sub>*`"]
-    ml["`\*`"]
-    al["`\+`"]
+    c3[$$c_3$$]
+    c2[$$c_2$$]
+    ml[$$\times$$]
+    al[$$+$$]
     c3 --> ml
     xl --> ml
     ml --> al
     c2 --> al
 
-    c1["`*c<sub>1</sub>*`"]
-    c0["`*c<sub>0</sub>*`"]
-    mr["`\*`"]
-    ar["`\+`"]
+    c1[$$c_1$$]
+    c0[$$c_0$$]
+    mr[$$\times$$]
+    ar[$$+$$]
     c1 --> mr
     xr --> mr
     mr --> ar
     c0 --> ar
 
-    mt["`\*`"]
-    at["`\+`"]
+    mt[$$\times$$]
+    at[$$+$$]
     sq --> mt
     al --> mt
     mt --> at
@@ -263,29 +263,29 @@ but that's okay for MINOTAUR.
 <figure>
 <pre class="mermaid">
 flowchart TB
-    xq["`*x*`"]
-    xd["`*x*`"]
+    xq[$$x$$]
+    xd[$$x$$]
 
-    k1["`*k<sub>1</sub>*`"]
-    k0["`*k<sub>0</sub>*`"]
-    mq["`\*`"]
-    aq["`\+`"]
+    k1[$$k_1$$]
+    k0[$$k_0$$]
+    mq[$$\times$$]
+    aq[$$+$$]
     k1 --> mq
     xq --> mq
     mq --> aq
     k0 --> aq
 
-    alpha["`α`"]
-    md["`\*`"]
-    ad["`\+`"]
+    alpha[$$\alpha$$]
+    md[$$\times$$]
+    ad[$$+$$]
     xd --> md
     xd --> md
     md --> ad
     alpha --> ad
 
-    gamma["`ɣ`"]
-    mt["`\*`"]
-    at["`\+`"]
+    gamma[$$\gamma$$]
+    mt[$$\times$$]
+    at[$$+$$]
     aq --> mt
     ad --> mt
     mt --> at
