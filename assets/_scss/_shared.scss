@@ -20,6 +20,7 @@ a:hover {
     text-decoration: none;
 }
 
+
 /* Link to jump to the main content of the page, for accessibility */
 /* We'll put it in the very top left corner of the page */
 #skipToTheMain {
@@ -28,6 +29,7 @@ a:hover {
     left: 0;
     z-index: 1000;
 }
+
 
 /* Center objects in the page itself */
 /* Have some parameters for calculating the width of objects */
@@ -63,4 +65,15 @@ $contentInset: 2rem;
     @extend %page-obj;
     width: calc(#{$pageObjWidth} - #{$contentInset});
     min-width: calc(#{$pageObjMinWidth} - #{$contentInset});
+}
+
+
+/* The footer link should not be underlined on hover */
+/* instead, it should be a different color */
+#footerLink {
+    color: var(--bs-tertiary-color);
+}
+#footerLink:hover {
+    color: var(--bs-secondary-color);
+    text-decoration: none;
 }
